@@ -157,7 +157,8 @@ var _ = Describe("KubeScheduler", func() {
 						"app":  "kubernetes",
 						"role": "scheduler",
 					},
-					Type: corev1.ServiceTypeClusterIP,
+					Type:       corev1.ServiceTypeClusterIP,
+					IPFamilies: []corev1.IPFamily{corev1.IPv4Protocol},
 					Ports: []corev1.ServicePort{
 						{
 							Name:     "metrics",

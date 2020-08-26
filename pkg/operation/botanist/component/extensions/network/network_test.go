@@ -100,8 +100,8 @@ var _ = Describe("#Network", func() {
 			Namespace:      networkNs,
 			Type:           networkType,
 			ProviderConfig: nil,
-			PodCIDR:        &podCIDR,
-			ServiceCIDR:    &serviceCIDR,
+			PodCIDR:        []net.IPNet{podCIDR},
+			ServiceCIDR:    []net.IPNet{serviceCIDR},
 		}
 
 		empty = &extensionsv1alpha1.Network{

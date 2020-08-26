@@ -46,5 +46,5 @@ const (
 	RegistrationSpecHash = "registration-spec-hash"
 
 	// ShootDNSIngressName is a constant for the DNS resources used for the shoot ingress addon.
-	ShootDNSIngressName = "ingress"
+	ShootDNSIngressName = "i"
 )

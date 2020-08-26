@@ -15,9 +15,10 @@
 package validation
 
 import (
+	"strings"
+
 	extensionsv1alpha1 "github.com/gardener/gardener/pkg/apis/extensions/v1alpha1"
 	cidrvalidation "github.com/gardener/gardener/pkg/utils/validation/cidr"
-
 	apiequality "k8s.io/apimachinery/pkg/api/equality"
 	apivalidation "k8s.io/apimachinery/pkg/api/validation"
 	"k8s.io/apimachinery/pkg/util/validation/field"
@@ -56,13 +57,17 @@ func ValidateNetworkSpec(spec *extensionsv1alpha1.NetworkSpec, fldPath *field.Pa
 	if len(spec.PodCIDR) == 0 {
 		allErrs = append(allErrs, field.Required(fldPath.Child("podCIDR"), "field is required"))
 	} else {
-		cidrs = append(cidrs, cidrvalidation.NewCIDR(spec.PodCIDR, fldPath.Child("podCIDR")))
+		for _, s := range strings.Split(spec.PodCIDR, ",") {
+			cidrs = append(cidrs, cidrvalidation.NewCIDR(s, fldPath.Child("podCIDR")))
+		}
 	}
 
 	if len(spec.ServiceCIDR) == 0 {
 		allErrs = append(allErrs, field.Required(fldPath.Child("serviceCIDR"), "field is required"))
 	} else {
-		cidrs = append(cidrs, cidrvalidation.NewCIDR(spec.ServiceCIDR, fldPath.Child("serviceCIDR")))
+		for _, s := range strings.Split(spec.ServiceCIDR, ",") {
+			cidrs = append(cidrs, cidrvalidation.NewCIDR(s, fldPath.Child("serviceCIDR")))
+		}
 	}
 
 	allErrs = append(allErrs, cidrvalidation.ValidateCIDRParse(cidrs...)...)

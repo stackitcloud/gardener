@@ -182,6 +182,16 @@ func (b *Botanist) DeploySeedMonitoring(ctx context.Context) error {
 		prometheusIngressTLSSecretName = ingressTLSSecret.Name
 	}
 
+	var podCidrs []string
+	for _, pod := range b.Shoot.Networks.Pods {
+		podCidrs = append(podCidrs, pod.String())
+	}
+
+	var svcCidrs []string
+	for _, svc := range b.Shoot.Networks.Services {
+		svcCidrs = append(svcCidrs, svc.String())
+	}
+
 	ingressClass, err := seed.ComputeNginxIngressClass(b.Seed, b.Seed.GetInfo().Status.KubernetesVersion)
 	if err != nil {
 		return err
@@ -204,8 +214,8 @@ func (b *Botanist) DeploySeedMonitoring(ctx context.Context) error {
 
 	var (
 		networks = map[string]interface{}{
-			"pods":     b.Shoot.Networks.Pods.String(),
-			"services": b.Shoot.Networks.Services.String(),
+			"pods":     strings.Join(podCidrs, ","),
+			"services": strings.Join(svcCidrs, ","),
 		}
 		prometheusConfig = map[string]interface{}{
 			"secretNameClusterCA":      clusterCASecret.Name,
