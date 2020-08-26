@@ -69,7 +69,7 @@ var _ = Describe("CoreDNS", func() {
 			botanist.K8sSeedClient = kubernetesClient
 			botanist.Shoot.Networks = &shootpkg.Networks{
 				CoreDNS: net.ParseIP("18.19.20.21"),
-				Pods:    &net.IPNet{IP: net.ParseIP("22.23.24.25")},
+				Pods:    []net.IPNet{{IP: net.ParseIP("22.23.24.25")}},
 			}
 		})
 

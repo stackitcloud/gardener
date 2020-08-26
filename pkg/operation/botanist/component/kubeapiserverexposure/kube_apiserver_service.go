@@ -60,6 +60,7 @@ func NewService(
 	waiter retry.Ops,
 	clusterIPFunc func(clusterIP string),
 	ingressFunc func(ingressIP string),
+	ipFamilies []corev1.IPFamily,
 ) component.DeployWaiter {
 	if waiter == nil {
 		waiter = retry.DefaultOps()
@@ -116,6 +117,7 @@ func NewService(
 		waiter:                 waiter,
 		clusterIPFunc:          clusterIPFunc,
 		ingressFunc:            ingressFunc,
+		ipFamilies:             ipFamilies,
 	}
 }
 
@@ -128,6 +130,7 @@ type service struct {
 	waiter                 retry.Ops
 	clusterIPFunc          func(clusterIP string)
 	ingressFunc            func(ingressIP string)
+	ipFamilies             []corev1.IPFamily
 }
 
 func (s *service) Deploy(ctx context.Context) error {
@@ -142,6 +145,10 @@ func (s *service) Deploy(ctx context.Context) error {
 		obj.Labels = getLabels()
 		if s.values.gardenerManaged {
 			metav1.SetMetaDataLabel(&obj.ObjectMeta, v1beta1constants.LabelAPIServerExposure, v1beta1constants.LabelAPIServerExposureGardenerManaged)
+		}
+
+		if s.ipFamilies != nil {
+			obj.Spec.IPFamilies = s.ipFamilies
 		}
 
 		obj.Spec.Type = s.values.serviceType

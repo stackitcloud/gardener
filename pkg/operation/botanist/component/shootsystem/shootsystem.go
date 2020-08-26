@@ -233,14 +233,24 @@ func addPriorityClasses(registry *managedresources.Registry) error {
 }
 
 func (s *shootSystem) shootInfoData() map[string]string {
+	var podCidrs []string
+	for _, pod := range s.values.Shoot.Networks.Pods {
+		podCidrs = append(podCidrs, pod.String())
+	}
+
+	var svcCidrs []string
+	for _, svc := range s.values.Shoot.Networks.Services {
+		svcCidrs = append(svcCidrs, svc.String())
+	}
+
 	data := map[string]string{
 		"projectName":       s.values.ProjectName,
 		"shootName":         s.values.Shoot.GetInfo().Name,
 		"provider":          s.values.Shoot.GetInfo().Spec.Provider.Type,
 		"region":            s.values.Shoot.GetInfo().Spec.Region,
 		"kubernetesVersion": s.values.Shoot.GetInfo().Spec.Kubernetes.Version,
-		"podNetwork":        s.values.Shoot.Networks.Pods.String(),
-		"serviceNetwork":    s.values.Shoot.Networks.Services.String(),
+		"podNetwork":        strings.Join(podCidrs, ","),
+		"serviceNetwork":    strings.Join(svcCidrs, ","),
 		"maintenanceBegin":  s.values.Shoot.GetInfo().Spec.Maintenance.TimeWindow.Begin,
 		"maintenanceEnd":    s.values.Shoot.GetInfo().Spec.Maintenance.TimeWindow.End,
 	}

@@ -17,6 +17,7 @@ package coredns
 import (
 	"context"
 	"strconv"
+	"strings"
 	"time"
 
 	gardencorev1beta1 "github.com/gardener/gardener/pkg/apis/core/v1beta1"
@@ -157,6 +158,7 @@ func (c *coreDNS) WaitCleanup(ctx context.Context) error {
 }
 
 func (c *coreDNS) computeResourcesData() (map[string][]byte, error) {
+
 	var (
 		portAPIServer       = intstr.FromInt(kubeapiserver.Port)
 		portDNSServerHost   = intstr.FromInt(53)
@@ -334,7 +336,6 @@ import custom/*.server
 					},
 					From: []networkingv1.NetworkPolicyPeer{
 						{NamespaceSelector: &metav1.LabelSelector{}, PodSelector: &metav1.LabelSelector{}},
-						{IPBlock: &networkingv1.IPBlock{CIDR: c.values.PodNetworkCIDR}},
 					},
 				}},
 				PolicyTypes: []networkingv1.PolicyType{networkingv1.PolicyTypeIngress, networkingv1.PolicyTypeEgress},
@@ -746,6 +747,16 @@ import custom/*.server
 		}
 	)
 
+	podNetworkCIDRs := strings.Split(c.values.PodNetworkCIDR, ",")
+	for _, cidr := range podNetworkCIDRs {
+		networkPolicy.Spec.Ingress[0].From = append(
+			networkPolicy.Spec.Ingress[0].From,
+			networkingv1.NetworkPolicyPeer{
+				IPBlock: &networkingv1.IPBlock{CIDR: cidr},
+			},
+		)
+	}
+
 	if c.values.APIServerHost != nil {
 		deployment.Spec.Template.Spec.Containers[0].Env = append(deployment.Spec.Template.Spec.Containers[0].Env, corev1.EnvVar{
 			Name:  "KUBERNETES_SERVICE_HOST",
@@ -754,9 +765,15 @@ import custom/*.server
 	}
 
 	if c.values.NodeNetworkCIDR != nil {
-		networkPolicy.Spec.Ingress[0].From = append(networkPolicy.Spec.Ingress[0].From, networkingv1.NetworkPolicyPeer{
-			IPBlock: &networkingv1.IPBlock{CIDR: *c.values.NodeNetworkCIDR},
-		})
+		nodeNetworkCIDR := strings.Split(*c.values.NodeNetworkCIDR, ",")
+		for _, cidr := range nodeNetworkCIDR {
+			networkPolicy.Spec.Ingress[0].From = append(
+				networkPolicy.Spec.Ingress[0].From,
+				networkingv1.NetworkPolicyPeer{
+					IPBlock: &networkingv1.IPBlock{CIDR: cidr},
+				},
+			)
+		}
 	}
 
 	if c.values.AutoscalingMode == gardencorev1beta1.CoreDNSAutoscalingModeClusterProportional {

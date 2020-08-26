@@ -126,8 +126,8 @@ var _ = Describe("KubeAPIServer", func() {
 					ExternalClusterDomain: &externalClusterDomain,
 					Networks: &shootpkg.Networks{
 						APIServer: apiServerNetwork,
-						Pods:      podNetwork,
-						Services:  serviceNetwork,
+						Pods:      []net.IPNet{{IP: podNetwork.IP, Mask: podNetwork.Mask}},
+						Services:  []net.IPNet{{IP: serviceNetwork.IP, Mask: serviceNetwork.Mask}},
 					},
 				},
 				ImageVector: imagevector.ImageVector{

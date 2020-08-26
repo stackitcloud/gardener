@@ -141,14 +141,14 @@ var _ = Describe("ManagedSeed", func() {
 						},
 					}
 					ingress = &core.Ingress{
-						Domain: "ingress." + domain,
+						Domain: "i." + domain,
 						Controller: core.IngressController{
 							Kind: "nginx",
 						},
 					}
 				} else {
 					dns = core.SeedDNS{
-						IngressDomain: pointer.String("ingress." + domain),
+						IngressDomain: pointer.String("i." + domain),
 					}
 				}
 

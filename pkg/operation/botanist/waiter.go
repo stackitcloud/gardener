@@ -18,6 +18,7 @@ import (
 	"context"
 	"fmt"
 	"net"
+	"strings"
 	"time"
 
 	"github.com/gardener/gardener/pkg/operation/common"
@@ -137,11 +138,15 @@ func (b *Botanist) WaitUntilEndpointsDoNotContainPodIPs(ctx context.Context) err
 	b.Logger.Info("Waiting until there are no Endpoints containing Pod IPs in the shoot cluster")
 
 	var podsNetwork *net.IPNet
+	var podsNetworks []*net.IPNet
 	if val := b.Shoot.GetInfo().Spec.Networking.Pods; val != nil {
-		var err error
-		_, podsNetwork, err = net.ParseCIDR(*val)
-		if err != nil {
-			return fmt.Errorf("unable to check if there are still Endpoints containing Pod IPs in the shoot cluster. Shoots's Pods network could not be parsed: %+v", err)
+		for _, podNet := range strings.Split(string(*val), ",") {
+			var err error
+			_, podsNetwork, err = net.ParseCIDR(podNet)
+			if err != nil {
+				return fmt.Errorf("unable to check if there are still Endpoints containing Pod IPs in the shoot cluster. Shoots's Pods network could not be parsed: %+v", err)
+			}
+			podsNetworks = append(podsNetworks, podsNetwork)
 		}
 	} else {
 		return fmt.Errorf("unable to check if there are still Endpoints containing Pod IPs in the shoot cluster. Shoot's Pods network is empty")
@@ -173,10 +178,12 @@ func (b *Botanist) WaitUntilEndpointsDoNotContainPodIPs(ctx context.Context) err
 
 			for _, subset := range endpoint.Subsets {
 				for _, address := range subset.Addresses {
-					if podsNetwork.Contains(net.ParseIP(address.IP)) {
-						b.Logger.Info("Waiting until there are no endpoints containing pod IPs in the shoot cluster (at least one endpoint still exists)", "endpoint", client.ObjectKeyFromObject(&endpoint))
-						return retry.MinorError(fmt.Errorf("waiting until there are no running Pods in the shoot cluster... "+
-							"there is still at least one Endpoint containing pod IPs in the shoot cluster: %q", client.ObjectKeyFromObject(&endpoint).String()))
+					for _, podNet := range podsNetworks {
+						if podNet.Contains(net.ParseIP(address.IP)) {
+							b.Logger.Info("Waiting until there are no endpoints containing pod IPs in the shoot cluster (at least one endpoint still exists)", "endpoint", client.ObjectKeyFromObject(&endpoint))
+							return retry.MinorError(fmt.Errorf("waiting until there are no running Pods in the shoot cluster... "+
+								"there is still at least one Endpoint containing pod IPs in the shoot cluster: %q", client.ObjectKeyFromObject(&endpoint).String()))
+						}
 					}
 				}
 			}

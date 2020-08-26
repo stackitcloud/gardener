@@ -70,8 +70,8 @@ var _ = Describe("VPNSeedServer", func() {
 			botanist.Shoot = &shootpkg.Shoot{
 				DisableDNS: true,
 				Networks: &shootpkg.Networks{
-					Services: &net.IPNet{IP: net.IP{10, 0, 0, 1}, Mask: net.CIDRMask(10, 24)},
-					Pods:     &net.IPNet{IP: net.IP{10, 0, 0, 2}, Mask: net.CIDRMask(10, 24)},
+					Services: []net.IPNet{{IP: net.IP{10, 0, 0, 1}, Mask: net.CIDRMask(10, 24)}},
+					Pods:     []net.IPNet{{IP: net.IP{10, 0, 0, 2}, Mask: net.CIDRMask(10, 24)}},
 				},
 			}
 			botanist.Shoot.SetInfo(&gardencorev1beta1.Shoot{

@@ -62,9 +62,9 @@ var _ = Describe("VpnSeedServer", func() {
 		vpnImage                = "eu.gcr.io/gardener-project/gardener/vpn-seed-server:v1.2.3"
 		envoyImage              = "envoyproxy/envoy:v4.5.6"
 		kubeAPIServerHost       = "foo.bar"
-		serviceNetwork          = "10.0.0.0/24"
-		podNetwork              = "10.0.1.0/24"
-		nodeNetwork             = "10.0.2.0/24"
+		serviceNetwork          = []string{"10.0.0.0/24"}
+		podNetwork              = []string{"10.0.1.0/24"}
+		nodeNetwork             = []string{"10.0.2.0/24"}
 		replicas          int32 = 1
 		vpaUpdateMode           = vpaautoscalingv1.UpdateModeAuto
 		controlledValues        = vpaautoscalingv1.ContainerControlledValuesRequestsOnly
@@ -302,11 +302,11 @@ admin:
 									Env: []corev1.EnvVar{
 										{
 											Name:  "SERVICE_NETWORK",
-											Value: serviceNetwork,
+											Value: serviceNetwork[0],
 										},
 										{
 											Name:  "POD_NETWORK",
-											Value: podNetwork,
+											Value: podNetwork[0],
 										},
 										{
 											Name: "LOCAL_NODE_IP",
@@ -910,7 +910,7 @@ admin:
 			})
 
 			It("should successfully deploy all resources (w/ node network)", func() {
-				vpnSeedServer = New(c, namespace, sm, envoyImage, vpnImage, &kubeAPIServerHost, serviceNetwork, podNetwork, &nodeNetwork, replicas, istioIngressGateway)
+				vpnSeedServer = New(c, namespace, sm, envoyImage, vpnImage, &kubeAPIServerHost, serviceNetwork, podNetwork, nodeNetwork, replicas, istioIngressGateway)
 				vpnSeedServer.SetSecrets(secrets)
 				vpnSeedServer.SetSeedNamespaceObjectUID(namespaceUID)
 
@@ -937,7 +937,7 @@ admin:
 					c.EXPECT().Get(ctx, kutil.Key(namespace, DeploymentName), gomock.AssignableToTypeOf(&appsv1.Deployment{})),
 					c.EXPECT().Patch(ctx, gomock.AssignableToTypeOf(&appsv1.Deployment{}), gomock.Any()).
 						Do(func(ctx context.Context, obj client.Object, _ client.Patch, _ ...client.PatchOption) {
-							Expect(obj).To(DeepEqual(deployment(&nodeNetwork)))
+							Expect(obj).To(DeepEqual(deployment(&nodeNetwork[0])))
 						}),
 					c.EXPECT().Get(ctx, kutil.Key(namespace, DeploymentName), gomock.AssignableToTypeOf(&networkingv1beta1.DestinationRule{})),
 					c.EXPECT().Patch(ctx, gomock.AssignableToTypeOf(&networkingv1beta1.DestinationRule{}), gomock.Any()).

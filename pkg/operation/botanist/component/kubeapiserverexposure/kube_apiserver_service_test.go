@@ -92,7 +92,8 @@ var _ = Describe("#Service", func() {
 					"app":  "kubernetes",
 					"role": "apiserver",
 				},
-				ClusterIP: "1.1.1.1",
+				IPFamilies: []corev1.IPFamily{corev1.IPv4Protocol},
+				ClusterIP:  "1.1.1.1",
 			},
 		}
 
@@ -126,6 +127,7 @@ var _ = Describe("#Service", func() {
 			&retryfake.Ops{MaxAttempts: 1},
 			clusterIPFunc,
 			ingressIPFunc,
+			[]corev1.IPFamily{corev1.IPv4Protocol},
 		)
 	})
 
