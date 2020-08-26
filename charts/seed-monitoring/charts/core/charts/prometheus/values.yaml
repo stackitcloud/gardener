@@ -86,6 +86,8 @@ allowedMetrics:
   - apiserver_current_inqueue_requests
   - apiserver_response_sizes_bucket
   - apiserver_request_duration_seconds_bucket
+  - apiserver_request_duration_seconds_count
+  - apiserver_request_duration_seconds_sum
   - apiserver_request_terminations_total
   - apiserver_storage_transformation_duration_seconds_bucket
   - apiserver_storage_transformation_operations_total
@@ -199,6 +201,21 @@ allowedMetrics:
   - node_scrape_collector_success
   - process_max_fds
   - process_open_fds
+  - node_disk_discard_time_seconds_total
+  - node_disk_discarded_sectors_total
+  - node_disk_discards_completed_total
+  - node_disk_discards_merged_total
+  - node_disk_io_now
+  - node_disk_io_time_seconds_total
+  - node_disk_io_time_weighted_seconds_total
+  - node_disk_read_bytes_total
+  - node_disk_read_time_seconds_total
+  - node_disk_reads_completed_total
+  - node_disk_reads_merged_total
+  - node_disk_write_time_seconds_total
+  - node_disk_writes_completed_total
+  - node_disk_writes_merged_total
+  - node_disk_written_bytes_total
   prometheus:
   - process_max_fds
   - process_open_fds
@@ -290,6 +307,12 @@ allowedMetrics:
   - envoy_tcp_downstream_cx_rx_bytes_total
   - envoy_tcp_downstream_cx_total
   - envoy_tcp_downstream_cx_tx_bytes_total
+  externalBlackboxExporter:
+    - probe_duration_seconds
+    - probe_http_duration_seconds
+    - probe_success
+    - probe_http_status_code
+    - up
 seed:
   apiserver: https://api.foo.bar
   region: antarctica-1
@@ -337,3 +360,23 @@ resources:
   limits:
     cpu: 350m
     memory: 760Mi
+
+
+#remoteWrite:
+#  url: coretexURL
+#  basic_auth:
+#    username: user
+#    password: password
+#  keep:
+#  - metric1
+#  - metric2
+#  - metric3
+#  - metric4
+
+#externalBlackboxExporter:
+#  url: blackboxURL
+#  module: module
+#  externalApiUrl: https://apu-url
+#  basic_auth:
+#    username: user
+#    password: password

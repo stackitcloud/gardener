@@ -194,7 +194,11 @@ spec:
               value: Bearer {{ .Values.probeCredentials }}
           successThreshold: 1
           failureThreshold: 3
+          {{- if semverCompare ">= 1.16" .Values.kubernetesVersion }}
+          initialDelaySeconds: 60
+          {{- else }}
           initialDelaySeconds: 15
+          {{- end }}
           periodSeconds: 10
           timeoutSeconds: 15
         readinessProbe:
@@ -323,12 +327,12 @@ spec:
         - name: APISERVER_AUTH_MODE_CLIENT_CERT_KEY
           value: /srv/secrets/vpn-seed/tls.key
         - name: SERVICE_NETWORK
-          value: {{ .Values.shootNetworks.services }}
+          value: "{{ (split "," .Values.shootNetworks.services)._0  }}"
         - name: POD_NETWORK
-          value: {{ .Values.shootNetworks.pods }}
+          value: "{{ (split "," .Values.shootNetworks.pods)._0 }}"
         {{- if .Values.shootNetworks.nodes }}
         - name: NODE_NETWORK
-          value: {{ .Values.shootNetworks.nodes }}
+          value: "{{ (split "," .Values.shootNetworks.nodes)._0 }}"
         {{- end }}
         {{- if .Values.vpnSeedResources }}
         resources:
