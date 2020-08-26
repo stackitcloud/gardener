@@ -23,6 +23,7 @@ import (
 	"github.com/gardener/gardener/pkg/operation/common"
 
 	"k8s.io/utils/pointer"
+	"strings"
 )
 
 // NewNetworkPoliciesDeployer is an alias for networkpolicies.New. Exposed for testing.
@@ -33,13 +34,13 @@ var NewNetworkPoliciesDeployer = networkpolicies.New
 func (b *Botanist) DefaultNetworkPolicies(sniPhase component.Phase) (component.Deployer, error) {
 	var shootCIDRNetworks []string
 	if v := b.Shoot.GetInfo().Spec.Networking.Nodes; v != nil {
-		shootCIDRNetworks = append(shootCIDRNetworks, *v)
+		shootCIDRNetworks = append(shootCIDRNetworks, strings.Split(*v, ",")...)
 	}
 	if v := b.Shoot.GetInfo().Spec.Networking.Pods; v != nil {
-		shootCIDRNetworks = append(shootCIDRNetworks, *v)
+		shootCIDRNetworks = append(shootCIDRNetworks, strings.Split(*v, ",")...)
 	}
 	if v := b.Shoot.GetInfo().Spec.Networking.Services; v != nil {
-		shootCIDRNetworks = append(shootCIDRNetworks, *v)
+		shootCIDRNetworks = append(shootCIDRNetworks, strings.Split(*v, ",")...)
 	}
 
 	shootNetworkPeers, err := networkpolicies.NetworkPolicyPeersWithExceptions(shootCIDRNetworks, b.Seed.GetInfo().Spec.Networks.BlockCIDRs...)
@@ -47,9 +48,11 @@ func (b *Botanist) DefaultNetworkPolicies(sniPhase component.Phase) (component.D
 		return nil, err
 	}
 
-	seedCIDRNetworks := []string{b.Seed.GetInfo().Spec.Networks.Pods, b.Seed.GetInfo().Spec.Networks.Services}
+	var seedCIDRNetworks []string
+	seedCIDRNetworks = append(seedCIDRNetworks, strings.Split(b.Seed.GetInfo().Spec.Networks.Pods, ",")...)
+	seedCIDRNetworks = append(seedCIDRNetworks, strings.Split(b.Seed.GetInfo().Spec.Networks.Services, ",")...)
 	if v := b.Seed.GetInfo().Spec.Networks.Nodes; v != nil {
-		seedCIDRNetworks = append(seedCIDRNetworks, *v)
+		seedCIDRNetworks = append(seedCIDRNetworks, strings.Split(*v, ",")...)
 	}
 
 	allCIDRNetworks := append(seedCIDRNetworks, shootCIDRNetworks...)
