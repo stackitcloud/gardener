@@ -20,6 +20,7 @@ import (
 	"hash/crc32"
 	"path/filepath"
 	"strconv"
+	"strings"
 	"time"
 
 	gardencorev1beta1 "github.com/gardener/gardener/pkg/apis/core/v1beta1"
@@ -868,8 +869,10 @@ func (b *Botanist) deployNetworkPolicies(ctx context.Context, denyAll bool) erro
 	if v := b.Shoot.GetNodeNetwork(); v != nil {
 		shootCIDRNetworks = append(shootCIDRNetworks, *v)
 	}
-	if v := b.Shoot.Info.Spec.Networking.Pods; v != nil {
-		shootCIDRNetworks = append(shootCIDRNetworks, *v)
+	if val := b.Shoot.Info.Spec.Networking.Pods; val != nil {
+		for _, podNet := range strings.Split(string(*val), ",") {
+			shootCIDRNetworks = append(shootCIDRNetworks, podNet)
+		}
 	}
 	if v := b.Shoot.Info.Spec.Networking.Services; v != nil {
 		shootCIDRNetworks = append(shootCIDRNetworks, *v)
@@ -880,7 +883,7 @@ func (b *Botanist) deployNetworkPolicies(ctx context.Context, denyAll bool) erro
 	}
 	values["clusterNetworks"] = shootNetworkValues
 
-	allCIDRNetworks := []string{b.Seed.Info.Spec.Networks.Pods, b.Seed.Info.Spec.Networks.Services}
+	var allCIDRNetworks []string
 	if v := b.Seed.Info.Spec.Networks.Nodes; v != nil {
 		allCIDRNetworks = append(allCIDRNetworks, *v)
 	}
@@ -918,6 +921,11 @@ func (b *Botanist) DeployKubeAPIServer(ctx context.Context) error {
 		memoryMetricForHpaEnabled = true
 	}
 
+	var podCidrs []string
+	for _, pod := range b.Shoot.Networks.Pods {
+		podCidrs = append(podCidrs, pod.String())
+	}
+
 	var (
 		podAnnotations = map[string]interface{}{
 			"checksum/secret-ca":                     b.CheckSums[v1beta1constants.SecretNameCACluster],
@@ -953,7 +961,7 @@ func (b *Botanist) DeployKubeAPIServer(ctx context.Context) error {
 
 		shootNetworks = map[string]interface{}{
 			"services": b.Shoot.Networks.Services.String(),
-			"pods":     b.Shoot.Networks.Pods.String(),
+			"pods":     strings.Join(podCidrs, ","),
 		}
 	)
 
@@ -1244,10 +1252,15 @@ func IsValidAuditPolicyVersion(shootVersion string, schemaVersion *schema.GroupV
 
 // DeployKubeControllerManager deploys kube-controller-manager deployment.
 func (b *Botanist) DeployKubeControllerManager(ctx context.Context) error {
+	var podCidrs []string
+	for _, pod := range b.Shoot.Networks.Pods {
+		podCidrs = append(podCidrs, pod.String())
+	}
+
 	defaultValues := map[string]interface{}{
 		"clusterName":       b.Shoot.SeedNamespace,
 		"kubernetesVersion": b.Shoot.Info.Spec.Kubernetes.Version,
-		"podNetwork":        b.Shoot.Networks.Pods.String(),
+		"podNetwork":        strings.Join(podCidrs, ","),
 		"serviceNetwork":    b.Shoot.Networks.Services.String(),
 		"podAnnotations": map[string]interface{}{
 			"checksum/secret-ca":                             b.CheckSums[v1beta1constants.SecretNameCACluster],

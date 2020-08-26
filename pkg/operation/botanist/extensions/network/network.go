@@ -56,7 +56,7 @@ type Values struct {
 	// ProviderConfig contains the provider config for the Network extension.
 	ProviderConfig *runtime.RawExtension
 	// PodCIDR is the Shoot's pod CIDR in the Shoot VPC
-	PodCIDR *net.IPNet
+	PodCIDR []*net.IPNet
 	// ServiceCIDR is the Shoot's service CIDR in the Shoot VPC
 	ServiceCIDR *net.IPNet
 }
