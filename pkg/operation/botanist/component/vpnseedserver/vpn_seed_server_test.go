@@ -68,9 +68,9 @@ var _ = Describe("VpnSeedServer", func() {
 			ImageVPNSeedServer:  vpnImage,
 			KubeAPIServerHost:   pointer.String("foo.bar"),
 			Network: NetworkValues{
-				PodCIDR:     "10.0.1.0/24",
-				ServiceCIDR: "10.0.0.0/24",
-				NodeCIDR:    "10.0.2.0/24",
+				PodCIDR:     []string{"10.0.1.0/24"},
+				ServiceCIDR: []string{"10.0.0.0/24"},
+				NodeCIDR:    []string{"10.0.2.0/24"},
 			},
 			Replicas: 1,
 			IstioIngressGateway: IstioIngressGateway{
@@ -303,11 +303,11 @@ admin:
 							Env: []corev1.EnvVar{
 								{
 									Name:  "SERVICE_NETWORK",
-									Value: values.Network.ServiceCIDR,
+									Value: values.Network.ServiceCIDR[0],
 								},
 								{
 									Name:  "POD_NETWORK",
-									Value: values.Network.PodCIDR,
+									Value: values.Network.PodCIDR[0],
 								},
 								{
 									Name:  "NODE_NETWORK",
@@ -1048,7 +1048,7 @@ admin:
 
 			It("should successfully deploy all resources (w/o node network)", func() {
 				copy := values
-				copy.Network.NodeCIDR = ""
+				copy.Network.NodeCIDR = []string{""}
 				vpnSeedServer = New(c, namespace, sm, copy)
 				vpnSeedServer.SetSecrets(secrets)
 				vpnSeedServer.SetSeedNamespaceObjectUID(namespaceUID)
@@ -1106,7 +1106,7 @@ admin:
 
 			It("should successfully deploy all resources (w/o node network and high availability)", func() {
 				haValues := values
-				haValues.Network.NodeCIDR = ""
+				haValues.Network.NodeCIDR = []string{""}
 				haValues.Replicas = 3
 				haValues.HighAvailabilityEnabled = true
 				haValues.HighAvailabilityNumberOfSeedServers = 3
@@ -1218,7 +1218,7 @@ admin:
 					c.EXPECT().Get(ctx, kutil.Key(namespace, DeploymentName), gomock.AssignableToTypeOf(&appsv1.Deployment{})),
 					c.EXPECT().Patch(ctx, gomock.AssignableToTypeOf(&appsv1.Deployment{}), gomock.Any()).
 						Do(func(ctx context.Context, obj client.Object, _ client.Patch, _ ...client.PatchOption) {
-							Expect(obj).To(DeepEqual(deployment(values.Network.NodeCIDR)))
+							Expect(obj).To(DeepEqual(deployment(values.Network.NodeCIDR[0])))
 						}),
 					c.EXPECT().Get(ctx, kutil.Key(namespace, ServiceName), gomock.AssignableToTypeOf(&corev1.Service{})),
 					c.EXPECT().Patch(ctx, gomock.AssignableToTypeOf(&corev1.Service{}), gomock.Any()).

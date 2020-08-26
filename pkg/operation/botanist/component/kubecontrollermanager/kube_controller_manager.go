@@ -107,8 +107,8 @@ func New(
 	version *semver.Version,
 	image string,
 	config *gardencorev1beta1.KubeControllerManagerConfig,
-	podNetwork *net.IPNet,
-	serviceNetwork *net.IPNet,
+	podNetwork []net.IPNet,
+	serviceNetwork []net.IPNet,
 	hvpaConfig *HVPAConfig,
 	runtimeKubernetesVersion *semver.Version,
 ) Interface {
@@ -137,8 +137,8 @@ type kubeControllerManager struct {
 	image          string
 	replicas       int32
 	config         *gardencorev1beta1.KubeControllerManagerConfig
-	podNetwork     *net.IPNet
-	serviceNetwork *net.IPNet
+	podNetwork     []net.IPNet
+	serviceNetwork []net.IPNet
 	hvpaConfig     *HVPAConfig
 
 	runtimeVersionGreaterEqual123 bool
@@ -555,11 +555,24 @@ func (k *kubeControllerManager) computeCommand(port int32) []string {
 	)
 
 	if k.config.NodeCIDRMaskSize != nil {
-		command = append(command, fmt.Sprintf("--node-cidr-mask-size=%d", *k.config.NodeCIDRMaskSize))
+		if val, ok := k.config.FeatureGates["IPv6DualStack"]; ok && val {
+			command = append(command, fmt.Sprintf("--node-cidr-mask-size-ipv4=%d", *k.config.NodeCIDRMaskSize))
+			command = append(command, "--node-cidr-mask-size-ipv6=120")
+		} else {
+			command = append(command, fmt.Sprintf("--node-cidr-mask-size=%d", *k.config.NodeCIDRMaskSize))
+		}
+	}
+
+	var clusterCidr = ""
+	for i, ipNet := range k.podNetwork {
+		clusterCidr += ipNet.String()
+		if i != len(k.podNetwork)-1 {
+			clusterCidr += ","
+		}
 	}
 
 	command = append(command,
-		fmt.Sprintf("--cluster-cidr=%s", k.podNetwork.String()),
+		fmt.Sprintf("--cluster-cidr=%s", clusterCidr),
 		fmt.Sprintf("--cluster-name=%s", k.namespace),
 		fmt.Sprintf("--cluster-signing-kube-apiserver-client-cert-file=%s/%s", volumeMountPathCAClient, secrets.DataKeyCertificateCA),
 		fmt.Sprintf("--cluster-signing-kube-apiserver-client-key-file=%s/%s", volumeMountPathCAClient, secrets.DataKeyPrivateKeyCA),
@@ -598,6 +611,14 @@ func (k *kubeControllerManager) computeCommand(port int32) []string {
 		nodeMonitorGracePeriod = *v
 	}
 
+	var serviceCidr = ""
+	for i, ipNet := range k.serviceNetwork {
+		serviceCidr += ipNet.String()
+		if i != len(k.serviceNetwork)-1 {
+			serviceCidr += ","
+		}
+	}
+
 	command = append(command,
 		fmt.Sprintf("--horizontal-pod-autoscaler-sync-period=%s", defaultHorizontalPodAutoscalerConfig.SyncPeriod.Duration.String()),
 		fmt.Sprintf("--horizontal-pod-autoscaler-tolerance=%v", *defaultHorizontalPodAutoscalerConfig.Tolerance),
@@ -606,7 +627,7 @@ func (k *kubeControllerManager) computeCommand(port int32) []string {
 		fmt.Sprintf("--pod-eviction-timeout=%s", podEvictionTimeout.Duration),
 		fmt.Sprintf("--root-ca-file=%s/%s", volumeMountPathCA, secrets.DataKeyCertificateBundle),
 		fmt.Sprintf("--service-account-private-key-file=%s/%s", volumeMountPathServiceAccountKey, secrets.DataKeyRSAPrivateKey),
-		fmt.Sprintf("--service-cluster-ip-range=%s", k.serviceNetwork.String()),
+		fmt.Sprintf("--service-cluster-ip-range=%s", serviceCidr),
 		fmt.Sprintf("--secure-port=%d", port),
 	)
 

@@ -122,8 +122,8 @@ var _ = Describe("ShootSystem", func() {
 			ExternalClusterDomain: &domain,
 			KubernetesVersion:     semver.MustParse(kubernetesVersion),
 			Networks: &shootpkg.Networks{
-				Pods:     parseCIDR(podCIDR),
-				Services: parseCIDR(serviceCIDR),
+				Pods:     []net.IPNet{*parseCIDR(podCIDR)},
+				Services: []net.IPNet{*parseCIDR(serviceCIDR)},
 			},
 		}
 		shoot.SetInfo(shootObj)

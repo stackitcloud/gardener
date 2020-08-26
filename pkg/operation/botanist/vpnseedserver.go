@@ -16,6 +16,7 @@ package botanist
 
 import (
 	"context"
+	"strings"
 
 	v1beta1constants "github.com/gardener/gardener/pkg/apis/core/v1beta1/constants"
 	"github.com/gardener/gardener/pkg/operation/botanist/component"
@@ -72,13 +73,27 @@ func (b *Botanist) DefaultVPNSeedServer() (vpnseedserver.Interface, error) {
 		return nil, err
 	}
 
+	var netPods []string
+	for _, IPNetPod := range b.Shoot.Networks.Pods {
+		netPods = append(netPods, IPNetPod.String())
+	}
+
+	var netServices []string
+	for _, IPNetService := range b.Shoot.Networks.Services {
+		netServices = append(netServices, IPNetService.String())
+	}
+
+	var netNodes []string
+	var nodeNetworks = b.Shoot.GetInfo().Spec.Networking.Nodes
+	netNodes = append(netNodes, strings.Split(*nodeNetworks, ",")...)
+
 	values := vpnseedserver.Values{
 		ImageAPIServerProxy: imageAPIServerProxy.String(),
 		ImageVPNSeedServer:  imageVPNSeedServer.String(),
 		Network: vpnseedserver.NetworkValues{
-			PodCIDR:     b.Shoot.Networks.Pods.String(),
-			ServiceCIDR: b.Shoot.Networks.Services.String(),
-			NodeCIDR:    pointer.StringDeref(b.Shoot.GetInfo().Spec.Networking.Nodes, ""),
+			PodCIDR:     netPods,
+			ServiceCIDR: netServices,
+			NodeCIDR:    netNodes,
 		},
 		Replicas:                             b.Shoot.GetReplicas(1),
 		HighAvailabilityEnabled:              b.Shoot.VPNHighAvailabilityEnabled,

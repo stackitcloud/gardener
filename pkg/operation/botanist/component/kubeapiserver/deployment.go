@@ -812,11 +812,11 @@ func (k *kubeAPIServer) handleVPNSettingsLegacy(
 			},
 			{
 				Name:  "SERVICE_NETWORK",
-				Value: k.values.VPN.ServiceNetworkCIDR,
+				Value: strings.Split(k.values.VPN.ServiceNetworkCIDR, ",")[0],
 			},
 			{
 				Name:  "POD_NETWORK",
-				Value: k.values.VPN.PodNetworkCIDR,
+				Value: strings.Split(k.values.VPN.PodNetworkCIDR, ",")[0],
 			},
 		},
 		Resources: corev1.ResourceRequirements{

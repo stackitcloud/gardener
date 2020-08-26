@@ -802,6 +802,10 @@ var _ = Describe("Shoot Validation Tests", func() {
 					"Detail": ContainSubstring("invalid CIDR address"),
 				}, Fields{
 					"Type":   Equal(field.ErrorTypeInvalid),
+					"Field":  Equal("spec.networking.nodes"),
+					"Detail": ContainSubstring("dualStack check error"),
+				}, Fields{
+					"Type":   Equal(field.ErrorTypeInvalid),
 					"Field":  Equal("spec.networking.services"),
 					"Detail": ContainSubstring("invalid CIDR address"),
 				}))
@@ -831,6 +835,19 @@ var _ = Describe("Shoot Validation Tests", func() {
 					"Field":  Equal("spec.networking.services"),
 					"Detail": Equal("must be valid canonical CIDR"),
 				}))
+			})
+
+			It("should validate dual stack cidrs", func() {
+				nodeCIDR := "10.250.0.3/16,2a05:b540:caf9::7c:0/112"
+				podCIDR := "100.96.0.0/11,2a05:b540:caf9::7d:0/112"
+				serviceCIDR := "100.64.0.0/13,2a05:b540:caf9::7e:0/112"
+
+				shoot.Spec.Networking.Nodes = &nodeCIDR
+				shoot.Spec.Networking.Services = &serviceCIDR
+				shoot.Spec.Networking.Pods = &podCIDR
+
+				errorList := ValidateShoot(shoot)
+				Expect(errorList).Should(BeEmpty())
 			})
 
 			It("should forbid an empty worker list", func() {
@@ -1088,7 +1105,7 @@ var _ = Describe("Shoot Validation Tests", func() {
 
 				It("should allow valid total number of worker nodes", func() {
 					shoot.Spec.Kubernetes.KubeControllerManager.NodeCIDRMaskSize = pointer.Int32(24)
-					shoot.Spec.Networking.Pods = pointer.String("100.96.0.0/16")
+					shoot.Spec.Networking.Pods = pointer.String("100.96.0.0/16,ff:ac::/64")
 					worker1.Maximum = 128
 					worker2.Maximum = 128
 
@@ -1104,7 +1121,7 @@ var _ = Describe("Shoot Validation Tests", func() {
 
 				It("should not allow invalid total number of worker nodes", func() {
 					shoot.Spec.Kubernetes.KubeControllerManager.NodeCIDRMaskSize = pointer.Int32(24)
-					shoot.Spec.Networking.Pods = pointer.String("100.96.0.0/20")
+					shoot.Spec.Networking.Pods = pointer.String("100.96.0.0/20,ff:ac::/64")
 					worker1.Maximum = 16
 					worker2.Maximum = 16
 
