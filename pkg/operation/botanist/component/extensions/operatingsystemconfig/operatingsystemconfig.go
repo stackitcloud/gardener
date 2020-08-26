@@ -17,6 +17,7 @@ package operatingsystemconfig
 import (
 	"context"
 	"fmt"
+	gardencore "github.com/gardener/gardener/pkg/apis/core"
 	"sync"
 	"time"
 
@@ -88,6 +89,9 @@ type Values struct {
 	DownloaderValues
 	// OriginalValues are configuration values required for the 'reconcile' OperatingSystemConfigPurpose.
 	OriginalValues
+
+	ProxyConfig  *gardencore.ProxyConfig
+	CriEndpoints []gardencore.RegistryEndpoint
 }
 
 // DownloaderValues are configuration values required for the 'provision' OperatingSystemConfigPurpose.
@@ -185,7 +189,6 @@ func (o *operatingSystemConfig) Deploy(ctx context.Context) error {
 		_, err := d.deploy(ctx, v1beta1constants.GardenerOperationReconcile)
 		return err
 	})
-
 	return flow.Parallel(fns...)(ctx)
 }
 
@@ -420,6 +423,8 @@ func (o *operatingSystemConfig) newDeployer(worker gardencorev1beta1.Worker, pur
 		kubeletDataVolumeName:   worker.KubeletDataVolumeName,
 		kubernetesVersion:       o.values.KubernetesVersion,
 		sshPublicKey:            o.values.SSHPublicKey,
+		proxyConfig:             o.values.ProxyConfig,
+		criEndpoints:            o.values.CriEndpoints,
 	}
 }
 
@@ -475,6 +480,8 @@ type deployer struct {
 	kubeletDataVolumeName   *string
 	kubernetesVersion       *semver.Version
 	sshPublicKey            string
+	proxyConfig             *gardencore.ProxyConfig
+	criEndpoints            []gardencore.RegistryEndpoint
 }
 
 // exposed for testing
@@ -522,6 +529,8 @@ func (d *deployer) deploy(ctx context.Context, operation string) (extensionsv1al
 			KubeletDataVolumeName:   d.kubeletDataVolumeName,
 			KubernetesVersion:       d.kubernetesVersion,
 			SSHPublicKey:            d.sshPublicKey,
+			ProxyConfig:             d.proxyConfig,
+			CriEndpoints:            d.criEndpoints,
 		})
 		if err != nil {
 			return nil, err

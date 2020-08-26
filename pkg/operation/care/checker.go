@@ -206,17 +206,9 @@ func (b *HealthChecker) checkNodes(condition gardencorev1beta1.Condition, nodes 
 			return &c
 		}
 
-		if sameMajorMinor.Check(b.kubernetesVersion) {
-			equal, err := semver.NewConstraint("= " + object.Status.NodeInfo.KubeletVersion)
-			if err != nil {
-				c := b.FailedCondition(condition, "VersionParseError", fmt.Sprintf("Error checking for equal Kubernetes versions for node %q: %+v", object.Name, err))
-				return &c
-			}
-
-			if !equal.Check(b.kubernetesVersion) {
-				c := b.FailedCondition(condition, "KubeletVersionMismatch", fmt.Sprintf("The kubelet version for node %q (%s) does not match the desired Kubernetes version (v%s)", object.Name, object.Status.NodeInfo.KubeletVersion, b.kubernetesVersion.Original()))
-				return &c
-			}
+		if !sameMajorMinor.Check(b.kubernetesVersion) {
+			c := b.FailedCondition(condition, "KubeletVersionMismatch", fmt.Sprintf("The kubelet version for node %q (%s) does not match the desired Kubernetes version (v%s)", object.Name, object.Status.NodeInfo.KubeletVersion, b.kubernetesVersion.Original()))
+			return &c
 		}
 	}
 

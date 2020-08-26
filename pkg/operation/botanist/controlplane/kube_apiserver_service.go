@@ -55,7 +55,7 @@ func NewKubeAPIService(
 	waiter retry.Ops,
 	clusterIPFunc func(clusterIP string),
 	ingressFunc func(ingressIP string),
-
+	ipFamily corev1.IPFamily,
 ) component.DeployWaiter {
 	var loadBalancerServiceKey client.ObjectKey
 
@@ -103,6 +103,7 @@ func NewKubeAPIService(
 
 		internalValues.Annotations = values.Annotations
 		internalValues.EnableKonnectivityTunnel = values.KonnectivityTunnelEnabled
+		internalValues.IPFamily = string(ipFamily)
 	}
 
 	return &kubeAPIService{
@@ -181,11 +182,12 @@ func (d *kubeAPIService) getService() *corev1.Service {
 // this one is not exposed as not all values should be configured
 // from the outside.
 type kubeAPIServiceValues struct {
-	EnableSNI                bool               `json:"enableSNI,omitempty"`
-	EnableKonnectivityTunnel bool               `json:"enableKonnectivityTunnel,omitempty"`
+	EnableSNI                bool              `json:"enableSNI,omitempty"`
+	EnableKonnectivityTunnel bool              `json:"enableKonnectivityTunnel,omitempty"`
+	Name                     string            `json:"name,omitempty"`
+	Annotations              map[string]string `json:"annotations,omitempty"`
+	IPFamily                 string            `json:"ipFamily,omitempty"`
 	GardenerManaged          bool               `json:"gardenerManaged,omitempty"`
-	Name                     string             `json:"name,omitempty"`
-	Annotations              map[string]string  `json:"annotations,omitempty"`
 	ServiceType              corev1.ServiceType `json:"serviceType,omitempty"`
 }
 

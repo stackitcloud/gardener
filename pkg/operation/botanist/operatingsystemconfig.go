@@ -17,6 +17,7 @@ package botanist
 import (
 	"context"
 	"fmt"
+	gardencore "github.com/gardener/gardener/pkg/apis/core"
 	"time"
 
 	"github.com/gardener/gardener/charts"
@@ -57,6 +58,25 @@ func (b *Botanist) DefaultOperatingSystemConfig(seedClient client.Client) (opera
 		clusterDNSAddress = NodeLocalIPVSAddress
 	}
 
+	proxyConfig := gardencore.ProxyConfig{}
+	if b.Operation.Shoot.Info.Spec.Networking.ProxyConfig != nil {
+		proxyConfig.HttpProxy = b.Operation.Shoot.Info.Spec.Networking.ProxyConfig.HttpProxy
+		proxyConfig.NoProxy = b.Operation.Shoot.Info.Spec.Networking.ProxyConfig.NoProxy
+	}
+
+	var criEndpoints []gardencore.RegistryEndpoint
+	if len(b.Shoot.Info.Spec.Provider.Workers) > 0 &&
+		b.Shoot.Info.Spec.Provider.Workers[0].CRI != nil &&
+		b.Shoot.Info.Spec.Provider.Workers[0].CRI.Endpoints != nil {
+		for _, endpoint := range b.Shoot.Info.Spec.Provider.Workers[0].CRI.Endpoints {
+			criEndpoints = append(criEndpoints, gardencore.RegistryEndpoint{
+				Name:               endpoint.Name,
+				Endpoint:           endpoint.Endpoint,
+				InsecureSkipVerify: endpoint.InsecureSkipVerify,
+			})
+		}
+	}
+
 	return operatingsystemconfig.New(
 		b.Logger,
 		seedClient,
@@ -75,6 +95,8 @@ func (b *Botanist) DefaultOperatingSystemConfig(seedClient client.Client) (opera
 				KubeletCLIFlags:         components.KubeletCLIFlagsFromCoreV1beta1KubeletConfig(b.Shoot.Info.Spec.Kubernetes.Kubelet),
 				MachineTypes:            b.Shoot.CloudProfile.Spec.MachineTypes,
 			},
+			CriEndpoints:      criEndpoints,
+			ProxyConfig:       &proxyConfig,
 		},
 		operatingsystemconfig.DefaultInterval,
 		operatingsystemconfig.DefaultSevereThreshold,

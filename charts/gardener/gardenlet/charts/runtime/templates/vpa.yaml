@@ -5,6 +5,14 @@ metadata:
   name: gardenlet-vpa
   namespace: garden
 spec:
+  {{- if .Values.global.gardenlet.vpa.resourcePolicy }}
+  resourcePolicy:
+    containerPolicies:
+      - containerName: '*'
+        minAllowed:
+          cpu: {{ required ".Values.global.gardenlet.vpa.resourcePolicy.minAllowed.cpu is required" .Values.global.gardenlet.vpa.resourcePolicy.minAllowed.cpu }}
+          memory: {{ required ".Values.global.gardenlet.vpa.resourcePolicy.minAllowed.memory is required" .Values.global.gardenlet.vpa.resourcePolicy.minAllowed.memory }}
+  {{- end }}
   targetRef:
     apiVersion: {{ include "deploymentversion" . }}
     kind: Deployment
