@@ -61,7 +61,6 @@ func (b *Botanist) DefaultOperatingSystemConfig() (operatingsystemconfig.Interfa
 	if b.isShootNodeLoggingEnabled() {
 		promtailEnabled, lokiIngressHost = true, b.ComputeLokiHost()
 	}
-
 	return operatingsystemconfig.New(
 		b.Logger,
 		b.K8sSeedClient.Client(),

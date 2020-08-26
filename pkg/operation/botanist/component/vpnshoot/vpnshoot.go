@@ -18,6 +18,7 @@ import (
 	"context"
 	"fmt"
 	"strconv"
+	"strings"
 	"time"
 
 	v1beta1constants "github.com/gardener/gardener/pkg/apis/core/v1beta1/constants"
@@ -570,6 +571,12 @@ func getLabels() map[string]string {
 }
 
 func (v *vpnShoot) getEnvVars() []corev1.EnvVar {
+	nodeCidr := v.values.Network.NodeCIDR
+	nodeCidrs := strings.Split(nodeCidr, ",")
+	if len(nodeCidrs) > 1 {
+		nodeCidr = nodeCidrs[0]
+	}
+
 	envVariables := []corev1.EnvVar{
 		{
 			Name:  "SERVICE_NETWORK",
@@ -581,7 +588,7 @@ func (v *vpnShoot) getEnvVars() []corev1.EnvVar {
 		},
 		{
 			Name:  "NODE_NETWORK",
-			Value: v.values.Network.NodeCIDR,
+			Value: nodeCidr,
 		},
 	}
 	if v.values.ReversedVPN.Enabled {

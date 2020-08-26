@@ -18,6 +18,7 @@ import (
 	"context"
 	"fmt"
 	"net"
+	"strings"
 	"time"
 
 	gardencorev1beta1 "github.com/gardener/gardener/pkg/apis/core/v1beta1"
@@ -246,16 +247,20 @@ func defaultIstio(ctx context.Context,
 }
 
 func defaultNetworkPolicies(c client.Client, seed *gardencorev1beta1.Seed, sniEnabled bool) (component.DeployWaiter, error) {
-	networks := []string{seed.Spec.Networks.Pods, seed.Spec.Networks.Services}
+	var networks []string
+	networks = append(networks, strings.Split(seed.Spec.Networks.Pods, ",")...)
+	networks = append(networks, strings.Split(seed.Spec.Networks.Services, ",")...)
+
 	if v := seed.Spec.Networks.Nodes; v != nil {
-		networks = append(networks, *v)
+		networks = append(networks, strings.Split(*v, ",")...)
 	}
+
 	privateNetworkPeers, err := networkpolicies.ToNetworkPolicyPeersWithExceptions(networkpolicies.AllPrivateNetworkBlocks(), networks...)
 	if err != nil {
 		return nil, err
 	}
 
-	_, seedServiceCIDR, err := net.ParseCIDR(seed.Spec.Networks.Services)
+	_, seedServiceCIDR, err := net.ParseCIDR(strings.Split(seed.Spec.Networks.Services, ",")[0])
 	if err != nil {
 		return nil, err
 	}

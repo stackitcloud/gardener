@@ -198,7 +198,7 @@ var _ = Describe("addons", func() {
 				SecretData: map[string][]byte{
 					"external-foo": []byte("external-bar"),
 				},
-				DNSName:           "*.ingress." + externalDomain,
+				DNSName:           "*.i." + externalDomain,
 				RecordType:        extensionsv1alpha1.DNSRecordTypeA,
 				Values:            []string{address},
 				AnnotateOperation: false,
@@ -244,7 +244,7 @@ var _ = Describe("addons", func() {
 				SecretData: map[string][]byte{
 					"external-foo": []byte("external-bar"),
 				},
-				DNSName:           "*.ingress." + externalDomain,
+				DNSName:           "*.i." + externalDomain,
 				RecordType:        extensionsv1alpha1.DNSRecordTypeA,
 				Values:            []string{address},
 				AnnotateOperation: false,
@@ -288,7 +288,7 @@ var _ = Describe("addons", func() {
 						Namespace: seedNamespace,
 					},
 					Zone:       pointer.String(externalZone),
-					Name:       "*.ingress." + externalDomain,
+					Name:       "*.i." + externalDomain,
 					RecordType: extensionsv1alpha1.DNSRecordTypeA,
 					Values:     []string{address},
 					TTL:        pointer.Int64(ttl),

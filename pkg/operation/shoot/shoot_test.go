@@ -79,14 +79,14 @@ var _ = Describe("shoot", func() {
 
 				Expect(err).ToNot(HaveOccurred())
 				Expect(result).To(PointTo(Equal(Networks{
-					Pods: &net.IPNet{
+					Pods: []net.IPNet{{
 						IP:   []byte{10, 0, 0, 0},
 						Mask: []byte{255, 255, 255, 0},
-					},
-					Services: &net.IPNet{
+					}},
+					Services: []net.IPNet{{
 						IP:   []byte{20, 0, 0, 0},
 						Mask: []byte{255, 255, 255, 0},
-					},
+					}},
 					APIServer: []byte{20, 0, 0, 1},
 					CoreDNS:   []byte{20, 0, 0, 10},
 				})))
