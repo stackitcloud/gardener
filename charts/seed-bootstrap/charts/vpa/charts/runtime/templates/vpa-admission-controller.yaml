@@ -5,12 +5,16 @@ metadata:
   name: vpa-admission-controller
   namespace: {{ .Release.Namespace }}
 spec:
+  {{- if .Values.admissionController.vpa }}
+  {{- if .Values.admissionController.vpa.resourcePolicy }}
   resourcePolicy:
     containerPolicies:
-    - containerName: '*'
-      minAllowed:
-        cpu: 50m
-        memory: 100Mi
+      - containerName: '*'
+        minAllowed:
+          cpu: {{ required ".Values.admissionController.vpa.resourcePolicy.minAllowed.cpu is required" .Values.admissionController.vpa.resourcePolicy.minAllowed.cpu }}
+          memory: {{ required ".Values.admissionController.vpa.resourcePolicy.minAllowed.memory is required" .Values.admissionController.vpa.resourcePolicy.minAllowed.memory }}
+  {{- end }}
+  {{- end }}
   targetRef:
     apiVersion: {{ include "deploymentversion" . }}
     kind: Deployment

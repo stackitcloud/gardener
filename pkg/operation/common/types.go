@@ -108,7 +108,7 @@ const (
 	CrtRenewalWindow = 30 * 24 * time.Hour
 
 	// ShootDNSIngressName is a constant for the DNS resources used for the shoot ingress addon.
-	ShootDNSIngressName = "ingress"
+	ShootDNSIngressName = "i"
 
 	// GardenLokiPriorityClassName is the name of the PriorityClass for the Loki in the garden namespace
 	GardenLokiPriorityClassName = "garden-loki"
