@@ -17,6 +17,7 @@ package operatingsystemconfig
 import (
 	"context"
 	"fmt"
+	gardencore "github.com/gardener/gardener/pkg/apis/core"
 	"sync"
 	"time"
 
@@ -94,6 +95,8 @@ type Values struct {
 	DownloaderValues
 	// OriginalValues are configuration values required for the 'reconcile' OperatingSystemConfigPurpose.
 	OriginalValues
+
+	CriEndpoints []gardencore.RegistryEndpoint
 }
 
 // DownloaderValues are configuration values required for the 'provision' OperatingSystemConfigPurpose.
@@ -506,6 +509,7 @@ func (o *operatingSystemConfig) newDeployer(osc *extensionsv1alpha1.OperatingSys
 		sshPublicKeys:           o.values.SSHPublicKeys,
 		lokiIngressHostName:     o.values.LokiIngressHostName,
 		promtailEnabled:         o.values.PromtailEnabled,
+		criEndpoints:            o.values.CriEndpoints,
 	}, nil
 }
 
@@ -564,6 +568,8 @@ type deployer struct {
 	sshPublicKeys           []string
 	lokiIngressHostName     string
 	promtailEnabled         bool
+	promtailRBACAuthToken   string
+	criEndpoints            []gardencore.RegistryEndpoint
 }
 
 // exposed for testing
@@ -612,6 +618,7 @@ func (d *deployer) deploy(ctx context.Context, operation string) (extensionsv1al
 			PromtailEnabled:         d.promtailEnabled,
 			LokiIngress:             d.lokiIngressHostName,
 			APIServerURL:            d.apiServerURL,
+			CriEndpoints:            d.criEndpoints,
 		})
 		if err != nil {
 			return nil, err

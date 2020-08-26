@@ -17,6 +17,7 @@ metadata:
 spec:
   type: ClusterIP
   clusterIP: None
+  ipFamily: IPv4
   ports:
   - name: metrics
     port: {{ .Values.ports.metrics }}
@@ -88,6 +89,7 @@ spec:
         - --collector.uname
         - --collector.stat
         - --collector.pressure
+        - --collector.diskstats
         ports:
         - containerPort: {{ .Values.ports.metrics }}
           protocol: TCP

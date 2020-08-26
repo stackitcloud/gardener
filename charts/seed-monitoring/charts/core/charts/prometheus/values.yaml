@@ -147,6 +147,21 @@ allowedMetrics:
   - node_scrape_collector_success
   - process_max_fds
   - process_open_fds
+  - node_disk_discard_time_seconds_total
+  - node_disk_discarded_sectors_total
+  - node_disk_discards_completed_total
+  - node_disk_discards_merged_total
+  - node_disk_io_now
+  - node_disk_io_time_seconds_total
+  - node_disk_io_time_weighted_seconds_total
+  - node_disk_read_bytes_total
+  - node_disk_read_time_seconds_total
+  - node_disk_reads_completed_total
+  - node_disk_reads_merged_total
+  - node_disk_write_time_seconds_total
+  - node_disk_writes_completed_total
+  - node_disk_writes_merged_total
+  - node_disk_written_bytes_total
   prometheus:
   - process_max_fds
   - process_open_fds
@@ -288,6 +303,12 @@ allowedMetrics:
   - envoy_cluster_upstream_cx_length_ms_sum
   - envoy_http_downstream_cx_length_ms_bucket
   - envoy_http_downstream_cx_length_ms_sum
+  externalBlackboxExporter:
+  - probe_duration_seconds
+  - probe_http_duration_seconds
+  - probe_success
+  - probe_http_status_code
+  - up
 seed:
   apiserver: https://api.foo.bar
   region: antarctica-1

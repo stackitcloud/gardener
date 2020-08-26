@@ -20,6 +20,11 @@ admissionController:
   controlNamespace: abcd
   port: 10250
   servicePort: 443
+#  vpa:
+#    resourcePolicy:
+#      minAllowed:
+#        cpu: 100m
+#        memory: 128Mi
 
 recommender:
   replicas: 1
@@ -29,6 +34,11 @@ recommender:
   createServiceAccount: true
   interval: 1m0s
   recommendationMarginFraction: 0.05
+  vpa:
+    resourcePolicy:
+      minAllowed:
+        cpu: 10m
+        memory: 40Mi
 
 updater:
   replicas: 1
@@ -41,3 +51,8 @@ updater:
   evictionRateLimit: -1
   evictionTolerance: 1
   interval: 1m0s
+#  vpa:
+#    resourcePolicy:
+#      minAllowed:
+#        cpu: 100m
+#        memory: 128Mi

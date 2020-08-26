@@ -74,6 +74,12 @@ aggregatePrometheus:
   seed: seed
   hostName: p.seed-1.example.com
   secretName: prometheus-tls
+#  vpa:
+#    resourcePolicy:
+#      minAllowed:
+#        cpu: 100m
+#        memory: 128Mi
+
   hvpa:
     enabled: false
     minAllowed:

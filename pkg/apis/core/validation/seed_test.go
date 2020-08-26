@@ -15,21 +15,20 @@
 package validation_test
 
 import (
+	"k8s.io/apimachinery/pkg/api/resource"
+	"k8s.io/utils/pointer"
 	"strings"
 
+	"github.com/gardener/gardener/pkg/apis/core"
+	. "github.com/gardener/gardener/pkg/apis/core/validation"
+	. "github.com/gardener/gardener/pkg/utils/test/matchers"
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 	. "github.com/onsi/gomega/gstruct"
 	gomegatypes "github.com/onsi/gomega/types"
 	corev1 "k8s.io/api/core/v1"
-	"k8s.io/apimachinery/pkg/api/resource"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/util/validation/field"
-	"k8s.io/utils/pointer"
-
-	"github.com/gardener/gardener/pkg/apis/core"
-	. "github.com/gardener/gardener/pkg/apis/core/validation"
-	. "github.com/gardener/gardener/pkg/utils/test/matchers"
 )
 
 var _ = Describe("Seed Validation Tests", func() {
@@ -43,7 +42,7 @@ var _ = Describe("Seed Validation Tests", func() {
 		region := "some-region"
 		pods := "10.240.0.0/16"
 		services := "10.241.0.0/16"
-		nodesCIDR := "10.250.0.0/16"
+		nodesCIDR := "10.250.0.3/16,2a05:b540:caf9::7c:0/112"
 		seed = &core.Seed{
 			ObjectMeta: metav1.ObjectMeta{
 				Name: "seed-1",
@@ -65,8 +64,8 @@ var _ = Describe("Seed Validation Tests", func() {
 				},
 				Networks: core.SeedNetworks{
 					Nodes:    &nodesCIDR,
-					Pods:     "100.96.0.0/11",
-					Services: "100.64.0.0/13",
+					Pods:     "100.96.0.0/11,2a05:b540:caf9::7d:0/112",
+					Services: "100.64.0.0/13,2a05:b540:caf9::7e:0/112",
 					ShootDefaults: &core.ShootNetworks{
 						Pods:     &pods,
 						Services: &services,
@@ -90,6 +89,20 @@ var _ = Describe("Seed Validation Tests", func() {
 			},
 			Spec: seed.Spec,
 		}
+	})
+
+	It("aaa", func() {
+		nodeCIDR := "10.250.0.3/16,2a05:b540:caf9::7c:0/112"
+		podCIDR := "100.96.0.0/11,2a05:b540:caf9::7d:0/112"
+		serviceCIDR := "100.64.0.0/13,2a05:b540:caf9::7e:0/112"
+
+		seed.Spec.Networks.Nodes = &nodeCIDR
+		seed.Spec.Networks.Services = serviceCIDR
+		seed.Spec.Networks.Pods = podCIDR
+
+		errorList := ValidateSeed(seed)
+
+		Expect(errorList).Should(BeEmpty())
 	})
 
 	Describe("#ValidateSeed, #ValidateSeedUpdate", func() {
@@ -492,6 +505,18 @@ var _ = Describe("Seed Validation Tests", func() {
 				"Field":  Equal("spec.dns.ingressDomain"),
 				"Detail": Equal(`field is immutable`),
 			}))
+		})
+
+		It("bla", func() {
+			seedNetwork := core.SeedNetworks{
+				Pods:     "100.96.0.0/11,2a05:b540:cafe::9:0/112",
+				Services: "100.64.0.0/13,2a05:b540:cafe::a:0/112",
+				Nodes:    pointer.StringPtr("10.250.0.0/16,2a05:b540:cafe::8:0/112"),
+			}
+			seed.Spec.Networks = seedNetwork
+
+			errorList := ValidateSeed(seed)
+			Expect(errorList).To(BeEmpty())
 		})
 
 		Context("nodes cidr", func() {

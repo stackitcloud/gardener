@@ -111,9 +111,9 @@ func New(
 	imageAPIServerProxy string,
 	imageVPNSeedServer string,
 	kubeAPIServerHost *string,
-	serviceNetwork string,
-	podNetwork string,
-	nodeNetwork *string,
+	serviceNetwork []string,
+	podNetwork []string,
+	nodeNetwork []string,
 	replicas int32,
 	istioIngressGateway IstioIngressGateway,
 ) Interface {
@@ -138,9 +138,9 @@ type vpnSeedServer struct {
 	imageAPIServerProxy string
 	imageVPNSeedServer  string
 	kubeAPIServerHost   *string
-	serviceNetwork      string
-	podNetwork          string
-	nodeNetwork         *string
+	serviceNetwork      []string
+	podNetwork          []string
+	nodeNetwork         []string
 	replicas            int32
 
 	istioIngressGateway      IstioIngressGateway
@@ -362,11 +362,11 @@ func (v *vpnSeedServer) Deploy(ctx context.Context) error {
 							Env: []corev1.EnvVar{
 								{
 									Name:  "SERVICE_NETWORK",
-									Value: v.serviceNetwork,
+									Value: v.serviceNetwork[0],
 								},
 								{
 									Name:  "POD_NETWORK",
-									Value: v.podNetwork,
+									Value: v.podNetwork[0],
 								},
 								{
 									Name: "LOCAL_NODE_IP",
@@ -517,7 +517,7 @@ func (v *vpnSeedServer) Deploy(ctx context.Context) error {
 		if v.nodeNetwork != nil {
 			deployment.Spec.Template.Spec.Containers[0].Env = append(
 				deployment.Spec.Template.Spec.Containers[0].Env,
-				corev1.EnvVar{Name: "NODE_NETWORK", Value: *v.nodeNetwork},
+				corev1.EnvVar{Name: "NODE_NETWORK", Value: v.nodeNetwork[0]},
 			)
 		}
 
