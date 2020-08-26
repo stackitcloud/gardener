@@ -18,6 +18,7 @@ import (
 	"context"
 	"fmt"
 	"path/filepath"
+	"strings"
 	"time"
 
 	"github.com/gardener/gardener/charts"
@@ -343,6 +344,16 @@ func (b *Botanist) deployKubeAPIServer(ctx context.Context) error {
 		hvpaEnabled = gardenletfeatures.FeatureGate.Enabled(features.HVPAForShootedSeed)
 	}
 
+	var podCidrs []string
+	for _, pod := range b.Shoot.Networks.Pods {
+		podCidrs = append(podCidrs, pod.String())
+	}
+
+	var svcCidrs []string
+	for _, svc := range b.Shoot.Networks.Services {
+		svcCidrs = append(svcCidrs, svc.String())
+	}
+
 	var (
 		podAnnotations = map[string]interface{}{
 			"checksum/secret-ca":                     b.LoadCheckSum(v1beta1constants.SecretNameCACluster),
@@ -373,8 +384,8 @@ func (b *Botanist) deployKubeAPIServer(ctx context.Context) error {
 		}
 
 		shootNetworks = map[string]interface{}{
-			"services": b.Shoot.Networks.Services.String(),
-			"pods":     b.Shoot.Networks.Pods.String(),
+			"services": strings.Join(svcCidrs, ","),
+			"pods":     strings.Join(podCidrs, ","),
 		}
 	)
 

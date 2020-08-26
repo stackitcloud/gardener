@@ -886,6 +886,100 @@ func RunReconcileSeedFlow(
 		return err
 	}
 
+	gardenerResourceManagerVpaSettings := make(map[string]interface{})
+	if seed.GetInfo().Spec.Settings.VerticalPodAutoscaler.GardenerResourceManagerMinAllowed != nil {
+		gardenerResourceManagerVpaSettings["resourcePolicy"] = map[string]interface{}{
+			"minAllowed": map[string]interface{}{
+				"cpu":    seed.GetInfo().Spec.Settings.VerticalPodAutoscaler.GardenerResourceManagerMinAllowed.Cpu,
+				"memory": seed.GetInfo().Spec.Settings.VerticalPodAutoscaler.GardenerResourceManagerMinAllowed.Memory,
+			},
+		}
+	}
+
+	gardenerSeedAdmissionControllerVpaSettings := make(map[string]interface{})
+	if seed.GetInfo().Spec.Settings.VerticalPodAutoscaler.GardenerSeedAdmissionControllerMinAllowed != nil {
+		gardenerSeedAdmissionControllerVpaSettings["resourcePolicy"] = map[string]interface{}{
+			"minAllowed": map[string]interface{}{
+				"cpu":    seed.GetInfo().Spec.Settings.VerticalPodAutoscaler.GardenerSeedAdmissionControllerMinAllowed.Cpu,
+				"memory": seed.GetInfo().Spec.Settings.VerticalPodAutoscaler.GardenerSeedAdmissionControllerMinAllowed.Memory,
+			},
+		}
+	}
+
+	aggregatePrometheusVpaSettings := make(map[string]interface{})
+	if seed.GetInfo().Spec.Settings.VerticalPodAutoscaler.AggregatePrometheusMinAllowed != nil {
+		aggregatePrometheusVpaSettings["resourcePolicy"] = map[string]interface{}{
+			"minAllowed": map[string]interface{}{
+				"cpu":    seed.GetInfo().Spec.Settings.VerticalPodAutoscaler.AggregatePrometheusMinAllowed.Cpu,
+				"memory": seed.GetInfo().Spec.Settings.VerticalPodAutoscaler.AggregatePrometheusMinAllowed.Memory,
+			},
+		}
+	}
+
+	vpaUpdaterSettings := make(map[string]interface{})
+	if seed.GetInfo().Spec.Settings.VerticalPodAutoscaler.VpaUpdaterMinAllowed != nil {
+		vpaUpdaterVpaSettings := make(map[string]interface{})
+		vpaUpdaterVpaSettings["resourcePolicy"] = map[string]interface{}{
+			"minAllowed": map[string]interface{}{
+				"cpu":    seed.GetInfo().Spec.Settings.VerticalPodAutoscaler.VpaUpdaterMinAllowed.Cpu,
+				"memory": seed.GetInfo().Spec.Settings.VerticalPodAutoscaler.VpaUpdaterMinAllowed.Memory,
+			},
+		}
+		vpaUpdaterSettings["vpa"] = vpaUpdaterVpaSettings
+	}
+
+	if seed.GetInfo().Spec.Settings.VerticalPodAutoscaler.UpdaterInterval != "" {
+		vpaUpdaterSettings["interval"] = seed.GetInfo().Spec.Settings.VerticalPodAutoscaler.UpdaterInterval
+	}
+
+	if seed.GetInfo().Spec.Settings.VerticalPodAutoscaler.UpdaterEvictAfterOOMThreshold != "" {
+		vpaUpdaterSettings["evictAfterOOMThreshold"] = seed.GetInfo().Spec.Settings.VerticalPodAutoscaler.UpdaterEvictAfterOOMThreshold
+	}
+
+	vpaExporterSettings := make(map[string]interface{})
+	if seed.GetInfo().Spec.Settings.VerticalPodAutoscaler.VpaExporterMinAllowed != nil {
+		vpaExporterVpaSettings := make(map[string]interface{})
+		vpaExporterVpaSettings["resourcePolicy"] = map[string]interface{}{
+			"minAllowed": map[string]interface{}{
+				"cpu":    seed.GetInfo().Spec.Settings.VerticalPodAutoscaler.VpaExporterMinAllowed.Cpu,
+				"memory": seed.GetInfo().Spec.Settings.VerticalPodAutoscaler.VpaExporterMinAllowed.Memory,
+			},
+		}
+		vpaExporterSettings["vpa"] = vpaExporterVpaSettings
+	}
+
+	vpaRecommenderSettings := make(map[string]interface{})
+	if seed.GetInfo().Spec.Settings.VerticalPodAutoscaler.VpaRecommenderMinAllowed != nil {
+		vpaRecommenderVpaSettings := make(map[string]interface{})
+		vpaRecommenderVpaSettings["resourcePolicy"] = map[string]interface{}{
+			"minAllowed": map[string]interface{}{
+				"cpu":    seed.GetInfo().Spec.Settings.VerticalPodAutoscaler.VpaRecommenderMinAllowed.Cpu,
+				"memory": seed.GetInfo().Spec.Settings.VerticalPodAutoscaler.VpaRecommenderMinAllowed.Memory,
+			},
+		}
+		vpaRecommenderSettings["vpa"] = vpaRecommenderVpaSettings
+	}
+
+	vpaAdmissionControllerVpaSettings := make(map[string]interface{})
+	if seed.GetInfo().Spec.Settings.VerticalPodAutoscaler.VpaAdmissionControllerMinAllowed != nil {
+		vpaAdmissionControllerVpaSettings["resourcePolicy"] = map[string]interface{}{
+			"minAllowed": map[string]interface{}{
+				"cpu":    seed.GetInfo().Spec.Settings.VerticalPodAutoscaler.VpaAdmissionControllerMinAllowed.Cpu,
+				"memory": seed.GetInfo().Spec.Settings.VerticalPodAutoscaler.VpaAdmissionControllerMinAllowed.Memory,
+			},
+		}
+	}
+	vpaRuntimeConfig := map[string]interface{}{
+		"admissionController": map[string]interface{}{
+			"vpa": vpaAdmissionControllerVpaSettings,
+			"podAnnotations": map[string]interface{}{
+				"checksum/secret-vpa-tls-certs": utils.ComputeSHA256Hex(jsonString),
+			},
+		},
+		"updater":     vpaUpdaterSettings,
+		"recommender": vpaRecommenderSettings,
+		"exporter":    vpaExporterSettings,
+	}
 	values := kubernetes.Values(map[string]interface{}{
 		"priorityClassName": v1beta1constants.PriorityClassNameShootControlPlane,
 		"global": map[string]interface{}{
@@ -908,6 +1002,7 @@ func RunReconcileSeedFlow(
 			"seed":       seed.GetInfo().Name,
 			"hostName":   prometheusHost,
 			"secretName": prometheusTLSOverride,
+			"vpa":        aggregatePrometheusVpaSettings,
 		},
 		"grafana": map[string]interface{}{
 			"hostName":   grafanaHost,
@@ -924,13 +1019,7 @@ func RunReconcileSeedFlow(
 		"alertmanager": alertManagerConfig,
 		"vpa": map[string]interface{}{
 			"enabled": vpaEnabled,
-			"runtime": map[string]interface{}{
-				"admissionController": map[string]interface{}{
-					"podAnnotations": map[string]interface{}{
-						"checksum/secret-vpa-tls-certs": utils.ComputeSHA256Hex(jsonString),
-					},
-				},
-			},
+			"runtime": vpaRuntimeConfig,
 			"application": map[string]interface{}{
 				"admissionController": map[string]interface{}{
 					"controlNamespace": v1beta1constants.GardenNamespace,
@@ -945,9 +1034,19 @@ func RunReconcileSeedFlow(
 		"istio": map[string]interface{}{
 			"enabled": gardenletfeatures.FeatureGate.Enabled(features.ManagedIstio),
 		},
+		"global-network-policies": map[string]interface{}{
+			"denyAll":    false,
+			"sniEnabled": gardenletfeatures.FeatureGate.Enabled(features.APIServerSNI),
+		},
+		"gardenerResourceManager": map[string]interface{}{
+			"resourceClass": v1beta1constants.SeedResourceManagerClass,
+			"vpa":           gardenerResourceManagerVpaSettings,
+			"sniEnabled":    gardenletfeatures.FeatureGate.Enabled(features.APIServerSNI) || anySNI,
+		},
 		"ingress": map[string]interface{}{
 			"basicAuthSecret": monitoringBasicAuth,
 		},
+		"gardenerSeedAdmissionController": map[string]interface{}{"vpa": gardenerSeedAdmissionControllerVpaSettings},
 	})
 
 	if err := chartApplier.Apply(ctx, filepath.Join(charts.Path, chartName), v1beta1constants.GardenNamespace, chartName, values, applierOptions); err != nil {

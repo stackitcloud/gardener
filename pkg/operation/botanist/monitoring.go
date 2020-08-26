@@ -126,6 +126,16 @@ func (b *Botanist) DeploySeedMonitoring(ctx context.Context) error {
 		},
 	}
 
+	var podCidrs []string
+	for _, pod := range b.Shoot.Networks.Pods {
+		podCidrs = append(podCidrs, pod.String())
+	}
+
+	var svcCidrs []string
+	for _, svc := range b.Shoot.Networks.Services {
+		svcCidrs = append(svcCidrs, svc.String())
+	}
+
 	ingressClass, err := getIngressClass(b.Seed.GetInfo())
 	if err != nil {
 		return err
@@ -133,8 +143,8 @@ func (b *Botanist) DeploySeedMonitoring(ctx context.Context) error {
 
 	var (
 		networks = map[string]interface{}{
-			"pods":     b.Shoot.Networks.Pods.String(),
-			"services": b.Shoot.Networks.Services.String(),
+			"pods":     strings.Join(podCidrs, ","),
+			"services": strings.Join(svcCidrs, ","),
 		}
 		prometheusConfig = map[string]interface{}{
 			"kubernetesVersion": b.Shoot.GetInfo().Spec.Kubernetes.Version,
@@ -207,6 +217,27 @@ func (b *Botanist) DeploySeedMonitoring(ctx context.Context) error {
 	)
 
 	prometheusConfig["podAnnotations"] = podAnnotations
+
+	if b.Shoot.CloudProfile.Spec.Monitoring.ExternalBlackboxExporterURL != "" &&
+		b.Shoot.CloudProfile.Spec.Monitoring.ExternalBlackboxExporterModule != "" {
+		externalBlackboxExporter := map[string]interface{}{
+			"url": b.Shoot.CloudProfile.Spec.Monitoring.ExternalBlackboxExporterURL,
+			"module": b.Shoot.CloudProfile.Spec.Monitoring.ExternalBlackboxExporterModule,
+		}
+		if b.Shoot.CloudProfile.Spec.Monitoring.ExternalBlackboxExporterUsername != "" &&
+			b.Shoot.CloudProfile.Spec.Monitoring.ExternalBlackboxExporterPassword != "" {
+			externalBlackboxExporter["basic_auth"] = map[string]interface{}{
+				"username": b.Shoot.CloudProfile.Spec.Monitoring.ExternalBlackboxExporterUsername,
+				"password": b.Shoot.CloudProfile.Spec.Monitoring.ExternalBlackboxExporterPassword,
+			}
+		}
+		for _, advertisedAddresse := range b.Shoot.Info.Status.AdvertisedAddresses {
+			if advertisedAddresse.Name == "external" {
+				externalBlackboxExporter["externalApiUrl"] = advertisedAddresse.URL
+			}
+		}
+		prometheusConfig["externalBlackboxExporter"] = externalBlackboxExporter
+	}
 
 	prometheus, err := b.InjectSeedShootImages(prometheusConfig, prometheusImages...)
 	if err != nil {
