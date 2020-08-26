@@ -17,6 +17,8 @@ package botanist
 import (
 	"context"
 	"fmt"
+	gardencore "github.com/gardener/gardener/pkg/apis/core"
+	"time"
 
 	"github.com/gardener/gardener/charts"
 	gardencorev1beta1 "github.com/gardener/gardener/pkg/apis/core/v1beta1"
@@ -56,6 +58,19 @@ func (b *Botanist) DefaultOperatingSystemConfig() (operatingsystemconfig.Interfa
 		clusterDNSAddress = common.NodeLocalIPVSAddress
 	}
 
+	var criEndpoints []gardencore.RegistryEndpoint
+	if len(b.Shoot.GetInfo().Spec.Provider.Workers) > 0 &&
+		b.Shoot.GetInfo().Spec.Provider.Workers[0].CRI != nil &&
+		b.Shoot.GetInfo().Spec.Provider.Workers[0].CRI.Endpoints != nil {
+		for _, endpoint := range b.Shoot.GetInfo().Spec.Provider.Workers[0].CRI.Endpoints {
+			criEndpoints = append(criEndpoints, gardencore.RegistryEndpoint{
+				Name:               endpoint.Name,
+				Endpoint:           endpoint.Endpoint,
+				InsecureSkipVerify: endpoint.InsecureSkipVerify,
+			})
+		}
+	}
+
 	return operatingsystemconfig.New(
 		b.Logger,
 		b.K8sSeedClient.Client(),
@@ -74,6 +89,7 @@ func (b *Botanist) DefaultOperatingSystemConfig() (operatingsystemconfig.Interfa
 				KubeletCLIFlags:         components.KubeletCLIFlagsFromCoreV1beta1KubeletConfig(b.Shoot.GetInfo().Spec.Kubernetes.Kubelet),
 				MachineTypes:            b.Shoot.CloudProfile.Spec.MachineTypes,
 			},
+			CriEndpoints: criEndpoints,
 		},
 		operatingsystemconfig.DefaultInterval,
 		operatingsystemconfig.DefaultSevereThreshold,
