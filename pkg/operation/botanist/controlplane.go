@@ -19,6 +19,7 @@ import (
 	"fmt"
 	"path/filepath"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/gardener/gardener/charts"
@@ -435,6 +436,16 @@ func (b *Botanist) DeployKubeAPIServer(ctx context.Context) error {
 		}
 	}
 
+	var podCidrs []string
+	for _, pod := range b.Shoot.Networks.Pods {
+		podCidrs = append(podCidrs, pod.String())
+	}
+
+	var svcCidrs []string
+	for _, svc := range b.Shoot.Networks.Services {
+		svcCidrs = append(svcCidrs, svc.String())
+	}
+
 	var (
 		podAnnotations = map[string]interface{}{
 			"checksum/secret-ca":                     b.CheckSums[v1beta1constants.SecretNameCACluster],
@@ -479,8 +490,8 @@ func (b *Botanist) DeployKubeAPIServer(ctx context.Context) error {
 		}
 
 		shootNetworks = map[string]interface{}{
-			"services": b.Shoot.Networks.Services.String(),
-			"pods":     b.Shoot.Networks.Pods.String(),
+			"services": strings.Join(svcCidrs, ","),
+			"pods":     strings.Join(podCidrs, ","),
 		}
 	)
 
@@ -748,6 +759,11 @@ func (b *Botanist) getKubeApiServerServiceAnnotations(sniPhase component.Phase) 
 }
 
 func (b *Botanist) kubeAPIServiceService(sniPhase component.Phase) component.DeployWaiter {
+	ipFamily := corev1.IPv4Protocol
+	if b.Seed.LoadBalancerServiceAnnotations["ske.ipFamily"] == "IPv6" {
+		ipFamily = corev1.IPv6Protocol
+	}
+
 	return kubeapiserverexposure.NewService(
 		b.Logger,
 		b.K8sSeedClient.Client(),
@@ -761,6 +777,7 @@ func (b *Botanist) kubeAPIServiceService(sniPhase component.Phase) component.Dep
 		nil,
 		b.setAPIServerServiceClusterIP,
 		func(address string) { b.setAPIServerAddress(address, b.K8sSeedClient.DirectClient()) },
+		ipFamily,
 	)
 }
 

@@ -685,6 +685,16 @@ type Networking struct {
 	Nodes *string
 	// Services is the CIDR of the service network.
 	Services *string
+	// ProxyConfig defines proxy settings for gardener components
+	ProxyConfig *ProxyConfig
+}
+
+// ProxyConfig defines proxy settings for gardener components
+type ProxyConfig struct {
+	// HttpProxy defines the http proxy to use
+	HttpProxy *string
+	// NoProxy defines the destinations to reach without proxy
+	NoProxy *string
 }
 
 const (
@@ -769,6 +779,8 @@ type Provider struct {
 	InfrastructureConfig *runtime.RawExtension
 	// Workers is a list of worker groups.
 	Workers []Worker
+	// ComponentResources
+	ComponentResources map[string]corev1.ResourceRequirements
 }
 
 // Worker is the base definition of a worker group.
@@ -892,6 +904,23 @@ type CRI struct {
 	Name CRIName
 	// ContainerRuntimes is the list of the required container runtimes supported for a worker pool.
 	ContainerRuntimes []ContainerRuntime
+	// RegistryEndpoint defines a list of registry overrides
+	// +optional
+	Endpoints []RegistryEndpoint
+	// DownloadHttpProxy defines a proxy that is used for downloading the kubelet and kubectl (only containerd)
+	// +optional
+	DownloadHttpProxy *string
+}
+
+// RegistryEndpoint defines a list of registry overrides
+type RegistryEndpoint struct {
+	// Name defines the original registry url name
+	Name string
+	// Endpoint defines the endpoint where the image shall be pulled from
+	Endpoint string
+	// InsecureSkipVerify defines if tls certs shall be verified
+	// +optional
+	InsecureSkipVerify *bool
 }
 
 // CRIName is a type alias for the CRI name string.

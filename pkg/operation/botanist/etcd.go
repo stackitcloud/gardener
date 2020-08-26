@@ -17,6 +17,7 @@ package botanist
 import (
 	"context"
 	"fmt"
+	gardencore "github.com/gardener/gardener/pkg/apis/core"
 	"hash/crc32"
 	"time"
 
@@ -45,7 +46,7 @@ import (
 var NewEtcd = etcd.New
 
 // DefaultEtcd returns a deployer for the etcd.
-func (b *Botanist) DefaultEtcd(role string, class etcd.Class) (etcd.Interface, error) {
+func (b *Botanist) DefaultEtcd(role string, class etcd.Class, proxyConfig *gardencore.ProxyConfig) (etcd.Interface, error) {
 	defragmentationSchedule, err := determineDefragmentationSchedule(b.Shoot.Info, b.ManagedSeed, class)
 	if err != nil {
 		return nil, err
@@ -59,6 +60,7 @@ func (b *Botanist) DefaultEtcd(role string, class etcd.Class) (etcd.Interface, e
 		b.Shoot.HibernationEnabled,
 		b.Seed.GetValidVolumeSize("10Gi"),
 		&defragmentationSchedule,
+		proxyConfig,
 	)
 
 	hvpaEnabled := gardenletfeatures.FeatureGate.Enabled(features.HVPA)

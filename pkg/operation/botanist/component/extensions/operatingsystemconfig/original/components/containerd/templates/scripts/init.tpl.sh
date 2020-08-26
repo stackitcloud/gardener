@@ -1,9 +1,11 @@
 #!/bin/bash
 
 FILE=/etc/containerd/config.toml
+rm $FILE
 if [ ! -f "$FILE" ]; then
   mkdir -p /etc/containerd
-  containerd config default > "$FILE"
+  echo 'imports = ["/etc/containerd/runtime_*.toml"]' > "$FILE"
+  containerd config default >> "$FILE"
 fi
 
 # use injected image as sandbox image

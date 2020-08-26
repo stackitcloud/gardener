@@ -15,6 +15,7 @@
 package components
 
 import (
+	gardencore "github.com/gardener/gardener/pkg/apis/core"
 	extensionsv1alpha1 "github.com/gardener/gardener/pkg/apis/extensions/v1alpha1"
 	"github.com/gardener/gardener/pkg/utils/imagevector"
 
@@ -42,4 +43,6 @@ type Context struct {
 	KubeletDataVolumeName   *string
 	KubernetesVersion       *semver.Version
 	SSHPublicKey            string
+	ProxyConfig             *gardencore.ProxyConfig
+	CriEndpoints            []gardencore.RegistryEndpoint
 }

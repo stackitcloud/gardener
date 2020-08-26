@@ -17,6 +17,7 @@ package kubelet
 import (
 	"bytes"
 	_ "embed"
+	gardencore "github.com/gardener/gardener/pkg/apis/core"
 	"strings"
 	"text/template"
 
@@ -102,6 +103,14 @@ func (component) Config(ctx components.Context) ([]extensionsv1alpha1.Unit, []ex
 
 	cliFlags := CLIFlags(ctx.KubernetesVersion, ctx.CRIName, ctx.Images[charts.ImageNamePauseContainer], ctx.KubeletCLIFlags)
 
+	var execPreStart string
+	switch ctx.CRIName {
+	case extensionsv1alpha1.CRINameDocker:
+		execPreStart = execStartPreCopyBinaryFromContainer("kubelet", ctx.Images[charts.ImageNameHyperkube], ctx.KubernetesVersion)
+	case extensionsv1alpha1.CRINameContainerD:
+		execPreStart = execStartPreCopyBinaryFromContainerForContainerD("kubelet", ctx.Images[charts.ImageNameHyperkube], ctx.KubernetesVersion, ctx.ProxyConfig)
+	}
+
 	return []extensionsv1alpha1.Unit{
 			{
 				Name:    UnitName,
@@ -118,7 +127,7 @@ Restart=always
 RestartSec=5
 EnvironmentFile=/etc/environment
 EnvironmentFile=-/var/lib/kubelet/extra_args
-ExecStartPre=` + execStartPreCopyBinaryFromContainer("kubelet", ctx.Images[charts.ImageNameHyperkube], ctx.KubernetesVersion) + `
+ExecStartPre=` + execPreStart + `
 ExecStart=` + PathKubernetesBinaries + `/kubelet \
     ` + utils.Indent(strings.Join(cliFlags, " \\\n"), 4) + ` $KUBELET_EXTRA_ARGS`),
 			},
@@ -134,7 +143,7 @@ WantedBy=multi-user.target
 [Service]
 Restart=always
 EnvironmentFile=/etc/environment
-ExecStartPre=` + execStartPreCopyBinaryFromContainer("kubectl", ctx.Images[charts.ImageNameHyperkube], ctx.KubernetesVersion) + `
+ExecStartPre=` + execPreStart + `
 ExecStart=` + pathHealthMonitor),
 			},
 		},
@@ -188,6 +197,21 @@ func execStartPreCopyBinaryFromContainer(binaryName string, image *imagevector.I
 		return docker.PathBinary + ` run --rm -v /opt/bin:/opt/bin:rw --entrypoint /bin/sh ` + image.String() + ` -c "cp /usr/local/bin/` + binaryName + ` /opt/bin"`
 	}
 	return `/usr/bin/env sh -c "ID=\"$(` + docker.PathBinary + ` run --rm -d -v /opt/bin:/opt/bin:rw ` + image.String() + `)\"; ` + docker.PathBinary + ` cp \"$ID\":/` + binaryName + ` /opt/bin; ` + docker.PathBinary + ` stop \"$ID\"; chmod +x /opt/bin/` + binaryName + `"`
+}
+
+func execStartPreCopyBinaryFromContainerForContainerD(binaryName string, image *imagevector.Image, kubernetesVersion *semver.Version, proxyConfig *gardencore.ProxyConfig) string {
+	var proxyString string
+	if proxyConfig != nil {
+		if proxyConfig.HttpProxy != nil {
+			proxyString += "http_proxy=\"" + *proxyConfig.HttpProxy + "\" "
+		}
+		if proxyConfig.NoProxy != nil {
+			proxyString += "no_proxy=\"" + *proxyConfig.NoProxy + "\" "
+		}
+	}
+
+	return "ExecStartPre=\"/bin/sh -c '" + proxyString + " /usr/bin/ctr i pull " + image.String() + " && /usr/bin/ctr run --rm --mount type=bind,src=/opt/bin,dst=/opt/bin/,options=rbind:rw " + image.String() + " annemarie cp /kubelet /opt/bin/'"
+
 }
 
 func unitConfigAfterCRI(criName extensionsv1alpha1.CRIName) string {

@@ -17,6 +17,7 @@ package botanist
 import (
 	"context"
 	"fmt"
+	gardencore "github.com/gardener/gardener/pkg/apis/core"
 	"sort"
 	"strings"
 	"time"
@@ -102,11 +103,17 @@ func New(ctx context.Context, o *operation.Operation) (*Botanist, error) {
 	}
 
 	// control plane components
-	o.Shoot.Components.ControlPlane.EtcdMain, err = b.DefaultEtcd(v1beta1constants.ETCDRoleMain, etcd.ClassImportant)
+	var proxyConfig *gardencore.ProxyConfig = nil
+	if o.Shoot.Info.Spec.Networking.ProxyConfig != nil {
+		proxyConfig = &gardencore.ProxyConfig{}
+		proxyConfig.HttpProxy = o.Shoot.Info.Spec.Networking.ProxyConfig.HttpProxy
+		proxyConfig.NoProxy = o.Shoot.Info.Spec.Networking.ProxyConfig.NoProxy
+	}
+	o.Shoot.Components.ControlPlane.EtcdMain, err = b.DefaultEtcd(v1beta1constants.ETCDRoleMain, etcd.ClassImportant, proxyConfig)
 	if err != nil {
 		return nil, err
 	}
-	o.Shoot.Components.ControlPlane.EtcdEvents, err = b.DefaultEtcd(v1beta1constants.ETCDRoleEvents, etcd.ClassNormal)
+	o.Shoot.Components.ControlPlane.EtcdEvents, err = b.DefaultEtcd(v1beta1constants.ETCDRoleEvents, etcd.ClassNormal, proxyConfig)
 	if err != nil {
 		return nil, err
 	}
