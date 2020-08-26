@@ -210,12 +210,21 @@ func (b *Botanist) DeployManagedResourceForAddons(ctx context.Context) error {
 // generateCoreAddonsChart renders the gardener-resource-manager configuration for the core addons. After that it
 // creates a ManagedResource CRD that references the rendered manifests and creates it.
 func (b *Botanist) generateCoreAddonsChart(ctx context.Context) (*chartrenderer.RenderedChart, error) {
+	var podCidrs []string
+	for _, pod := range b.Shoot.Networks.Pods {
+		podCidrs = append(podCidrs, pod.String())
+	}
+
+	var svcCidrs []string
+	for _, svc := range b.Shoot.Networks.Services {
+		svcCidrs = append(svcCidrs, svc.String())
+	}
 	var (
 		kasFQDN         = b.outOfClusterAPIServerFQDN()
 		kubeProxySecret = b.Secrets["kube-proxy"]
 		global          = map[string]interface{}{
 			"kubernetesVersion": b.Shoot.Info.Spec.Kubernetes.Version,
-			"podNetwork":        b.Shoot.Networks.Pods.String(),
+			"podNetwork":        strings.Join(podCidrs, ","),
 			"vpaEnabled":        b.Shoot.WantsVerticalPodAutoscaler,
 		}
 		coreDNSConfig = map[string]interface{}{
@@ -260,8 +269,8 @@ func (b *Botanist) generateCoreAddonsChart(ctx context.Context) (*chartrenderer.
 			"provider":          b.Shoot.Info.Spec.Provider.Type,
 			"region":            b.Shoot.Info.Spec.Region,
 			"kubernetesVersion": b.Shoot.Info.Spec.Kubernetes.Version,
-			"podNetwork":        b.Shoot.Networks.Pods.String(),
-			"serviceNetwork":    b.Shoot.Networks.Services.String(),
+			"podNetwork":        strings.Join(podCidrs, ","),
+			"serviceNetwork":    strings.Join(svcCidrs, ","),
 			"maintenanceBegin":  b.Shoot.Info.Spec.Maintenance.TimeWindow.Begin,
 			"maintenanceEnd":    b.Shoot.Info.Spec.Maintenance.TimeWindow.End,
 		}
@@ -422,8 +431,8 @@ func (b *Botanist) generateCoreAddonsChart(ctx context.Context) (*chartrenderer.
 			vpnTLSAuthSecret = b.Secrets["vpn-seed-tlsauth"]
 			vpnShootSecret   = b.Secrets["vpn-shoot"]
 			vpnShootConfig   = map[string]interface{}{
-				"podNetwork":     b.Shoot.Networks.Pods.String(),
-				"serviceNetwork": b.Shoot.Networks.Services.String(),
+				"podNetwork":     strings.Join(podCidrs, ","),
+				"serviceNetwork": strings.Join(svcCidrs, ","),
 				"tlsAuth":        vpnTLSAuthSecret.Data["vpn.tlsauth"],
 				"vpnShootSecretData": map[string]interface{}{
 					"ca":     vpnShootSecret.Data["ca.crt"],

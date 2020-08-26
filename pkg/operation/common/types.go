@@ -152,7 +152,7 @@ const (
 	// IngressPrefix is the part of a FQDN which will be used to construct the domain name for an ingress controller of
 	// a Shoot cluster. For example, when a Shoot specifies domain 'cluster.example.com', the ingress domain would be
 	// '*.<IngressPrefix>.cluster.example.com'.
-	IngressPrefix = "ingress"
+	IngressPrefix = "i"
 
 	// APIServerPrefix is the part of a FQDN which will be used to construct the domain name for the kube-apiserver of
 	// a Shoot cluster. For example, when a Shoot specifies domain 'cluster.example.com', the apiserver domain would be
@@ -461,7 +461,7 @@ const (
 	EndUserCrtValidity = 730 * 24 * time.Hour // ~2 years, see https://support.apple.com/en-us/HT210176
 
 	// ShootDNSIngressName is a constant for the DNS resources used for the shoot ingress addon.
-	ShootDNSIngressName = "ingress"
+	ShootDNSIngressName = "i"
 )
 
 var (

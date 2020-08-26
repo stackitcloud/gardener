@@ -17,6 +17,7 @@ package etcd
 import (
 	"context"
 	"fmt"
+	gardencore "github.com/gardener/gardener/pkg/apis/core"
 	"time"
 
 	druidv1alpha1 "github.com/gardener/etcd-druid/api/v1alpha1"
@@ -123,6 +124,7 @@ func New(
 	retainReplicas bool,
 	storageCapacity string,
 	defragmentationSchedule *string,
+	proxyConfig *gardencore.ProxyConfig,
 ) Etcd {
 	return &etcd{
 		client:                  client,
@@ -143,6 +145,8 @@ type etcd struct {
 	retainReplicas          bool
 	storageCapacity         string
 	defragmentationSchedule *string
+
+	proxyConfig *gardencore.ProxyConfig
 
 	secrets      Secrets
 	backupConfig *BackupConfig
@@ -323,6 +327,11 @@ func (e *etcd) Deploy(ctx context.Context) error {
 			Resources:               resourcesBackupRestore,
 			GarbageCollectionPolicy: &garbageCollectionPolicy,
 			GarbageCollectionPeriod: &garbageCollectionPeriod,
+		}
+
+		if e.proxyConfig != nil {
+			etcd.Spec.Backup.HttpProxy = e.proxyConfig.HttpProxy
+			etcd.Spec.Backup.NoProxy = e.proxyConfig.NoProxy
 		}
 
 		if e.backupConfig != nil {

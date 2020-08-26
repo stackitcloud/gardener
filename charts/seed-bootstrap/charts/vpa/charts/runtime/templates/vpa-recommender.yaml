@@ -5,12 +5,16 @@ metadata:
   name: vpa-recommender
   namespace: {{ .Release.Namespace }}
 spec:
+  {{- if .Values.recommender.vpa }}
+  {{- if .Values.recommender.vpa.resourcePolicy }}
   resourcePolicy:
     containerPolicies:
-    - containerName: '*'
-      minAllowed:
-        cpu: 10m
-        memory: 40Mi
+      - containerName: '*'
+        minAllowed:
+          cpu: {{ required ".Values.recommender.vpa.resourcePolicy.minAllowed.cpu is required" .Values.recommender.vpa.resourcePolicy.minAllowed.cpu }}
+          memory: {{ required ".Values.recommender.vpa.resourcePolicy.minAllowed.memory is required" .Values.recommender.vpa.resourcePolicy.minAllowed.memory }}
+  {{- end }}
+  {{- end }}
   targetRef:
     apiVersion: {{ include "deploymentversion" . }}
     kind: Deployment

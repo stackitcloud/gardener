@@ -15,7 +15,8 @@ spec:
     - namespaceSelector:
         matchLabels:
           gardener.cloud/role: shoot
-      podSelector: 
+      podSelector:
+        matchLabels:
 {{ toYaml .Values.global.lokiLabels | indent 10 }}
     - podSelector:
         matchLabels:

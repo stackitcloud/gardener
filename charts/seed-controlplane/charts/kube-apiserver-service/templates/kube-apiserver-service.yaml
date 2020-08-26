@@ -19,6 +19,7 @@ metadata:
     core.gardener.cloud/apiserver-exposure: gardener-managed
 {{- end }}
 spec:
+  ipFamily: {{ .Values.ipFamily }}
   type: {{ .Values.serviceType }}
   selector:
     app: kubernetes

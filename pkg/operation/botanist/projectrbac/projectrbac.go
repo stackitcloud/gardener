@@ -126,7 +126,7 @@ func (p *projectRBAC) Deploy(ctx context.Context) error {
 						APIGroups:     []string{gardencorev1beta1.SchemeGroupVersion.Group},
 						Resources:     []string{"projects"},
 						ResourceNames: []string{p.project.Name},
-						Verbs:         []string{"get", "patch", "manage-members", "update", "delete"},
+						Verbs:         []string{"get", "manage-members"},
 					},
 				},
 			)
@@ -147,7 +147,7 @@ func (p *projectRBAC) Deploy(ctx context.Context) error {
 						APIGroups:     []string{gardencorev1beta1.SchemeGroupVersion.Group},
 						Resources:     []string{"projects"},
 						ResourceNames: []string{p.project.Name},
-						Verbs:         []string{"get", "manage-members", "patch", "update"},
+						Verbs:         []string{"get", "manage-members"},
 					},
 				},
 			)
@@ -174,7 +174,7 @@ func (p *projectRBAC) Deploy(ctx context.Context) error {
 						APIGroups:     []string{gardencorev1beta1.SchemeGroupVersion.Group},
 						Resources:     []string{"projects"},
 						ResourceNames: []string{p.project.Name},
-						Verbs:         []string{"get", "patch", "update", "delete"},
+						Verbs:         []string{"get"},
 					},
 				},
 			)

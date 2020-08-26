@@ -19,6 +19,7 @@ import (
 	"fmt"
 	"path/filepath"
 	"strconv"
+	"strings"
 	"time"
 
 	gardencorev1beta1 "github.com/gardener/gardener/pkg/apis/core/v1beta1"
@@ -489,14 +490,20 @@ func (b *Botanist) deployNetworkPolicies(ctx context.Context, denyAll bool) erro
 	excludeNets = append(excludeNets, b.Seed.Info.Spec.Networks.BlockCIDRs...)
 
 	var shootCIDRNetworks []string
-	if v := b.Shoot.GetNodeNetwork(); v != nil {
-		shootCIDRNetworks = append(shootCIDRNetworks, *v)
+	if val := b.Shoot.GetNodeNetwork(); val != nil {
+		for _, shootCIDRNetwork := range strings.Split(string(*val), ",") {
+			shootCIDRNetworks = append(shootCIDRNetworks, shootCIDRNetwork)
+		}
 	}
-	if v := b.Shoot.Info.Spec.Networking.Pods; v != nil {
-		shootCIDRNetworks = append(shootCIDRNetworks, *v)
+	if val := b.Shoot.Info.Spec.Networking.Pods; val != nil {
+		for _, podNet := range strings.Split(string(*val), ",") {
+			shootCIDRNetworks = append(shootCIDRNetworks, podNet)
+		}
 	}
 	if v := b.Shoot.Info.Spec.Networking.Services; v != nil {
-		shootCIDRNetworks = append(shootCIDRNetworks, *v)
+		for _, svcNet := range strings.Split(string(*v), ",") {
+			shootCIDRNetworks = append(shootCIDRNetworks, svcNet)
+		}
 	}
 	shootNetworkValues, err := common.ExceptNetworks(shootCIDRNetworks, excludeNets...)
 	if err != nil {
@@ -504,9 +511,11 @@ func (b *Botanist) deployNetworkPolicies(ctx context.Context, denyAll bool) erro
 	}
 	values["clusterNetworks"] = shootNetworkValues
 
-	allCIDRNetworks := []string{b.Seed.Info.Spec.Networks.Pods, b.Seed.Info.Spec.Networks.Services}
+	var allCIDRNetworks []string
 	if v := b.Seed.Info.Spec.Networks.Nodes; v != nil {
-		allCIDRNetworks = append(allCIDRNetworks, *v)
+		for _, cidr := range strings.Split(*v, ",") {
+			allCIDRNetworks = append(allCIDRNetworks, cidr)
+		}
 	}
 	allCIDRNetworks = append(allCIDRNetworks, shootCIDRNetworks...)
 	allCIDRNetworks = append(allCIDRNetworks, excludeNets...)
@@ -541,6 +550,16 @@ func (b *Botanist) DeployKubeAPIServer(ctx context.Context) error {
 		// Override for shooted seeds
 		hvpaEnabled = gardenletfeatures.FeatureGate.Enabled(features.HVPAForShootedSeed)
 		memoryMetricForHpaEnabled = true
+	}
+
+	var podCidrs []string
+	for _, pod := range b.Shoot.Networks.Pods {
+		podCidrs = append(podCidrs, pod.String())
+	}
+
+	var svcCidrs []string
+	for _, svc := range b.Shoot.Networks.Services {
+		svcCidrs = append(svcCidrs, svc.String())
 	}
 
 	var (
@@ -580,8 +599,8 @@ func (b *Botanist) DeployKubeAPIServer(ctx context.Context) error {
 		maxReplicas int32 = 4
 
 		shootNetworks = map[string]interface{}{
-			"services": b.Shoot.Networks.Services.String(),
-			"pods":     b.Shoot.Networks.Pods.String(),
+			"services": strings.Join(svcCidrs, ","),
+			"pods":     strings.Join(podCidrs, ","),
 		}
 	)
 
@@ -904,6 +923,11 @@ func (b *Botanist) DefaultKubeAPIServerService(sniPhase component.Phase) compone
 }
 
 func (b *Botanist) kubeAPIServiceService(sniPhase component.Phase) component.DeployWaiter {
+	ipFamily := corev1.IPv4Protocol
+	if b.Seed.LoadBalancerServiceAnnotations["ske.ipFamily"] == "IPv6" {
+		ipFamily = corev1.IPv6Protocol
+	}
+
 	return controlplane.NewKubeAPIService(
 		&controlplane.KubeAPIServiceValues{
 			Annotations:               b.Seed.LoadBalancerServiceAnnotations,
@@ -919,6 +943,7 @@ func (b *Botanist) kubeAPIServiceService(sniPhase component.Phase) component.Dep
 		nil,
 		b.setAPIServerServiceClusterIP,
 		func(address string) { b.setAPIServerAddress(address, b.K8sSeedClient.DirectClient()) },
+		ipFamily,
 	)
 }
 
