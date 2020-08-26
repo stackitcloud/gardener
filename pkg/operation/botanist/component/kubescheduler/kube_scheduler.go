@@ -198,6 +198,7 @@ func (k *kubeScheduler) Deploy(ctx context.Context) error {
 		return err
 	}
 
+	ipFamilies := []corev1.IPFamily{corev1.IPv4Protocol}
 	if _, err := controllerutils.GetAndCreateOrMergePatch(ctx, k.client, service, func() error {
 		service.Labels = getLabels()
 		service.Spec.Selector = getLabels()
@@ -210,6 +211,7 @@ func (k *kubeScheduler) Deploy(ctx context.Context) error {
 			},
 		}
 		service.Spec.Ports = kutil.ReconcileServicePorts(service.Spec.Ports, desiredPorts, corev1.ServiceTypeClusterIP)
+		service.Spec.IPFamilies = ipFamilies
 		return nil
 	}); err != nil {
 		return err

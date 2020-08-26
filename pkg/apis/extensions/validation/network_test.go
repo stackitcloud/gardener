@@ -40,8 +40,8 @@ var _ = Describe("Network validation tests", func() {
 					Type:           "provider",
 					ProviderConfig: &runtime.RawExtension{},
 				},
-				PodCIDR:     "10.20.30.40/26",
-				ServiceCIDR: "10.30.40.50/26",
+				PodCIDR:     "10.20.30.40/26,ff:ab::/64",
+				ServiceCIDR: "10.30.40.50/26,ff:ac::/64",
 			},
 		}
 	})
@@ -90,10 +90,19 @@ var _ = Describe("Network validation tests", func() {
 
 			errorList := ValidateNetwork(c)
 
-			Expect(errorList).To(ConsistOf(PointTo(MatchFields(IgnoreExtras, Fields{
-				"Type":  Equal(field.ErrorTypeInvalid),
-				"Field": Equal("spec.serviceCIDR"),
-			}))))
+			Expect(errorList).To(ConsistOf(
+				PointTo(MatchFields(IgnoreExtras, Fields{
+					"Type":     Equal(field.ErrorTypeInvalid),
+					"Field":    Equal("spec.serviceCIDR"),
+					"BadValue": Equal("10.30.40.50/26"),
+				})),
+				PointTo(MatchFields(IgnoreExtras, Fields{
+					"Type":     Equal(field.ErrorTypeInvalid),
+					"Field":    Equal("spec.serviceCIDR"),
+					"BadValue": Equal("ff:ac::/64"),
+				})),
+			))
+
 		})
 
 		It("should allow valid network resources", func() {
