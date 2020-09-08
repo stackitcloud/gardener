@@ -596,11 +596,13 @@ func validateNetworking(networking core.Networking, fldPath *field.Path) field.E
 		allErrs = append(allErrs, field.Required(fldPath.Child("type"), "networking type must be provided"))
 	}
 
+	fmt.Println("FeatureGateDS: " + strconv.FormatBool(*networking.FeatureGates.IPv6DualStack))
+
 	if networking.Nodes != nil {
 		path := fldPath.Child("nodes")
 
 		// validate for dual-stack
-		if networking.FeatureGates.IPv6DualStack {
+		if *networking.FeatureGates.IPv6DualStack {
 			res, err := net.IsDualStackCIDRStrings(strings.Split(*networking.Nodes, ","))
 			if err != nil || !res {
 				allErrs = append(allErrs, field.Invalid(path, networking.Nodes, "when IPv6DualStack enabled, you have to define ipv4 and ipv6"))
@@ -615,7 +617,7 @@ func validateNetworking(networking core.Networking, fldPath *field.Path) field.E
 	if networking.Pods != nil {
 		path := fldPath.Child("pods")
 		// validate for dual-stack
-		if networking.FeatureGates.IPv6DualStack {
+		if *networking.FeatureGates.IPv6DualStack {
 			res, err := net.IsDualStackCIDRStrings(strings.Split(*networking.Pods, ","))
 			if err != nil || !res {
 				allErrs = append(allErrs, field.Invalid(path, networking.Pods, "when IPv6DualStack enabled, you have to define ipv4 and ipv6"))
@@ -631,7 +633,7 @@ func validateNetworking(networking core.Networking, fldPath *field.Path) field.E
 	if networking.Services != nil {
 		path := fldPath.Child("services")
 		// validate for dual-stack
-		if networking.FeatureGates.IPv6DualStack {
+		if *networking.FeatureGates.IPv6DualStack {
 			res, err := net.IsDualStackCIDRStrings(strings.Split(*networking.Services, ","))
 			if err != nil || !res {
 				allErrs = append(allErrs, field.Invalid(path, networking.Services, "when IPv6DualStack enabled, you have to define ipv4 and ipv6"))

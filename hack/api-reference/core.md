@@ -3458,6 +3458,37 @@ bool
 </tr>
 </tbody>
 </table>
+<h3 id="core.gardener.cloud/v1beta1.FeatureGates">FeatureGates
+</h3>
+<p>
+(<em>Appears on:</em>
+<a href="#core.gardener.cloud/v1beta1.Networking">Networking</a>)
+</p>
+<p>
+<p>FeatureGates Some random comment</p>
+</p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<code>IPv6DualStack</code></br>
+<em>
+bool
+</em>
+</td>
+<td>
+<em>(Optional)</em>
+<p>IPv6DualStack Some random comment</p>
+</td>
+</tr>
+</tbody>
+</table>
 <h3 id="core.gardener.cloud/v1beta1.Gardener">Gardener
 </h3>
 <p>
@@ -5741,6 +5772,20 @@ string
 <td>
 <em>(Optional)</em>
 <p>Services is the CIDR of the service network.</p>
+</td>
+</tr>
+<tr>
+<td>
+<code>featureGates</code></br>
+<em>
+<a href="#core.gardener.cloud/v1beta1.FeatureGates">
+FeatureGates
+</a>
+</em>
+</td>
+<td>
+<em>(Optional)</em>
+<p>FeatureGates Some random comment</p>
 </td>
 </tr>
 </tbody>
