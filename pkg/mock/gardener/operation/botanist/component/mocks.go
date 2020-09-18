@@ -6,35 +6,34 @@ package component
 
 import (
 	context "context"
-	reflect "reflect"
-
 	gomock "github.com/golang/mock/gomock"
+	reflect "reflect"
 )
 
-// MockDeployer is a mock of Deployer interface.
+// MockDeployer is a mock of Deployer interface
 type MockDeployer struct {
 	ctrl     *gomock.Controller
 	recorder *MockDeployerMockRecorder
 }
 
-// MockDeployerMockRecorder is the mock recorder for MockDeployer.
+// MockDeployerMockRecorder is the mock recorder for MockDeployer
 type MockDeployerMockRecorder struct {
 	mock *MockDeployer
 }
 
-// NewMockDeployer creates a new mock instance.
+// NewMockDeployer creates a new mock instance
 func NewMockDeployer(ctrl *gomock.Controller) *MockDeployer {
 	mock := &MockDeployer{ctrl: ctrl}
 	mock.recorder = &MockDeployerMockRecorder{mock}
 	return mock
 }
 
-// EXPECT returns an object that allows the caller to indicate expected use.
+// EXPECT returns an object that allows the caller to indicate expected use
 func (m *MockDeployer) EXPECT() *MockDeployerMockRecorder {
 	return m.recorder
 }
 
-// Deploy mocks base method.
+// Deploy mocks base method
 func (m *MockDeployer) Deploy(arg0 context.Context) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Deploy", arg0)
@@ -42,13 +41,13 @@ func (m *MockDeployer) Deploy(arg0 context.Context) error {
 	return ret0
 }
 
-// Deploy indicates an expected call of Deploy.
+// Deploy indicates an expected call of Deploy
 func (mr *MockDeployerMockRecorder) Deploy(arg0 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Deploy", reflect.TypeOf((*MockDeployer)(nil).Deploy), arg0)
 }
 
-// Destroy mocks base method.
+// Destroy mocks base method
 func (m *MockDeployer) Destroy(arg0 context.Context) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Destroy", arg0)
@@ -56,36 +55,36 @@ func (m *MockDeployer) Destroy(arg0 context.Context) error {
 	return ret0
 }
 
-// Destroy indicates an expected call of Destroy.
+// Destroy indicates an expected call of Destroy
 func (mr *MockDeployerMockRecorder) Destroy(arg0 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Destroy", reflect.TypeOf((*MockDeployer)(nil).Destroy), arg0)
 }
 
-// MockWaiter is a mock of Waiter interface.
+// MockWaiter is a mock of Waiter interface
 type MockWaiter struct {
 	ctrl     *gomock.Controller
 	recorder *MockWaiterMockRecorder
 }
 
-// MockWaiterMockRecorder is the mock recorder for MockWaiter.
+// MockWaiterMockRecorder is the mock recorder for MockWaiter
 type MockWaiterMockRecorder struct {
 	mock *MockWaiter
 }
 
-// NewMockWaiter creates a new mock instance.
+// NewMockWaiter creates a new mock instance
 func NewMockWaiter(ctrl *gomock.Controller) *MockWaiter {
 	mock := &MockWaiter{ctrl: ctrl}
 	mock.recorder = &MockWaiterMockRecorder{mock}
 	return mock
 }
 
-// EXPECT returns an object that allows the caller to indicate expected use.
+// EXPECT returns an object that allows the caller to indicate expected use
 func (m *MockWaiter) EXPECT() *MockWaiterMockRecorder {
 	return m.recorder
 }
 
-// Wait mocks base method.
+// Wait mocks base method
 func (m *MockWaiter) Wait(arg0 context.Context) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Wait", arg0)
@@ -93,13 +92,13 @@ func (m *MockWaiter) Wait(arg0 context.Context) error {
 	return ret0
 }
 
-// Wait indicates an expected call of Wait.
+// Wait indicates an expected call of Wait
 func (mr *MockWaiterMockRecorder) Wait(arg0 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Wait", reflect.TypeOf((*MockWaiter)(nil).Wait), arg0)
 }
 
-// WaitCleanup mocks base method.
+// WaitCleanup mocks base method
 func (m *MockWaiter) WaitCleanup(arg0 context.Context) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "WaitCleanup", arg0)
@@ -107,36 +106,36 @@ func (m *MockWaiter) WaitCleanup(arg0 context.Context) error {
 	return ret0
 }
 
-// WaitCleanup indicates an expected call of WaitCleanup.
+// WaitCleanup indicates an expected call of WaitCleanup
 func (mr *MockWaiterMockRecorder) WaitCleanup(arg0 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "WaitCleanup", reflect.TypeOf((*MockWaiter)(nil).WaitCleanup), arg0)
 }
 
-// MockDeployWaiter is a mock of DeployWaiter interface.
+// MockDeployWaiter is a mock of DeployWaiter interface
 type MockDeployWaiter struct {
 	ctrl     *gomock.Controller
 	recorder *MockDeployWaiterMockRecorder
 }
 
-// MockDeployWaiterMockRecorder is the mock recorder for MockDeployWaiter.
+// MockDeployWaiterMockRecorder is the mock recorder for MockDeployWaiter
 type MockDeployWaiterMockRecorder struct {
 	mock *MockDeployWaiter
 }
 
-// NewMockDeployWaiter creates a new mock instance.
+// NewMockDeployWaiter creates a new mock instance
 func NewMockDeployWaiter(ctrl *gomock.Controller) *MockDeployWaiter {
 	mock := &MockDeployWaiter{ctrl: ctrl}
 	mock.recorder = &MockDeployWaiterMockRecorder{mock}
 	return mock
 }
 
-// EXPECT returns an object that allows the caller to indicate expected use.
+// EXPECT returns an object that allows the caller to indicate expected use
 func (m *MockDeployWaiter) EXPECT() *MockDeployWaiterMockRecorder {
 	return m.recorder
 }
 
-// Deploy mocks base method.
+// Deploy mocks base method
 func (m *MockDeployWaiter) Deploy(arg0 context.Context) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Deploy", arg0)
@@ -144,13 +143,13 @@ func (m *MockDeployWaiter) Deploy(arg0 context.Context) error {
 	return ret0
 }
 
-// Deploy indicates an expected call of Deploy.
+// Deploy indicates an expected call of Deploy
 func (mr *MockDeployWaiterMockRecorder) Deploy(arg0 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Deploy", reflect.TypeOf((*MockDeployWaiter)(nil).Deploy), arg0)
 }
 
-// Destroy mocks base method.
+// Destroy mocks base method
 func (m *MockDeployWaiter) Destroy(arg0 context.Context) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Destroy", arg0)
@@ -158,13 +157,13 @@ func (m *MockDeployWaiter) Destroy(arg0 context.Context) error {
 	return ret0
 }
 
-// Destroy indicates an expected call of Destroy.
+// Destroy indicates an expected call of Destroy
 func (mr *MockDeployWaiterMockRecorder) Destroy(arg0 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Destroy", reflect.TypeOf((*MockDeployWaiter)(nil).Destroy), arg0)
 }
 
-// Wait mocks base method.
+// Wait mocks base method
 func (m *MockDeployWaiter) Wait(arg0 context.Context) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Wait", arg0)
@@ -172,13 +171,13 @@ func (m *MockDeployWaiter) Wait(arg0 context.Context) error {
 	return ret0
 }
 
-// Wait indicates an expected call of Wait.
+// Wait indicates an expected call of Wait
 func (mr *MockDeployWaiterMockRecorder) Wait(arg0 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Wait", reflect.TypeOf((*MockDeployWaiter)(nil).Wait), arg0)
 }
 
-// WaitCleanup mocks base method.
+// WaitCleanup mocks base method
 func (m *MockDeployWaiter) WaitCleanup(arg0 context.Context) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "WaitCleanup", arg0)
@@ -186,7 +185,7 @@ func (m *MockDeployWaiter) WaitCleanup(arg0 context.Context) error {
 	return ret0
 }
 
-// WaitCleanup indicates an expected call of WaitCleanup.
+// WaitCleanup indicates an expected call of WaitCleanup
 func (mr *MockDeployWaiterMockRecorder) WaitCleanup(arg0 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "WaitCleanup", reflect.TypeOf((*MockDeployWaiter)(nil).WaitCleanup), arg0)
