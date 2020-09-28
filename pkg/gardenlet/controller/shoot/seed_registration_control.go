@@ -359,6 +359,9 @@ func prepareSeedConfig(ctx context.Context, gardenClient client.Client, seedClie
 			VerticalPodAutoscaler: &gardencorev1beta1.SeedSettingVerticalPodAutoscaler{
 				Enabled: vpaEnabled,
 			},
+			LoadBalancerServices: &gardencorev1beta1.SeedSettingLoadBalancerServices{
+				Annotations: shootedSeedConfig.LoadBalancerAnnotations,
+			},
 		},
 		Taints: taints,
 		Backup: backupProfile,
