@@ -33,7 +33,7 @@
 # v1.10.2: rebased to v1.10.1
 # v1.10.3: rebased to v1.7.62
 
-EFFECTIVE_VERSION=v1.7.62
+EFFECTIVE_VERSION=v1.10.3
 REGISTRY=registry.alpha.ske.eu01.stackit.cloud/gardener-ds
 APISERVER_IMAGE_REPOSITORY=$REGISTRY/apiserver
 CONROLLER_MANAGER_IMAGE_REPOSITORY=$REGISTRY/controller-manager
