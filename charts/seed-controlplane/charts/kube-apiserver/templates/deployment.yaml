@@ -343,7 +343,7 @@ spec:
           value: "{{ (split "," .Values.shootNetworks.pods)._0 }}"
         {{- if .Values.shootNetworks.nodes }}
         - name: NODE_NETWORK
-          value: {{ .Values.shootNetworks.nodes }}
+          value: "{{ (split "," .Values.shootNetworks.nodes)._0 }}"
         {{- end }}
         ports:
         - name: tcp-tunnel

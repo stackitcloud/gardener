@@ -50,7 +50,7 @@ spec:
           value: "{{ (split "," .Values.podNetwork)._0 }}"
         {{- if .Values.nodeNetwork }}
         - name: NODE_NETWORK
-          value: {{ .Values.nodeNetwork }}
+          value: "{{ (split "," .Values.nodeNetwork)._0 }}"
         {{- end }}
         securityContext:
           privileged: true
