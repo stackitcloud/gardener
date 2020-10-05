@@ -23,7 +23,7 @@ spec:
             name: aggregate-prometheus-web
             port:
               number: 80
-        pathType: Exact
+        pathType: Prefix
         path: /
       {{- else }}
       - backend:
