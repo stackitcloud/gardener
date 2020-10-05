@@ -17,7 +17,17 @@ spec:
   - host: {{ .Values.grafana.hostName }}
     http:
       paths:
+      {{- if eq (include "ingressversion" .) "networking.k8s.io/v1" }}
+      - backend:
+          service:
+            name: grafana
+            port:
+              number: 3000
+        pathType: Exact
+        path: /
+      {{- else }}
       - backend:
           serviceName: grafana
           servicePort: 3000
         path: /
+      {{- end }}

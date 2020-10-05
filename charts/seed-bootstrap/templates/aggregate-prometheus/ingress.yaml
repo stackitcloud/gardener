@@ -17,7 +17,17 @@ spec:
   - host: {{ .Values.aggregatePrometheus.hostName }}
     http:
       paths:
+      {{- if eq (include "ingressversion" .) "networking.k8s.io/v1" }}
+      - backend:
+          service:
+            name: aggregate-prometheus-web
+            port:
+              number: 80
+        pathType: Exact
+        path: /
+      {{- else }}
       - backend:
           serviceName: aggregate-prometheus-web
           servicePort: 80
         path: /
+      {{- end }}
