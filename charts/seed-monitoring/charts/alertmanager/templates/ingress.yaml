@@ -21,9 +21,19 @@ spec:
   - host: {{ required ".hostName is required" .hostName }}
     http:
       paths:
+      {{- if eq (include "ingressversion" .) "networking.k8s.io/v1" }}
+      - backend:
+          service:
+            name: alertmanager-client
+            port:
+              number: 9093
+        pathType: Prefix
+        path: /
+      {{- else }}
       - backend:
           serviceName: alertmanager-client
           servicePort: 9093
         path: /
+      {{- end }}
   {{- end }}
 

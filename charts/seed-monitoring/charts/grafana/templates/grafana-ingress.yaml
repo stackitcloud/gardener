@@ -23,8 +23,18 @@ spec:
   - host: {{ required ".hostName is required" .hostName }}
     http:
       paths:
+      {{- if eq (include "ingressversion" .) "networking.k8s.io/v1" }}
+      - backend:
+          service:
+            name: grafana-{{ $.Values.role }}
+            port:
+              number: {{ required ".ports.grafana is required" $.Values.ports.grafana }}
+        pathType: Prefix
+        path: /
+      {{- else }}
       - backend:
           servicePort: {{ required ".ports.grafana is required" $.Values.ports.grafana }}
           serviceName: grafana-{{ $.Values.role }}
         path: /
+      {{- end }}
   {{- end }}

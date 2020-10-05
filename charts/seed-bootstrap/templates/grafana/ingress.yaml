@@ -23,7 +23,7 @@ spec:
             name: grafana
             port:
               number: 3000
-        pathType: Exact
+        pathType: Prefix
         path: /
       {{- else }}
       - backend:
