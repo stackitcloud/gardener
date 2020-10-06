@@ -38,8 +38,10 @@
 # v1.10.7-ske: added cidr split for NODE_NETWORK in vpn-shoot
 # v1.10.8-ske: changed ingress spec for "networking.k8s.io/v1" in seed-monitoring
 # v1.10.9-ske: changed pathType Exact to Prefix in aggregate-prometheus ingress
+# v1.10.10-ske: some rolebacks
+# v1.10.11-ske: patched some ingress version stuff
 
-EFFECTIVE_VERSION=v1.10.9-ske
+EFFECTIVE_VERSION=v1.10.11-ske
 REGISTRY=registry.alpha.ske.eu01.stackit.cloud/gardener-ds
 APISERVER_IMAGE_REPOSITORY=$REGISTRY/apiserver
 CONROLLER_MANAGER_IMAGE_REPOSITORY=$REGISTRY/controller-manager

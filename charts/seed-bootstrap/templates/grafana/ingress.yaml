@@ -16,7 +16,7 @@ spec:
   rules:
   - host: {{ .Values.grafana.hostName }}
     http:
-      paths:
+      paths: {{ include "ingressversion" . }}
       {{- if eq (include "ingressversion" .) "networking.k8s.io/v1" }}
       - backend:
           service:
