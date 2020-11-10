@@ -27,7 +27,4 @@ rules:
   - {{ .Values.project.name | quote }}
   verbs:
   - get
-  - patch
   - manage-members
-  - update
-  - delete

@@ -41,8 +41,9 @@
 # v1.10.10-ske: some rolebacks
 # v1.10.11-ske: patched some ingress version stuff
 # v1.10.12-ske: fixed silly stuff
+# v1.10.13-ske: fixed silly stuff
 
-EFFECTIVE_VERSION=v1.10.12-ske
+EFFECTIVE_VERSION=v1.10.13-ske
 REGISTRY=registry.alpha.ske.eu01.stackit.cloud/gardener-ds
 APISERVER_IMAGE_REPOSITORY=$REGISTRY/apiserver
 CONROLLER_MANAGER_IMAGE_REPOSITORY=$REGISTRY/controller-manager
