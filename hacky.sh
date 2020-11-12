@@ -44,7 +44,7 @@
 # v1.10.13-ske: fixed silly stuff
 
 EFFECTIVE_VERSION=v1.10.13-ske
-REGISTRY=registry.alpha.ske.eu01.stackit.cloud/gardener-ds
+REGISTRY=registry.ske.eu01.stackit.cloud/gardener-ds
 APISERVER_IMAGE_REPOSITORY=$REGISTRY/apiserver
 CONROLLER_MANAGER_IMAGE_REPOSITORY=$REGISTRY/controller-manager
 SCHEDULER_IMAGE_REPOSITORY=$REGISTRY/scheduler
