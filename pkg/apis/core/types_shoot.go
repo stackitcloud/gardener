@@ -670,6 +670,16 @@ type Networking struct {
 	Services *string
 	// Map for Feature Gates
 	FeatureGates *FeatureGates
+	// ProxyConfig defines proxy settings for gardener components
+	ProxyConfig *ProxyConfig
+}
+
+// ProxyConfig defines proxy settings for gardener components
+type ProxyConfig struct {
+	// HttpProxy defines the http proxy to use
+	HttpProxy *string
+	// NoProxy defines the destinations to reach without proxy
+	NoProxy *string
 }
 
 type FeatureGates struct {

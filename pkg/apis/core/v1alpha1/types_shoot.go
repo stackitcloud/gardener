@@ -842,6 +842,19 @@ type Networking struct {
 	// FeatureGates Some random comment
 	// +optional
 	FeatureGates *FeatureGates `json:"featureGates,omitempty" protobuf:"bytes,6,opt,name=featureGates"`
+	// ProxyConfig
+	// +optional
+	ProxyConfig *ProxyConfig `json:"proxyConfig,omitempty" protobuf:"bytes,7,opt,name=proxyConfig"`
+}
+
+// ProxyConfig defines proxy settings for gardener components
+type ProxyConfig struct {
+	// HttpProxy defines the http proxy to use
+	// +optional
+	HttpProxy *string `json:"httpProxy,omitempty" protobuf:"bytes,1,opt,name=httpProxy"`
+	// NoProxy defines the destinations to reach without proxy
+	// +optional
+	NoProxy *string `json:"noProxy,omitempty" protobuf:"bytes,2,opt,name=noProxy"`
 }
 
 // FeatureGates Some random comment
