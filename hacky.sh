@@ -44,8 +44,9 @@
 # v1.10.13-ske: fixed silly stuff
 # v1.10.14-ske: shoot.spec.networking.proxyConfig and containerd os-systemconfig
 # v1.10.15-ske: changed kubelet path in hyperkube
+# v1.10.16-ske: wrapped ExecStartPre of kubelet in sh -c
 
-EFFECTIVE_VERSION=v1.10.15-ske
+EFFECTIVE_VERSION=v1.10.16-ske
 REGISTRY=registry.ske.eu01.stackit.cloud/gardener-ds
 APISERVER_IMAGE_REPOSITORY=$REGISTRY/apiserver
 CONROLLER_MANAGER_IMAGE_REPOSITORY=$REGISTRY/controller-manager
