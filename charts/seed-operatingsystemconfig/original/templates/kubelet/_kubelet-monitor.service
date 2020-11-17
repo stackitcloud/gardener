@@ -13,7 +13,7 @@
     EnvironmentFile=/etc/environment
     {{- if .Values.worker.cri }}
     {{- if eq .Values.worker.cri.name "containerd" }}
-    ExecStartPre=/usr/bin/ctr i pull {{ required "images.hyperkube is required" .Values.images.hyperkube }} && /usr/bin/ctr run --rm --mount type=bind,src=/opt/bin,dst=/opt/bin/,options=rbind:rw {{ required "images.hyperkube is required" .Values.images.hyperkube }} lisa cp /usr/local/bin/kubectl /opt/bin/
+    ExecStartPre=/bin/sh -c '/usr/bin/ctr i pull {{ required "images.hyperkube is required" .Values.images.hyperkube }} && /usr/bin/ctr run --rm --mount type=bind,src=/opt/bin,dst=/opt/bin/,options=rbind:rw {{ required "images.hyperkube is required" .Values.images.hyperkube }} lisa cp /usr/local/bin/kubectl /opt/bin/'
     {{- end }}
     {{- else }}
     {{- if semverCompare "< 1.17" .Values.kubernetes.version }}
