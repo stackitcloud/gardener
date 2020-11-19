@@ -45,8 +45,9 @@
 # v1.10.14-ske: shoot.spec.networking.proxyConfig and containerd os-systemconfig
 # v1.10.15-ske: changed kubelet path in hyperkube
 # v1.10.16-ske: wrapped ExecStartPre of kubelet in sh -c
+# v1.10.17-ske: Changed APIServer name to fqdn for MCM
 
-EFFECTIVE_VERSION=v1.10.16-ske
+EFFECTIVE_VERSION=v1.10.17-ske
 REGISTRY=registry.ske.eu01.stackit.cloud/gardener-ds
 APISERVER_IMAGE_REPOSITORY=$REGISTRY/apiserver
 CONROLLER_MANAGER_IMAGE_REPOSITORY=$REGISTRY/controller-manager
