@@ -23,7 +23,7 @@ kubernetes:
   version: 1.11.2
 worker:
   name: cpu-worker
-# cri:
+#  cri:
 #   name: containerd
   kubelet:
     caCert: abcd

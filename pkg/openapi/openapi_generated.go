@@ -122,6 +122,7 @@ func GetOpenAPIDefinitions(ref common.ReferenceCallback) map[string]common.OpenA
 		"github.com/gardener/gardener/pkg/apis/core/v1alpha1.ProjectStatus":                         schema_pkg_apis_core_v1alpha1_ProjectStatus(ref),
 		"github.com/gardener/gardener/pkg/apis/core/v1alpha1.ProjectTolerations":                    schema_pkg_apis_core_v1alpha1_ProjectTolerations(ref),
 		"github.com/gardener/gardener/pkg/apis/core/v1alpha1.Provider":                              schema_pkg_apis_core_v1alpha1_Provider(ref),
+		"github.com/gardener/gardener/pkg/apis/core/v1alpha1.ProxyConfig":                           schema_pkg_apis_core_v1alpha1_ProxyConfig(ref),
 		"github.com/gardener/gardener/pkg/apis/core/v1alpha1.Quota":                                 schema_pkg_apis_core_v1alpha1_Quota(ref),
 		"github.com/gardener/gardener/pkg/apis/core/v1alpha1.QuotaList":                             schema_pkg_apis_core_v1alpha1_QuotaList(ref),
 		"github.com/gardener/gardener/pkg/apis/core/v1alpha1.QuotaSpec":                             schema_pkg_apis_core_v1alpha1_QuotaSpec(ref),
@@ -254,6 +255,7 @@ func GetOpenAPIDefinitions(ref common.ReferenceCallback) map[string]common.OpenA
 		"github.com/gardener/gardener/pkg/apis/core/v1beta1.ProjectStatus":                          schema_pkg_apis_core_v1beta1_ProjectStatus(ref),
 		"github.com/gardener/gardener/pkg/apis/core/v1beta1.ProjectTolerations":                     schema_pkg_apis_core_v1beta1_ProjectTolerations(ref),
 		"github.com/gardener/gardener/pkg/apis/core/v1beta1.Provider":                               schema_pkg_apis_core_v1beta1_Provider(ref),
+		"github.com/gardener/gardener/pkg/apis/core/v1beta1.ProxyConfig":                            schema_pkg_apis_core_v1beta1_ProxyConfig(ref),
 		"github.com/gardener/gardener/pkg/apis/core/v1beta1.Quota":                                  schema_pkg_apis_core_v1beta1_Quota(ref),
 		"github.com/gardener/gardener/pkg/apis/core/v1beta1.QuotaList":                              schema_pkg_apis_core_v1beta1_QuotaList(ref),
 		"github.com/gardener/gardener/pkg/apis/core/v1beta1.QuotaSpec":                              schema_pkg_apis_core_v1beta1_QuotaSpec(ref),
@@ -3801,12 +3803,18 @@ func schema_pkg_apis_core_v1alpha1_Networking(ref common.ReferenceCallback) comm
 							Ref:         ref("github.com/gardener/gardener/pkg/apis/core/v1alpha1.FeatureGates"),
 						},
 					},
+					"proxyConfig": {
+						SchemaProps: spec.SchemaProps{
+							Description: "ProxyConfig",
+							Ref:         ref("github.com/gardener/gardener/pkg/apis/core/v1alpha1.ProxyConfig"),
+						},
+					},
 				},
 				Required: []string{"type"},
 			},
 		},
 		Dependencies: []string{
-			"github.com/gardener/gardener/pkg/apis/core/v1alpha1.FeatureGates", "k8s.io/apimachinery/pkg/runtime.RawExtension"},
+			"github.com/gardener/gardener/pkg/apis/core/v1alpha1.FeatureGates", "github.com/gardener/gardener/pkg/apis/core/v1alpha1.ProxyConfig", "k8s.io/apimachinery/pkg/runtime.RawExtension"},
 	}
 }
 
@@ -4555,6 +4563,33 @@ func schema_pkg_apis_core_v1alpha1_Provider(ref common.ReferenceCallback) common
 		},
 		Dependencies: []string{
 			"github.com/gardener/gardener/pkg/apis/core/v1alpha1.Worker", "k8s.io/apimachinery/pkg/runtime.RawExtension"},
+	}
+}
+
+func schema_pkg_apis_core_v1alpha1_ProxyConfig(ref common.ReferenceCallback) common.OpenAPIDefinition {
+	return common.OpenAPIDefinition{
+		Schema: spec.Schema{
+			SchemaProps: spec.SchemaProps{
+				Description: "ProxyConfig defines proxy settings for gardener components",
+				Type:        []string{"object"},
+				Properties: map[string]spec.Schema{
+					"httpProxy": {
+						SchemaProps: spec.SchemaProps{
+							Description: "HttpProxy defines the http proxy to use",
+							Type:        []string{"string"},
+							Format:      "",
+						},
+					},
+					"noProxy": {
+						SchemaProps: spec.SchemaProps{
+							Description: "NoProxy defines the destinations to reach without proxy",
+							Type:        []string{"string"},
+							Format:      "",
+						},
+					},
+				},
+			},
+		},
 	}
 }
 
@@ -9783,12 +9818,18 @@ func schema_pkg_apis_core_v1beta1_Networking(ref common.ReferenceCallback) commo
 							Ref:         ref("github.com/gardener/gardener/pkg/apis/core/v1beta1.FeatureGates"),
 						},
 					},
+					"proxyConfig": {
+						SchemaProps: spec.SchemaProps{
+							Description: "ProxyConfig",
+							Ref:         ref("github.com/gardener/gardener/pkg/apis/core/v1beta1.ProxyConfig"),
+						},
+					},
 				},
 				Required: []string{"type"},
 			},
 		},
 		Dependencies: []string{
-			"github.com/gardener/gardener/pkg/apis/core/v1beta1.FeatureGates", "k8s.io/apimachinery/pkg/runtime.RawExtension"},
+			"github.com/gardener/gardener/pkg/apis/core/v1beta1.FeatureGates", "github.com/gardener/gardener/pkg/apis/core/v1beta1.ProxyConfig", "k8s.io/apimachinery/pkg/runtime.RawExtension"},
 	}
 }
 
@@ -10537,6 +10578,33 @@ func schema_pkg_apis_core_v1beta1_Provider(ref common.ReferenceCallback) common.
 		},
 		Dependencies: []string{
 			"github.com/gardener/gardener/pkg/apis/core/v1beta1.Worker", "k8s.io/apimachinery/pkg/runtime.RawExtension"},
+	}
+}
+
+func schema_pkg_apis_core_v1beta1_ProxyConfig(ref common.ReferenceCallback) common.OpenAPIDefinition {
+	return common.OpenAPIDefinition{
+		Schema: spec.Schema{
+			SchemaProps: spec.SchemaProps{
+				Description: "ProxyConfig defines proxy settings for gardener components",
+				Type:        []string{"object"},
+				Properties: map[string]spec.Schema{
+					"httpProxy": {
+						SchemaProps: spec.SchemaProps{
+							Description: "HttpProxy defines the http proxy to use",
+							Type:        []string{"string"},
+							Format:      "",
+						},
+					},
+					"noProxy": {
+						SchemaProps: spec.SchemaProps{
+							Description: "NoProxy defines the destinations to reach without proxy",
+							Type:        []string{"string"},
+							Format:      "",
+						},
+					},
+				},
+			},
+		},
 	}
 }
 

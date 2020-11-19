@@ -1252,6 +1252,10 @@ message Networking {
   // FeatureGates Some random comment
   // +optional
   optional FeatureGates featureGates = 6;
+
+  // ProxyConfig
+  // +optional
+  optional ProxyConfig proxyConfig = 7;
 }
 
 // NginxIngress describes configuration values for the nginx-ingress addon.
@@ -1518,6 +1522,17 @@ message Provider {
   // +patchMergeKey=name
   // +patchStrategy=merge
   repeated Worker workers = 4;
+}
+
+// ProxyConfig defines proxy settings for gardener components
+message ProxyConfig {
+  // HttpProxy defines the http proxy to use
+  // +optional
+  optional string httpProxy = 1;
+
+  // NoProxy defines the destinations to reach without proxy
+  // +optional
+  optional string noProxy = 2;
 }
 
 message Quota {

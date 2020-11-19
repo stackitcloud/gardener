@@ -648,6 +648,8 @@ func validateNetworking(networking core.Networking, fldPath *field.Path) field.E
 		}
 	}
 
+	// todo for networking.proxyConfig
+
 	return allErrs
 }
 
