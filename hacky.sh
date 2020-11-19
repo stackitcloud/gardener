@@ -48,8 +48,9 @@
 # v1.10.17-ske: Changed APIServer name to fqdn for MCM
 # v1.10.18-ske: Changed APIServer DNS from fqdn to .svc, because APIServer Cert only valid for that
 # v1.10.19-ske: added containerd runtime config
+# v1.10.20-ske: fixed rendering bug
 
-EFFECTIVE_VERSION=v1.10.19-ske
+EFFECTIVE_VERSION=v1.10.20-ske
 REGISTRY=registry.ske.eu01.stackit.cloud/gardener-ds
 APISERVER_IMAGE_REPOSITORY=$REGISTRY/apiserver
 CONROLLER_MANAGER_IMAGE_REPOSITORY=$REGISTRY/controller-manager
