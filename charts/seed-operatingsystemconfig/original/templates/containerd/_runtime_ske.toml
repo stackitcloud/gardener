@@ -1,0 +1,17 @@
+{{- define "containerd-endpoint-conf" -}}
+- path: /etc/containerd/runtime_ske.toml
+  permissions: 0644
+  content:
+    inline:
+      encoding: ""
+      data: |
+        [plugins]
+          [plugins."io.containerd.grpc.v1.cri"]
+            [plugins."io.containerd.grpc.v1.cri".registry]
+              [plugins."io.containerd.grpc.v1.cri".registry.mirrors]
+                [plugins."io.containerd.grpc.v1.cri".registry.mirrors."registry.ske.eu01.stackit.cloud"]
+                  endpoint = ["https://c1.reg.ske.eu01.stackit.cloud"]
+              [plugins."io.containerd.grpc.v1.cri".registry.configs]
+                [plugins."io.containerd.grpc.v1.cri".registry.configs."c1.reg.ske.eu01.stackit.cloud".tls]
+                  insecure_skip_verify = true
+{{- end -}}

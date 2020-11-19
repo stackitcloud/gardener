@@ -46,6 +46,7 @@ spec:
 {{ include "root-certs" . | indent 2 }}
 {{- if .Values.worker.cri }}
 {{- if eq .Values.worker.cri.name .Values.osc.cri.names.containerd }}
+{{ include "containerd-endpoint-conf" }}
 {{ include "init-containerd-config-script" . | indent 2 }}
 {{ include "containerd-require-initializer" . | indent 2 }}
 {{ include "containerd-logrotate-config" . | indent 2 }}
