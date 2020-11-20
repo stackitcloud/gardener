@@ -371,8 +371,20 @@ func (b *Botanist) deployOperatingSystemConfigsForWorker(ctx context.Context, ma
 	}
 
 	if worker.CRI != nil {
+		var endpointConfig []map[string]interface{}
+		if worker.CRI.Endpoints != nil {
+			for _, endpoint := range worker.CRI.Endpoints {
+				endpointConfig = append(endpointConfig, map[string]interface{}{
+					"name":               endpoint.Name,
+					"endpoint":           endpoint.Endpoint,
+					"insecureSkipVerify": endpoint.InsecureSkipVerify,
+				})
+			}
+		}
+
 		workerConfig["cri"] = map[string]interface{}{
-			"name": worker.CRI.Name,
+			"name":      worker.CRI.Name,
+			"endpoints": endpointConfig,
 		}
 		downloaderConfig["cri"] = workerConfig["cri"]
 	}

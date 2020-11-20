@@ -2225,6 +2225,20 @@ CRIName
 <p>ContainerRuntimes is the list of the required container runtimes supported for a worker pool.</p>
 </td>
 </tr>
+<tr>
+<td>
+<code>endpoints</code></br>
+<em>
+<a href="#core.gardener.cloud/v1beta1.RegistryEndpoint">
+[]RegistryEndpoint
+</a>
+</em>
+</td>
+<td>
+<em>(Optional)</em>
+<p>RegistryEndpoint defines a list of registry overrides</p>
+</td>
+</tr>
 </tbody>
 </table>
 <h3 id="core.gardener.cloud/v1beta1.CRIName">CRIName
@@ -6724,6 +6738,59 @@ map[string]string
 <p>Labels is an optional set of key-value pairs that contain certain administrator-controlled labels for this region.
 It can be used by Gardener administrators/operators to provide additional information about a region, e.g. wrt
 quality, reliability, access restrictions, etc.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3 id="core.gardener.cloud/v1beta1.RegistryEndpoint">RegistryEndpoint
+</h3>
+<p>
+(<em>Appears on:</em>
+<a href="#core.gardener.cloud/v1beta1.CRI">CRI</a>)
+</p>
+<p>
+<p>RegistryEndpoint defines a list of registry overrides</p>
+</p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<code>name</code></br>
+<em>
+string
+</em>
+</td>
+<td>
+<p>Name defines the original registry url name</p>
+</td>
+</tr>
+<tr>
+<td>
+<code>endpoint</code></br>
+<em>
+string
+</em>
+</td>
+<td>
+<p>Endpoint defines the endpoint where the image shall be pulled from</p>
+</td>
+</tr>
+<tr>
+<td>
+<code>insecureSkipVerify</code></br>
+<em>
+bool
+</em>
+</td>
+<td>
+<em>(Optional)</em>
+<p>InsecureSkipVerify defines if tls certs shall be verified</p>
 </td>
 </tr>
 </tbody>

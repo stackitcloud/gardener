@@ -1097,6 +1097,20 @@ type CRI struct {
 	// ContainerRuntimes is the list of the required container runtimes supported for a worker pool.
 	// +optional
 	ContainerRuntimes []ContainerRuntime `json:"containerRuntimes,omitempty" protobuf:"bytes,2,rep,name=containerRuntimes"`
+	// RegistryEndpoint defines a list of registry overrides
+	// +optional
+	Endpoints []RegistryEndpoint `json:"endpoints,omitempty" protobuf:"bytes,3,opt,name=endpoints"`
+}
+
+// RegistryEndpoint defines a list of registry overrides
+type RegistryEndpoint struct {
+	// Name defines the original registry url name
+	Name string `json:"name" protobuf:"string,1,opt,name=name"`
+	// Endpoint defines the endpoint where the image shall be pulled from
+	Endpoint string `json:"endpoint" protobuf:"string,2,opt,name=endpoint"`
+	// InsecureSkipVerify defines if tls certs shall be verified
+	// +optional
+	InsecureSkipVerify *bool `json:"insecureSkipVerify,omitempty" protobuf:"bytes,3,opt,name=insecureSkipVerify"`
 }
 
 // CRIName is a type alias for the CRI name string.

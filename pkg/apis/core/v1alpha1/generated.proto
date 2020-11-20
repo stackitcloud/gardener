@@ -227,6 +227,10 @@ message CRI {
   // ContainerRuntimes is the list of the required container runtimes supported for a worker pool.
   // +optional
   repeated ContainerRuntime containerRuntimes = 2;
+
+  // RegistryEndpoint defines a list of registry overrides
+  // +optional
+  repeated RegistryEndpoint endpoints = 3;
 }
 
 // CloudInfo contains information about the cloud
@@ -1584,6 +1588,19 @@ message Region {
   // quality, reliability, access restrictions, etc.
   // +optional
   map<string, string> labels = 3;
+}
+
+// RegistryEndpoint defines a list of registry overrides
+message RegistryEndpoint {
+  // Name defines the original registry url name
+  optional string name = 1;
+
+  // Endpoint defines the endpoint where the image shall be pulled from
+  optional string endpoint = 2;
+
+  // InsecureSkipVerify defines if tls certs shall be verified
+  // +optional
+  optional bool insecureSkipVerify = 3;
 }
 
 // ResourceData holds the data of a resource referred to by an extension controller state.

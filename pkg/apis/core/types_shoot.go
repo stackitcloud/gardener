@@ -883,6 +883,20 @@ type CRI struct {
 	Name CRIName
 	// ContainerRuntimes is the list of the required container runtimes supported for a worker pool.
 	ContainerRuntimes []ContainerRuntime
+	// RegistryEndpoint defines a list of registry overrides
+	// +optional
+	Endpoints []RegistryEndpoint
+}
+
+// RegistryEndpoint defines a list of registry overrides
+type RegistryEndpoint struct {
+	// Name defines the original registry url name
+	Name string
+	// Endpoint defines the endpoint where the image shall be pulled from
+	Endpoint string
+	// InsecureSkipVerify defines if tls certs shall be verified
+	// +optional
+	InsecureSkipVerify *bool
 }
 
 // CRIName is a type alias for the CRI name string.

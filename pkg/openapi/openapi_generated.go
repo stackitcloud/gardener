@@ -127,6 +127,7 @@ func GetOpenAPIDefinitions(ref common.ReferenceCallback) map[string]common.OpenA
 		"github.com/gardener/gardener/pkg/apis/core/v1alpha1.QuotaList":                             schema_pkg_apis_core_v1alpha1_QuotaList(ref),
 		"github.com/gardener/gardener/pkg/apis/core/v1alpha1.QuotaSpec":                             schema_pkg_apis_core_v1alpha1_QuotaSpec(ref),
 		"github.com/gardener/gardener/pkg/apis/core/v1alpha1.Region":                                schema_pkg_apis_core_v1alpha1_Region(ref),
+		"github.com/gardener/gardener/pkg/apis/core/v1alpha1.RegistryEndpoint":                      schema_pkg_apis_core_v1alpha1_RegistryEndpoint(ref),
 		"github.com/gardener/gardener/pkg/apis/core/v1alpha1.ResourceData":                          schema_pkg_apis_core_v1alpha1_ResourceData(ref),
 		"github.com/gardener/gardener/pkg/apis/core/v1alpha1.ResourceWatchCacheSize":                schema_pkg_apis_core_v1alpha1_ResourceWatchCacheSize(ref),
 		"github.com/gardener/gardener/pkg/apis/core/v1alpha1.SecretBinding":                         schema_pkg_apis_core_v1alpha1_SecretBinding(ref),
@@ -260,6 +261,7 @@ func GetOpenAPIDefinitions(ref common.ReferenceCallback) map[string]common.OpenA
 		"github.com/gardener/gardener/pkg/apis/core/v1beta1.QuotaList":                              schema_pkg_apis_core_v1beta1_QuotaList(ref),
 		"github.com/gardener/gardener/pkg/apis/core/v1beta1.QuotaSpec":                              schema_pkg_apis_core_v1beta1_QuotaSpec(ref),
 		"github.com/gardener/gardener/pkg/apis/core/v1beta1.Region":                                 schema_pkg_apis_core_v1beta1_Region(ref),
+		"github.com/gardener/gardener/pkg/apis/core/v1beta1.RegistryEndpoint":                       schema_pkg_apis_core_v1beta1_RegistryEndpoint(ref),
 		"github.com/gardener/gardener/pkg/apis/core/v1beta1.ResourceWatchCacheSize":                 schema_pkg_apis_core_v1beta1_ResourceWatchCacheSize(ref),
 		"github.com/gardener/gardener/pkg/apis/core/v1beta1.SecretBinding":                          schema_pkg_apis_core_v1beta1_SecretBinding(ref),
 		"github.com/gardener/gardener/pkg/apis/core/v1beta1.SecretBindingList":                      schema_pkg_apis_core_v1beta1_SecretBindingList(ref),
@@ -1188,12 +1190,25 @@ func schema_pkg_apis_core_v1alpha1_CRI(ref common.ReferenceCallback) common.Open
 							},
 						},
 					},
+					"endpoints": {
+						SchemaProps: spec.SchemaProps{
+							Description: "RegistryEndpoint defines a list of registry overrides",
+							Type:        []string{"array"},
+							Items: &spec.SchemaOrArray{
+								Schema: &spec.Schema{
+									SchemaProps: spec.SchemaProps{
+										Ref: ref("github.com/gardener/gardener/pkg/apis/core/v1alpha1.RegistryEndpoint"),
+									},
+								},
+							},
+						},
+					},
 				},
 				Required: []string{"name"},
 			},
 		},
 		Dependencies: []string{
-			"github.com/gardener/gardener/pkg/apis/core/v1alpha1.ContainerRuntime"},
+			"github.com/gardener/gardener/pkg/apis/core/v1alpha1.ContainerRuntime", "github.com/gardener/gardener/pkg/apis/core/v1alpha1.RegistryEndpoint"},
 	}
 }
 
@@ -4782,6 +4797,41 @@ func schema_pkg_apis_core_v1alpha1_Region(ref common.ReferenceCallback) common.O
 	}
 }
 
+func schema_pkg_apis_core_v1alpha1_RegistryEndpoint(ref common.ReferenceCallback) common.OpenAPIDefinition {
+	return common.OpenAPIDefinition{
+		Schema: spec.Schema{
+			SchemaProps: spec.SchemaProps{
+				Description: "RegistryEndpoint defines a list of registry overrides",
+				Type:        []string{"object"},
+				Properties: map[string]spec.Schema{
+					"name": {
+						SchemaProps: spec.SchemaProps{
+							Description: "Name defines the original registry url name",
+							Type:        []string{"string"},
+							Format:      "",
+						},
+					},
+					"endpoint": {
+						SchemaProps: spec.SchemaProps{
+							Description: "Endpoint defines the endpoint where the image shall be pulled from",
+							Type:        []string{"string"},
+							Format:      "",
+						},
+					},
+					"insecureSkipVerify": {
+						SchemaProps: spec.SchemaProps{
+							Description: "InsecureSkipVerify defines if tls certs shall be verified",
+							Type:        []string{"boolean"},
+							Format:      "",
+						},
+					},
+				},
+				Required: []string{"name", "endpoint"},
+			},
+		},
+	}
+}
+
 func schema_pkg_apis_core_v1alpha1_ResourceData(ref common.ReferenceCallback) common.OpenAPIDefinition {
 	return common.OpenAPIDefinition{
 		Schema: spec.Schema{
@@ -7295,12 +7345,25 @@ func schema_pkg_apis_core_v1beta1_CRI(ref common.ReferenceCallback) common.OpenA
 							},
 						},
 					},
+					"endpoints": {
+						SchemaProps: spec.SchemaProps{
+							Description: "RegistryEndpoint defines a list of registry overrides",
+							Type:        []string{"array"},
+							Items: &spec.SchemaOrArray{
+								Schema: &spec.Schema{
+									SchemaProps: spec.SchemaProps{
+										Ref: ref("github.com/gardener/gardener/pkg/apis/core/v1beta1.RegistryEndpoint"),
+									},
+								},
+							},
+						},
+					},
 				},
 				Required: []string{"name"},
 			},
 		},
 		Dependencies: []string{
-			"github.com/gardener/gardener/pkg/apis/core/v1beta1.ContainerRuntime"},
+			"github.com/gardener/gardener/pkg/apis/core/v1beta1.ContainerRuntime", "github.com/gardener/gardener/pkg/apis/core/v1beta1.RegistryEndpoint"},
 	}
 }
 
@@ -10794,6 +10857,41 @@ func schema_pkg_apis_core_v1beta1_Region(ref common.ReferenceCallback) common.Op
 		},
 		Dependencies: []string{
 			"github.com/gardener/gardener/pkg/apis/core/v1beta1.AvailabilityZone"},
+	}
+}
+
+func schema_pkg_apis_core_v1beta1_RegistryEndpoint(ref common.ReferenceCallback) common.OpenAPIDefinition {
+	return common.OpenAPIDefinition{
+		Schema: spec.Schema{
+			SchemaProps: spec.SchemaProps{
+				Description: "RegistryEndpoint defines a list of registry overrides",
+				Type:        []string{"object"},
+				Properties: map[string]spec.Schema{
+					"name": {
+						SchemaProps: spec.SchemaProps{
+							Description: "Name defines the original registry url name",
+							Type:        []string{"string"},
+							Format:      "",
+						},
+					},
+					"endpoint": {
+						SchemaProps: spec.SchemaProps{
+							Description: "Endpoint defines the endpoint where the image shall be pulled from",
+							Type:        []string{"string"},
+							Format:      "",
+						},
+					},
+					"insecureSkipVerify": {
+						SchemaProps: spec.SchemaProps{
+							Description: "InsecureSkipVerify defines if tls certs shall be verified",
+							Type:        []string{"boolean"},
+							Format:      "",
+						},
+					},
+				},
+				Required: []string{"name", "endpoint"},
+			},
+		},
 	}
 }
 
