@@ -52,8 +52,9 @@
 # v1.10.21-ske: added containerd RegistryEndpoint to worker config
 # v1.10.22-ske: set InsecureSkipVerify protobuf to varint
 # v1.10.23-ske: added proxy attributes for etcd backup  to controlplane.go, etcd.yaml, values.yaml
+# v1.10.24-ske: Added null check for ProxyConfig in controlplane.go
 
-EFFECTIVE_VERSION=v1.10.23-ske
+EFFECTIVE_VERSION=v1.10.24-ske
 REGISTRY=registry.ske.eu01.stackit.cloud/gardener-ds
 APISERVER_IMAGE_REPOSITORY=$REGISTRY/apiserver
 CONROLLER_MANAGER_IMAGE_REPOSITORY=$REGISTRY/controller-manager
