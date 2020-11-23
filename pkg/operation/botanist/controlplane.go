@@ -1575,6 +1575,13 @@ func (b *Botanist) DeployETCD(ctx context.Context) error {
 					return err
 				}
 
+				var httpProxy *string = nil
+				var noProxy *string = nil
+				if b.Shoot.Info.Spec.Networking.ProxyConfig != nil {
+					httpProxy = b.Shoot.Info.Spec.Networking.ProxyConfig.HttpProxy
+					noProxy = b.Shoot.Info.Spec.Networking.ProxyConfig.NoProxy
+				}
+
 				sidecarValues["backup"] = map[string]interface{}{
 					"provider":                 b.Seed.Info.Spec.Backup.Provider,
 					"secretRefName":            common.BackupSecretName,
@@ -1583,8 +1590,8 @@ func (b *Botanist) DeployETCD(ctx context.Context) error {
 					"fullSnapshotSchedule":     snapshotSchedule,
 					"deltaSnapshotMemoryLimit": "100Mi",
 					"deltaSnapshotPeriod":      "5m",
-					"httpProxy":                b.Shoot.Info.Spec.Networking.ProxyConfig.HttpProxy,
-					"noProxy":                  b.Shoot.Info.Spec.Networking.ProxyConfig.NoProxy,
+					"httpProxy":                httpProxy,
+					"noProxy":                  noProxy,
 				}
 			}
 
