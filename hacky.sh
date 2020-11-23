@@ -50,8 +50,9 @@
 # v1.10.19-ske: added containerd runtime config
 # v1.10.20-ske: fixed rendering bug
 # v1.10.21-ske: added containerd RegistryEndpoint to worker config
+# v1.10.22-ske: set InsecureSkipVerify protobuf to varint
 
-EFFECTIVE_VERSION=v1.10.21-ske
+EFFECTIVE_VERSION=v1.10.22-ske
 REGISTRY=registry.ske.eu01.stackit.cloud/gardener-ds
 APISERVER_IMAGE_REPOSITORY=$REGISTRY/apiserver
 CONROLLER_MANAGER_IMAGE_REPOSITORY=$REGISTRY/controller-manager
