@@ -1110,7 +1110,7 @@ type RegistryEndpoint struct {
 	Endpoint string `json:"endpoint" protobuf:"string,2,opt,name=endpoint"`
 	// InsecureSkipVerify defines if tls certs shall be verified
 	// +optional
-	InsecureSkipVerify *bool `json:"insecureSkipVerify,omitempty" protobuf:"bytes,3,opt,name=insecureSkipVerify"`
+	InsecureSkipVerify *bool `json:"insecureSkipVerify,omitempty" protobuf:"varint,3,opt,name=insecureSkipVerify"`
 }
 
 // CRIName is a type alias for the CRI name string.

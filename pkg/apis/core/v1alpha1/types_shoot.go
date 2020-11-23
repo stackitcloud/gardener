@@ -1102,7 +1102,7 @@ type CRI struct {
 	ContainerRuntimes []ContainerRuntime `json:"containerRuntimes,omitempty" protobuf:"bytes,2,rep,name=containerRuntimes"`
 	// RegistryEndpoint defines a list of registry overrides
 	// +optional
-	Endpoints []RegistryEndpoint `json:"endpoints,omitempty" protobuf:"bytes,3,opt,name=endpoints"`
+	Endpoints []RegistryEndpoint `json:"endpoints,omitempty" protobuf:"varint,3,opt,name=endpoints"`
 }
 
 // RegistryEndpoint defines a list of registry overrides
