@@ -32,6 +32,8 @@ sidecar:
   quota: 8Gi
   garbageCollectionPeriod: 12h
   garbageCollectionPolicy: Exponential
+#  httpProxy: asd
+#  noProxy: noasd
 # backup:
 #   provider: aws
 #   container: temp

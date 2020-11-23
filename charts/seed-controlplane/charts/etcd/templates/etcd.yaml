@@ -60,6 +60,12 @@ spec:
     quota: {{ .Values.sidecar.quota }}
     garbageCollectionPolicy: {{ .Values.sidecar.garbageCollectionPolicy }}
     garbageCollectionPeriod: {{ .Values.sidecar.garbageCollectionPeriod }}
+{{- if .Values.sidecar.httpProxy }}
+    httpProxy: {{ .Values.sidecar.httpProxy }}
+{{- end }}
+{{- if .Values.sidecar.noProxy }}
+    noProxy: {{ .Values.sidecar.noProxy }}
+{{- end }}
 {{- if .Values.sidecar.backup }}
     store:
       secretRef:

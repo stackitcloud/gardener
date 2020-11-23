@@ -1583,6 +1583,8 @@ func (b *Botanist) DeployETCD(ctx context.Context) error {
 					"fullSnapshotSchedule":     snapshotSchedule,
 					"deltaSnapshotMemoryLimit": "100Mi",
 					"deltaSnapshotPeriod":      "5m",
+					"httpProxy":                b.Shoot.Info.Spec.Networking.ProxyConfig.HttpProxy,
+					"noProxy":                  b.Shoot.Info.Spec.Networking.ProxyConfig.NoProxy,
 				}
 			}
 
