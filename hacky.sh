@@ -54,8 +54,9 @@
 # v1.10.23-ske: added proxy attributes for etcd backup  to controlplane.go, etcd.yaml, values.yaml
 # v1.10.24-ske: Added null check for ProxyConfig in controlplane.go
 # v1.10.25-ske: fixed silly bug
+# v1.10.26-ske: added http_proxy to ctr image pull
 
-EFFECTIVE_VERSION=v1.10.25-ske
+EFFECTIVE_VERSION=v1.10.26-ske
 REGISTRY=registry.ske.eu01.stackit.cloud/gardener-ds
 APISERVER_IMAGE_REPOSITORY=$REGISTRY/apiserver
 CONROLLER_MANAGER_IMAGE_REPOSITORY=$REGISTRY/controller-manager
