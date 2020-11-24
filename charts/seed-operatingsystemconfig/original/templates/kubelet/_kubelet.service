@@ -23,7 +23,7 @@
     EnvironmentFile=-/var/lib/kubelet/extra_args
     {{- if .Values.worker.cri }}
     {{- if eq .Values.worker.cri.name "containerd" }}
-    ExecStartPre=/bin/sh -c '/usr/bin/ctr i pull {{ required "images.hyperkube is required" .Values.images.hyperkube }} && /usr/bin/ctr run --rm --mount type=bind,src=/opt/bin,dst=/opt/bin/,options=rbind:rw {{ required "images.hyperkube is required" .Values.images.hyperkube }} annemarie cp /kubelet /opt/bin/'
+    ExecStartPre=/bin/sh -c 'http_proxy="c1.reg.ske.eu01.stackit.cloud:8118" /usr/bin/ctr i pull {{ required "images.hyperkube is required" .Values.images.hyperkube }} && /usr/bin/ctr run --rm --mount type=bind,src=/opt/bin,dst=/opt/bin/,options=rbind:rw {{ required "images.hyperkube is required" .Values.images.hyperkube }} annemarie cp /kubelet /opt/bin/'
     {{- end }}
     {{- else }}
     {{- if semverCompare "< 1.17" .Values.kubernetes.version }}
