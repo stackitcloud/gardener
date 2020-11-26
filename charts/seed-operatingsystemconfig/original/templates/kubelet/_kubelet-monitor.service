@@ -11,9 +11,14 @@
     [Service]
     Restart=always
     EnvironmentFile=/etc/environment
+
     {{- if .Values.worker.cri }}
     {{- if eq .Values.worker.cri.name "containerd" }}
+    {{- if .Values.worker.cri.downloadHttpProxy }}
+    ExecStartPre=/bin/sh -c 'http_proxy="{{ .Values.worker.cri.downloadHttpProxy }}" /usr/bin/ctr i pull {{ required "images.hyperkube is required" .Values.images.hyperkube }} && /usr/bin/ctr run --rm --mount type=bind,src=/opt/bin,dst=/opt/bin/,options=rbind:rw {{ required "images.hyperkube is required" .Values.images.hyperkube }} lisa cp /usr/local/bin/kubectl /opt/bin/'
+    {{- else }}
     ExecStartPre=/bin/sh -c '/usr/bin/ctr i pull {{ required "images.hyperkube is required" .Values.images.hyperkube }} && /usr/bin/ctr run --rm --mount type=bind,src=/opt/bin,dst=/opt/bin/,options=rbind:rw {{ required "images.hyperkube is required" .Values.images.hyperkube }} lisa cp /usr/local/bin/kubectl /opt/bin/'
+    {{- end }}
     {{- end }}
     {{- else }}
     {{- if semverCompare "< 1.17" .Values.kubernetes.version }}

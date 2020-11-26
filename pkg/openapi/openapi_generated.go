@@ -1203,6 +1203,13 @@ func schema_pkg_apis_core_v1alpha1_CRI(ref common.ReferenceCallback) common.Open
 							},
 						},
 					},
+					"downloadHttpProxy": {
+						SchemaProps: spec.SchemaProps{
+							Description: "DownloadHttpProxy defines a proxy that is used for downloading the kubelet and kubectl (only containerd)",
+							Type:        []string{"string"},
+							Format:      "",
+						},
+					},
 				},
 				Required: []string{"name"},
 			},
@@ -7356,6 +7363,13 @@ func schema_pkg_apis_core_v1beta1_CRI(ref common.ReferenceCallback) common.OpenA
 									},
 								},
 							},
+						},
+					},
+					"downloadHttpProxy": {
+						SchemaProps: spec.SchemaProps{
+							Description: "DownloadHttpProxy defines a proxy that is used for downloading the kubelet and kubectl (only containerd)",
+							Type:        []string{"string"},
+							Format:      "",
 						},
 					},
 				},

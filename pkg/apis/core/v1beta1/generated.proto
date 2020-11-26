@@ -230,6 +230,10 @@ message CRI {
   // RegistryEndpoint defines a list of registry overrides
   // +optional
   repeated RegistryEndpoint endpoints = 3;
+
+  // DownloadHttpProxy defines a proxy that is used for downloading the kubelet and kubectl (only containerd)
+  // +optional
+  optional string downloadHttpProxy = 4;
 }
 
 // CloudInfo contains information about the cloud

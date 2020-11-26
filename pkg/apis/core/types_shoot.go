@@ -886,6 +886,9 @@ type CRI struct {
 	// RegistryEndpoint defines a list of registry overrides
 	// +optional
 	Endpoints []RegistryEndpoint
+	// DownloadHttpProxy defines a proxy that is used for downloading the kubelet and kubectl (only containerd)
+	// +optional
+	DownloadHttpProxy *string
 }
 
 // RegistryEndpoint defines a list of registry overrides

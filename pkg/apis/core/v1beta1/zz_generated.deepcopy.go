@@ -446,6 +446,11 @@ func (in *CRI) DeepCopyInto(out *CRI) {
 			(*in)[i].DeepCopyInto(&(*out)[i])
 		}
 	}
+	if in.DownloadHttpProxy != nil {
+		in, out := &in.DownloadHttpProxy, &out.DownloadHttpProxy
+		*out = new(string)
+		**out = **in
+	}
 	return
 }
 

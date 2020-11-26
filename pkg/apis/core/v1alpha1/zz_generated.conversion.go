@@ -1791,6 +1791,7 @@ func autoConvert_v1alpha1_CRI_To_core_CRI(in *CRI, out *core.CRI, s conversion.S
 	out.Name = core.CRIName(in.Name)
 	out.ContainerRuntimes = *(*[]core.ContainerRuntime)(unsafe.Pointer(&in.ContainerRuntimes))
 	out.Endpoints = *(*[]core.RegistryEndpoint)(unsafe.Pointer(&in.Endpoints))
+	out.DownloadHttpProxy = (*string)(unsafe.Pointer(in.DownloadHttpProxy))
 	return nil
 }
 
@@ -1803,6 +1804,7 @@ func autoConvert_core_CRI_To_v1alpha1_CRI(in *core.CRI, out *CRI, s conversion.S
 	out.Name = CRIName(in.Name)
 	out.ContainerRuntimes = *(*[]ContainerRuntime)(unsafe.Pointer(&in.ContainerRuntimes))
 	out.Endpoints = *(*[]RegistryEndpoint)(unsafe.Pointer(&in.Endpoints))
+	out.DownloadHttpProxy = (*string)(unsafe.Pointer(in.DownloadHttpProxy))
 	return nil
 }
 

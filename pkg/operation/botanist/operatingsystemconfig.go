@@ -383,8 +383,9 @@ func (b *Botanist) deployOperatingSystemConfigsForWorker(ctx context.Context, ma
 		}
 
 		workerConfig["cri"] = map[string]interface{}{
-			"name":      worker.CRI.Name,
-			"endpoints": endpointConfig,
+			"name":              worker.CRI.Name,
+			"endpoints":         endpointConfig,
+			"downloadHttpProxy": worker.CRI.DownloadHttpProxy,
 		}
 		downloaderConfig["cri"] = workerConfig["cri"]
 	}
