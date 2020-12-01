@@ -4,3 +4,4 @@ enableSNI: false
 annotations: {}
 enableKonnectivityTunnel: false
 name: kube-apiserver
+ipFamily: IPv4

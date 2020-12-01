@@ -54,7 +54,7 @@ func NewKubeAPIService(
 	waiter retry.Ops,
 	clusterIPFunc func(clusterIP string),
 	ingressFunc func(ingressIP string),
-
+	ipFamily corev1.IPFamily,
 ) component.DeployWaiter {
 	if waiter == nil {
 		waiter = retry.DefaultOps()
@@ -76,6 +76,7 @@ func NewKubeAPIService(
 	if values != nil {
 		internalValues.Annotations = values.Annotations
 		internalValues.EnableKonnectivityTunnel = values.KonnectivityTunnelEnabled
+		internalValues.IPFamily = string(ipFamily)
 	}
 
 	return &kubeAPIService{
@@ -163,6 +164,7 @@ type kubeAPIServiceValues struct {
 	EnableKonnectivityTunnel bool              `json:"enableKonnectivityTunnel,omitempty"`
 	Name                     string            `json:"name,omitempty"`
 	Annotations              map[string]string `json:"annotations,omitempty"`
+	IPFamily                 string            `json:"ipFamily,omitempty"`
 }
 
 type kubeAPIService struct {

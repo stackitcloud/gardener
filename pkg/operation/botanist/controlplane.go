@@ -1369,6 +1369,11 @@ func (b *Botanist) DefaultKubeAPIServerService() component.DeployWaiter {
 		sniService = &client.ObjectKey{Name: common.IstioIngressGatewayServiceName, Namespace: common.IstioIngressGatewayNamespace}
 	}
 
+	ipFamily := corev1.IPv4Protocol
+	if b.Seed.LoadBalancerServiceAnnotations["ske.ipFamily"] == "IPv6" {
+		ipFamily = corev1.IPv6Protocol
+	}
+
 	return controlplane.NewKubeAPIService(
 		&controlplane.KubeAPIServiceValues{
 			Annotations:               b.Seed.LoadBalancerServiceAnnotations,
@@ -1383,6 +1388,7 @@ func (b *Botanist) DefaultKubeAPIServerService() component.DeployWaiter {
 		nil,
 		b.setAPIServerServiceClusterIP,
 		func(address string) { b.setAPIServerAddress(address, b.K8sSeedClient.DirectClient()) },
+		ipFamily,
 	)
 }
 
