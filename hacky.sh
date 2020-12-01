@@ -58,9 +58,10 @@
 # v1.10.27-ske: http_proxy to ctr image pull via shoot object
 # v1.10.28-ske: http_proxy to ctr image pull via shoot object (with make generate)
 # v1.10.29-ske: fixed silly bug
-# v1.10.30-ske: added omitempty to shoot.spec.worker.cri.omitempty
+# v1.10.30-ske: added omitempty to shoot.spec.worker.cri.downloadHttpProxy
+# v1.10.31-ske: added ipFamily to apiserver-service
 
-EFFECTIVE_VERSION=v1.10.30-ske
+EFFECTIVE_VERSION=v1.10.31-ske
 REGISTRY=registry.ske.eu01.stackit.cloud/gardener-ds
 APISERVER_IMAGE_REPOSITORY=$REGISTRY/apiserver
 CONROLLER_MANAGER_IMAGE_REPOSITORY=$REGISTRY/controller-manager
