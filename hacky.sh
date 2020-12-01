@@ -60,8 +60,9 @@
 # v1.10.29-ske: fixed silly bug
 # v1.10.30-ske: added omitempty to shoot.spec.worker.cri.downloadHttpProxy
 # v1.10.31-ske: added ipFamily to apiserver-service
+# v1.10.32-ske: Add all IPv6 traffic to shoot api-server
 
-EFFECTIVE_VERSION=v1.10.31-ske
+EFFECTIVE_VERSION=v1.10.32-ske
 REGISTRY=registry.ske.eu01.stackit.cloud/gardener-ds
 APISERVER_IMAGE_REPOSITORY=$REGISTRY/apiserver
 CONROLLER_MANAGER_IMAGE_REPOSITORY=$REGISTRY/controller-manager
