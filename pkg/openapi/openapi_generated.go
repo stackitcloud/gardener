@@ -4579,12 +4579,26 @@ func schema_pkg_apis_core_v1alpha1_Provider(ref common.ReferenceCallback) common
 							},
 						},
 					},
+					"componentResources": {
+						SchemaProps: spec.SchemaProps{
+							Description: "ComponentResources",
+							Type:        []string{"object"},
+							AdditionalProperties: &spec.SchemaOrBool{
+								Allows: true,
+								Schema: &spec.Schema{
+									SchemaProps: spec.SchemaProps{
+										Ref: ref("k8s.io/api/core/v1.ResourceRequirements"),
+									},
+								},
+							},
+						},
+					},
 				},
 				Required: []string{"type", "workers"},
 			},
 		},
 		Dependencies: []string{
-			"github.com/gardener/gardener/pkg/apis/core/v1alpha1.Worker", "k8s.io/apimachinery/pkg/runtime.RawExtension"},
+			"github.com/gardener/gardener/pkg/apis/core/v1alpha1.Worker", "k8s.io/api/core/v1.ResourceRequirements", "k8s.io/apimachinery/pkg/runtime.RawExtension"},
 	}
 }
 
@@ -10649,12 +10663,26 @@ func schema_pkg_apis_core_v1beta1_Provider(ref common.ReferenceCallback) common.
 							},
 						},
 					},
+					"componentResources": {
+						SchemaProps: spec.SchemaProps{
+							Description: "ComponentResources",
+							Type:        []string{"object"},
+							AdditionalProperties: &spec.SchemaOrBool{
+								Allows: true,
+								Schema: &spec.Schema{
+									SchemaProps: spec.SchemaProps{
+										Ref: ref("k8s.io/api/core/v1.ResourceRequirements"),
+									},
+								},
+							},
+						},
+					},
 				},
 				Required: []string{"type", "workers"},
 			},
 		},
 		Dependencies: []string{
-			"github.com/gardener/gardener/pkg/apis/core/v1beta1.Worker", "k8s.io/apimachinery/pkg/runtime.RawExtension"},
+			"github.com/gardener/gardener/pkg/apis/core/v1beta1.Worker", "k8s.io/api/core/v1.ResourceRequirements", "k8s.io/apimachinery/pkg/runtime.RawExtension"},
 	}
 }
 

@@ -761,6 +761,8 @@ type Provider struct {
 	InfrastructureConfig *runtime.RawExtension
 	// Workers is a list of worker groups.
 	Workers []Worker
+	// ComponentResources
+	ComponentResources map[string]corev1.ResourceRequirements
 }
 
 // Worker is the base definition of a worker group.
