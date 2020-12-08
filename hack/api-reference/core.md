@@ -6540,6 +6540,20 @@ definition in the documentation of your provider extension.</p>
 <p>Workers is a list of worker groups.</p>
 </td>
 </tr>
+<tr>
+<td>
+<code>componentResources</code></br>
+<em>
+<a href="https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.15/#resourcerequirements-v1-core">
+map[string]k8s.io/api/core/v1.ResourceRequirements
+</a>
+</em>
+</td>
+<td>
+<em>(Optional)</em>
+<p>ComponentResources</p>
+</td>
+</tr>
 </tbody>
 </table>
 <h3 id="core.gardener.cloud/v1beta1.ProxyMode">ProxyMode

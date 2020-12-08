@@ -3727,6 +3727,7 @@ func autoConvert_v1alpha1_Provider_To_core_Provider(in *Provider, out *core.Prov
 	} else {
 		out.Workers = nil
 	}
+	out.ComponentResources = *(*map[string]v1.ResourceRequirements)(unsafe.Pointer(&in.ComponentResources))
 	return nil
 }
 
@@ -3750,6 +3751,7 @@ func autoConvert_core_Provider_To_v1alpha1_Provider(in *core.Provider, out *Prov
 	} else {
 		out.Workers = nil
 	}
+	out.ComponentResources = *(*map[string]v1.ResourceRequirements)(unsafe.Pointer(&in.ComponentResources))
 	return nil
 }
 
