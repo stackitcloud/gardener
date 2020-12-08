@@ -2659,6 +2659,13 @@ func (in *Provider) DeepCopyInto(out *Provider) {
 			(*in)[i].DeepCopyInto(&(*out)[i])
 		}
 	}
+	if in.ComponentResources != nil {
+		in, out := &in.ComponentResources, &out.ComponentResources
+		*out = make(map[string]v1.ResourceRequirements, len(*in))
+		for key, val := range *in {
+			(*out)[key] = *val.DeepCopy()
+		}
+	}
 	return
 }
 

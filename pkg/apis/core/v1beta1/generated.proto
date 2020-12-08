@@ -1482,6 +1482,10 @@ message Provider {
   // +patchMergeKey=name
   // +patchStrategy=merge
   repeated Worker workers = 4;
+
+  // ComponentResources
+  // +optional
+  map<string, k8s.io.api.core.v1.ResourceRequirements> componentResources = 5;
 }
 
 message Quota {
