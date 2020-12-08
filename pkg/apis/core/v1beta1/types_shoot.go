@@ -932,6 +932,9 @@ type Provider struct {
 	// +patchMergeKey=name
 	// +patchStrategy=merge
 	Workers []Worker `json:"workers" patchStrategy:"merge" patchMergeKey:"name" protobuf:"bytes,4,rep,name=workers"`
+	// ComponentResources
+	// +optional
+	ComponentResources map[string]corev1.ResourceRequirements `json:"componentResources,omitempty" protobuf:"bytes,5,rep,name=componentResources"`
 }
 
 // Worker is the base definition of a worker group.
