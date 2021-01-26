@@ -358,6 +358,7 @@ func prepareSeedConfig(ctx context.Context, gardenClient client.Client, seedClie
 			},
 			VerticalPodAutoscaler: &gardencorev1beta1.SeedSettingVerticalPodAutoscaler{
 				Enabled: vpaEnabled,
+				GardenletMinAllowed: shootedSeedConfig.VerticalAutoscalerSettings.GardenletMinAllowed,
 			},
 			LoadBalancerServices: &gardencorev1beta1.SeedSettingLoadBalancerServices{
 				Annotations: shootedSeedConfig.LoadBalancerAnnotations,
@@ -639,7 +640,15 @@ func deployGardenlet(ctx context.Context, gardenClient, seedClient, shootedSeedC
 					"tag":        tag,
 				},
 				"revisionHistoryLimit":           0,
-				"vpa":                            true,
+				"vpa":                            map[string]interface{}{
+					"enabled": seedSpec.Settings.VerticalPodAutoscaler.Enabled,
+					"resourcePolicy": map[string]interface{}{
+						"minAllowed": map[string]interface{}{
+							"cpu":  seedSpec.Settings.VerticalPodAutoscaler.GardenletMinAllowed.Cpu,
+							"memory": seedSpec.Settings.VerticalPodAutoscaler.GardenletMinAllowed.Memory,
+						},
+					},
+				},
 				"imageVectorOverwrite":           imageVectorOverwrite,
 				"componentImageVectorOverwrites": componentImageVectorOverwrites,
 				"config": map[string]interface{}{

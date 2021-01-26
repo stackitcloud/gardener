@@ -265,6 +265,7 @@ type ShootedSeed struct {
 	UseServiceAccountBootstrapping bool
 	WithSecretRef                  bool
 	LoadBalancerAnnotations        map[string]string
+	VerticalAutoscalerSettings     *gardencorev1beta1.SeedSettingVerticalPodAutoscaler
 }
 
 type ShootedSeedAPIServer struct {
@@ -339,6 +340,12 @@ func parseShootedSeed(annotation string) (*ShootedSeed, error) {
 		return nil, err
 	}
 	shootedSeed.LoadBalancerAnnotations = loadBalancerAnnotations
+
+	verticalAutoscalerSettings, err := parseShootedSeedVerticalAutoscalerSettings(settings)
+	if err != nil {
+		return nil, err
+	}
+	shootedSeed.VerticalAutoscalerSettings = verticalAutoscalerSettings
 
 	if size, ok := settings["minimumVolumeSize"]; ok {
 		shootedSeed.MinimumVolumeSize = &size
@@ -503,6 +510,29 @@ func parseShootedSeedAPIServerAutoscaler(settings map[string]string) (*ShootedSe
 
 	return &apiServerAutoscaler, nil
 }
+
+func parseShootedSeedVerticalAutoscalerSettings(settings map[string]string) (*gardencorev1beta1.SeedSettingVerticalPodAutoscaler, error) {
+	var (
+
+		gardenletMinAllowedCpu, ok1 = settings["vpa.gardenletMinAllowed.cpu"]
+		gardenletMinAllowedMemory, ok2 = settings["vpa.gardenletMinAllowed.memory"]
+	)
+
+
+	verticalPodAutoscaler := &gardencorev1beta1.SeedSettingVerticalPodAutoscaler{}
+    if ok1 || ok2 {
+    	verticalPodAutoscaler.GardenletMinAllowed = gardencorev1beta1.SeedSettingVerticalPodAutoscalerMinAllowed{}
+	}
+	if ok1 {
+		verticalPodAutoscaler.GardenletMinAllowed.Cpu = gardenletMinAllowedCpu
+	}
+
+	if ok2 {
+		verticalPodAutoscaler.GardenletMinAllowed.Memory = gardenletMinAllowedMemory
+	}
+	return verticalPodAutoscaler, nil
+}
+
 
 func validateShootedSeed(shootedSeed *ShootedSeed, fldPath *field.Path) field.ErrorList {
 	allErrs := field.ErrorList{}
