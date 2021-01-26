@@ -521,7 +521,7 @@ func parseShootedSeedVerticalAutoscalerSettings(settings map[string]string) (*ga
 
 	verticalPodAutoscaler := &gardencorev1beta1.SeedSettingVerticalPodAutoscaler{}
     if ok1 || ok2 {
-    	verticalPodAutoscaler.GardenletMinAllowed = gardencorev1beta1.SeedSettingVerticalPodAutoscalerMinAllowed{}
+    	verticalPodAutoscaler.GardenletMinAllowed = &gardencorev1beta1.SeedSettingVerticalPodAutoscalerMinAllowed{}
 	}
 	if ok1 {
 		verticalPodAutoscaler.GardenletMinAllowed.Cpu = gardenletMinAllowedCpu

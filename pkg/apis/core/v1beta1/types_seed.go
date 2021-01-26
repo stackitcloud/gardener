@@ -221,16 +221,18 @@ type SeedSettingVerticalPodAutoscaler struct {
 	Enabled bool `json:"enabled" protobuf:"bytes,1,opt,name=enabled"`
 	// GardenletMinAllowed set the VPA minAllowed settings for the gardenlet
 	// +optional
-	GardenletMinAllowed SeedSettingVerticalPodAutoscalerMinAllowed `json:"gardenletMinAllowed,omitempty" protobuf:"bytes,2,opt,name=gardenletMinAllowed"`
+	GardenletMinAllowed *SeedSettingVerticalPodAutoscalerMinAllowed `json:"gardenletMinAllowed,omitempty" protobuf:"bytes,2,opt,name=gardenletMinAllowed"`
 }
 
 // SeedSettingVerticalPodAutoscalerMinAllowed controls certain settings for the vertical pod autoscaler minAllowed values
 // seed.
 type SeedSettingVerticalPodAutoscalerMinAllowed struct {
 	// Memory Set the minAllowed memory for a component
-	Memory string `json:"memory" protobuf:"bytes,1,opt,name=memory"`
+	// +optional
+	Memory string `json:"memory,omitempty" protobuf:"bytes,1,opt,name=memory"`
 	// Cpu Set the minAllowed cpu for a component
-	Cpu string `json:"cpu" protobuf:"bytes,2,opt,name=cpu"`
+	// +optional
+	Cpu string `json:"cpu,omitempty" protobuf:"bytes,2,opt,name=cpu"`
 }
 
 // SeedTaint describes a taint on a seed.

@@ -7320,6 +7320,64 @@ is enabled by default because Gardener heavily relies on a VPA being deployed. Y
 your seed cluster already has another, manually/custom managed VPA deployment.</p>
 </td>
 </tr>
+<tr>
+<td>
+<code>gardenletMinAllowed</code></br>
+<em>
+<a href="#core.gardener.cloud/v1beta1.SeedSettingVerticalPodAutoscalerMinAllowed">
+SeedSettingVerticalPodAutoscalerMinAllowed
+</a>
+</em>
+</td>
+<td>
+<em>(Optional)</em>
+<p>GardenletMinAllowed set the VPA minAllowed settings for the gardenlet</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3 id="core.gardener.cloud/v1beta1.SeedSettingVerticalPodAutoscalerMinAllowed">SeedSettingVerticalPodAutoscalerMinAllowed
+</h3>
+<p>
+(<em>Appears on:</em>
+<a href="#core.gardener.cloud/v1beta1.SeedSettingVerticalPodAutoscaler">SeedSettingVerticalPodAutoscaler</a>)
+</p>
+<p>
+<p>SeedSettingVerticalPodAutoscalerMinAllowed controls certain settings for the vertical pod autoscaler minAllowed values
+seed.</p>
+</p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<code>memory</code></br>
+<em>
+string
+</em>
+</td>
+<td>
+<em>(Optional)</em>
+<p>Memory Set the minAllowed memory for a component</p>
+</td>
+</tr>
+<tr>
+<td>
+<code>cpu</code></br>
+<em>
+string
+</em>
+</td>
+<td>
+<em>(Optional)</em>
+<p>Cpu Set the minAllowed cpu for a component</p>
+</td>
+</tr>
 </tbody>
 </table>
 <h3 id="core.gardener.cloud/v1beta1.SeedSettings">SeedSettings

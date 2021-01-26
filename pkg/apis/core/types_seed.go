@@ -196,6 +196,17 @@ type SeedSettingVerticalPodAutoscaler struct {
 	// is enabled by default because Gardener heavily relies on a VPA being deployed. You should only disable this if
 	// your seed cluster already has another, manually/custom managed VPA deployment.
 	Enabled bool
+	// GardenletMinAllowed set the VPA minAllowed settings for the gardenlet
+	GardenletMinAllowed *SeedSettingVerticalPodAutoscalerMinAllowed
+}
+
+// SeedSettingVerticalPodAutoscalerMinAllowed controls certain settings for the vertical pod autoscaler minAllowed values
+// seed.
+type SeedSettingVerticalPodAutoscalerMinAllowed struct {
+	// Memory Set the minAllowed memory for a component
+	Memory string
+	// Cpu Set the minAllowed cpu for a component
+	Cpu string
 }
 
 // SeedTaint describes a taint on a seed.
