@@ -6,6 +6,16 @@ metadata:
   labels:
     app: gardener-resource-manager
 spec:
+  {{- if .Values.gardenerResourceManager.vpa }}
+  {{- if .Values.gardenerResourceManager.vpa.resourcePolicy }}
+  resourcePolicy:
+    containerPolicies:
+      - containerName: '*'
+        minAllowed:
+          cpu: {{ required ".Values.gardenerResourceManager.vpa.resourcePolicy.minAllowed.cpu is required" .Values.gardenerResourceManager.vpa.resourcePolicy.minAllowed.cpu }}
+          memory: {{ required ".Values.gardenerResourceManager.vpa.resourcePolicy.minAllowed.memory is required" .Values.gardenerResourceManager.vpa.resourcePolicy.minAllowed.memory }}
+  {{- end }}
+  {{- end }}
   targetRef:
     apiVersion: {{ include "deploymentversion" . }}
     kind: Deployment

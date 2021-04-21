@@ -357,8 +357,17 @@ func prepareSeedConfig(ctx context.Context, gardenClient client.Client, seedClie
 				Enabled: shootedSeedConfig.DisableDNS == nil || !*shootedSeedConfig.DisableDNS,
 			},
 			VerticalPodAutoscaler: &gardencorev1beta1.SeedSettingVerticalPodAutoscaler{
-				Enabled: vpaEnabled,
-				GardenletMinAllowed: shootedSeedConfig.VerticalAutoscalerSettings.GardenletMinAllowed,
+				Enabled:                                   vpaEnabled,
+				UpdaterInterval:                           shootedSeedConfig.VerticalAutoscalerSettings.UpdaterInterval,
+				UpdaterEvictAfterOOMThreshold:             shootedSeedConfig.VerticalAutoscalerSettings.UpdaterEvictAfterOOMThreshold,
+				GardenletMinAllowed:                       shootedSeedConfig.VerticalAutoscalerSettings.GardenletMinAllowed,
+				GardenerResourceManagerMinAllowed:         shootedSeedConfig.VerticalAutoscalerSettings.GardenerResourceManagerMinAllowed,
+				GardenerSeedAdmissionControllerMinAllowed: shootedSeedConfig.VerticalAutoscalerSettings.GardenerSeedAdmissionControllerMinAllowed,
+				AggregatePrometheusMinAllowed:             shootedSeedConfig.VerticalAutoscalerSettings.AggregatePrometheusMinAllowed,
+				VpaUpdaterMinAllowed:                      shootedSeedConfig.VerticalAutoscalerSettings.VpaUpdaterMinAllowed,
+				VpaRecommenderMinAllowed:                  shootedSeedConfig.VerticalAutoscalerSettings.VpaRecommenderMinAllowed,
+				VpaExporterMinAllowed:                     shootedSeedConfig.VerticalAutoscalerSettings.VpaExporterMinAllowed,
+				VpaAdmissionControllerMinAllowed:          shootedSeedConfig.VerticalAutoscalerSettings.VpaAdmissionControllerMinAllowed,
 			},
 			LoadBalancerServices: &gardencorev1beta1.SeedSettingLoadBalancerServices{
 				Annotations: shootedSeedConfig.LoadBalancerAnnotations,
@@ -632,6 +641,19 @@ func deployGardenlet(ctx context.Context, gardenClient, seedClient, shootedSeedC
 		return err
 	}
 
+	vpaSettings := make(map[string]interface{})
+	vpaSettings["enabled"] = seedSpec.Settings.VerticalPodAutoscaler.Enabled
+
+	if seedSpec.Settings.VerticalPodAutoscaler.GardenletMinAllowed != nil {
+		vpaSettings["resourcePolicy"]= map[string]interface{}{
+			"minAllowed": map[string]interface{}{
+				"cpu":    seedSpec.Settings.VerticalPodAutoscaler.GardenletMinAllowed.Cpu,
+				"memory": seedSpec.Settings.VerticalPodAutoscaler.GardenletMinAllowed.Memory,
+			},
+		}
+	}
+
+
 	values := map[string]interface{}{
 		"global": map[string]interface{}{
 			"gardenlet": map[string]interface{}{
@@ -640,15 +662,7 @@ func deployGardenlet(ctx context.Context, gardenClient, seedClient, shootedSeedC
 					"tag":        tag,
 				},
 				"revisionHistoryLimit":           0,
-				"vpa":                            map[string]interface{}{
-					"enabled": seedSpec.Settings.VerticalPodAutoscaler.Enabled,
-					"resourcePolicy": map[string]interface{}{
-						"minAllowed": map[string]interface{}{
-							"cpu":  seedSpec.Settings.VerticalPodAutoscaler.GardenletMinAllowed.Cpu,
-							"memory": seedSpec.Settings.VerticalPodAutoscaler.GardenletMinAllowed.Memory,
-						},
-					},
-				},
+				"vpa":                            vpaSettings,
 				"imageVectorOverwrite":           imageVectorOverwrite,
 				"componentImageVectorOverwrites": componentImageVectorOverwrites,
 				"config": map[string]interface{}{

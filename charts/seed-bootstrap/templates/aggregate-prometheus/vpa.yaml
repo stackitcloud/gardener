@@ -5,6 +5,16 @@ metadata:
   name: aggregate-prometheus-vpa
   namespace: {{ .Release.Namespace }}
 spec:
+  {{- if .Values.aggregatePrometheus.vpa }}
+  {{- if .Values.aggregatePrometheus.vpa.resourcePolicy }}
+  resourcePolicy:
+    containerPolicies:
+      - containerName: '*'
+        minAllowed:
+          cpu: {{ required ".Values.aggregatePrometheus.vpa.resourcePolicy.minAllowed.cpu is required" .Values.aggregatePrometheus.vpa.resourcePolicy.minAllowed.cpu }}
+          memory: {{ required ".Values.aggregatePrometheus.vpa.resourcePolicy.minAllowed.memory is required" .Values.aggregatePrometheus.vpa.resourcePolicy.minAllowed.memory }}
+  {{- end }}
+  {{- end }}
   targetRef:
     apiVersion: {{ include "statefulsetversion" . }}
     kind: StatefulSet

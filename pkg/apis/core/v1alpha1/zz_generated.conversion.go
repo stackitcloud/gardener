@@ -4285,7 +4285,16 @@ func Convert_core_SeedSettingShootDNS_To_v1alpha1_SeedSettingShootDNS(in *core.S
 
 func autoConvert_v1alpha1_SeedSettingVerticalPodAutoscaler_To_core_SeedSettingVerticalPodAutoscaler(in *SeedSettingVerticalPodAutoscaler, out *core.SeedSettingVerticalPodAutoscaler, s conversion.Scope) error {
 	out.Enabled = in.Enabled
+	out.UpdaterInterval = in.UpdaterInterval
+	out.UpdaterEvictAfterOOMThreshold = in.UpdaterEvictAfterOOMThreshold
 	out.GardenletMinAllowed = (*core.SeedSettingVerticalPodAutoscalerMinAllowed)(unsafe.Pointer(in.GardenletMinAllowed))
+	out.GardenerResourceManagerMinAllowed = (*core.SeedSettingVerticalPodAutoscalerMinAllowed)(unsafe.Pointer(in.GardenerResourceManagerMinAllowed))
+	out.GardenerSeedAdmissionControllerMinAllowed = (*core.SeedSettingVerticalPodAutoscalerMinAllowed)(unsafe.Pointer(in.GardenerSeedAdmissionControllerMinAllowed))
+	out.AggregatePrometheusMinAllowed = (*core.SeedSettingVerticalPodAutoscalerMinAllowed)(unsafe.Pointer(in.AggregatePrometheusMinAllowed))
+	out.VpaUpdaterMinAllowed = (*core.SeedSettingVerticalPodAutoscalerMinAllowed)(unsafe.Pointer(in.VpaUpdaterMinAllowed))
+	out.VpaRecommenderMinAllowed = (*core.SeedSettingVerticalPodAutoscalerMinAllowed)(unsafe.Pointer(in.VpaRecommenderMinAllowed))
+	out.VpaExporterMinAllowed = (*core.SeedSettingVerticalPodAutoscalerMinAllowed)(unsafe.Pointer(in.VpaExporterMinAllowed))
+	out.VpaAdmissionControllerMinAllowed = (*core.SeedSettingVerticalPodAutoscalerMinAllowed)(unsafe.Pointer(in.VpaAdmissionControllerMinAllowed))
 	return nil
 }
 
@@ -4296,7 +4305,16 @@ func Convert_v1alpha1_SeedSettingVerticalPodAutoscaler_To_core_SeedSettingVertic
 
 func autoConvert_core_SeedSettingVerticalPodAutoscaler_To_v1alpha1_SeedSettingVerticalPodAutoscaler(in *core.SeedSettingVerticalPodAutoscaler, out *SeedSettingVerticalPodAutoscaler, s conversion.Scope) error {
 	out.Enabled = in.Enabled
+	out.UpdaterInterval = in.UpdaterInterval
+	out.UpdaterEvictAfterOOMThreshold = in.UpdaterEvictAfterOOMThreshold
 	out.GardenletMinAllowed = (*SeedSettingVerticalPodAutoscalerMinAllowed)(unsafe.Pointer(in.GardenletMinAllowed))
+	out.GardenerResourceManagerMinAllowed = (*SeedSettingVerticalPodAutoscalerMinAllowed)(unsafe.Pointer(in.GardenerResourceManagerMinAllowed))
+	out.GardenerSeedAdmissionControllerMinAllowed = (*SeedSettingVerticalPodAutoscalerMinAllowed)(unsafe.Pointer(in.GardenerSeedAdmissionControllerMinAllowed))
+	out.AggregatePrometheusMinAllowed = (*SeedSettingVerticalPodAutoscalerMinAllowed)(unsafe.Pointer(in.AggregatePrometheusMinAllowed))
+	out.VpaUpdaterMinAllowed = (*SeedSettingVerticalPodAutoscalerMinAllowed)(unsafe.Pointer(in.VpaUpdaterMinAllowed))
+	out.VpaRecommenderMinAllowed = (*SeedSettingVerticalPodAutoscalerMinAllowed)(unsafe.Pointer(in.VpaRecommenderMinAllowed))
+	out.VpaExporterMinAllowed = (*SeedSettingVerticalPodAutoscalerMinAllowed)(unsafe.Pointer(in.VpaExporterMinAllowed))
+	out.VpaAdmissionControllerMinAllowed = (*SeedSettingVerticalPodAutoscalerMinAllowed)(unsafe.Pointer(in.VpaAdmissionControllerMinAllowed))
 	return nil
 }
 

@@ -7322,6 +7322,30 @@ your seed cluster already has another, manually/custom managed VPA deployment.</
 </tr>
 <tr>
 <td>
+<code>updaterInterval</code></br>
+<em>
+string
+</em>
+</td>
+<td>
+<em>(Optional)</em>
+<p>UpdaterInterval set the Interval</p>
+</td>
+</tr>
+<tr>
+<td>
+<code>updaterEvictAfterOOMThreshold</code></br>
+<em>
+string
+</em>
+</td>
+<td>
+<em>(Optional)</em>
+<p>UpdaterEvictAfterOOMThreshold set the Interval</p>
+</td>
+</tr>
+<tr>
+<td>
 <code>gardenletMinAllowed</code></br>
 <em>
 <a href="#core.gardener.cloud/v1beta1.SeedSettingVerticalPodAutoscalerMinAllowed">
@@ -7332,6 +7356,104 @@ SeedSettingVerticalPodAutoscalerMinAllowed
 <td>
 <em>(Optional)</em>
 <p>GardenletMinAllowed set the VPA minAllowed settings for the gardenlet</p>
+</td>
+</tr>
+<tr>
+<td>
+<code>gardenerResourceManagerMinAllowed</code></br>
+<em>
+<a href="#core.gardener.cloud/v1beta1.SeedSettingVerticalPodAutoscalerMinAllowed">
+SeedSettingVerticalPodAutoscalerMinAllowed
+</a>
+</em>
+</td>
+<td>
+<em>(Optional)</em>
+<p>GardenerResourceManagerMinAllowed set the VPA minAllowed settings for the GardenerResourceManager</p>
+</td>
+</tr>
+<tr>
+<td>
+<code>gardenerSeedAdmissionControllerMinAllowed</code></br>
+<em>
+<a href="#core.gardener.cloud/v1beta1.SeedSettingVerticalPodAutoscalerMinAllowed">
+SeedSettingVerticalPodAutoscalerMinAllowed
+</a>
+</em>
+</td>
+<td>
+<em>(Optional)</em>
+<p>GardenerSeedAdmissionControllerMinAllowed set the VPA minAllowed settings for the SeedAdmissionController</p>
+</td>
+</tr>
+<tr>
+<td>
+<code>aggregatePrometheusMinAllowed</code></br>
+<em>
+<a href="#core.gardener.cloud/v1beta1.SeedSettingVerticalPodAutoscalerMinAllowed">
+SeedSettingVerticalPodAutoscalerMinAllowed
+</a>
+</em>
+</td>
+<td>
+<em>(Optional)</em>
+<p>AggregatePrometheusMinAllowed set the VPA minAllowed settings for the AggregatePrometheus</p>
+</td>
+</tr>
+<tr>
+<td>
+<code>vpaUpdaterMinAllowed</code></br>
+<em>
+<a href="#core.gardener.cloud/v1beta1.SeedSettingVerticalPodAutoscalerMinAllowed">
+SeedSettingVerticalPodAutoscalerMinAllowed
+</a>
+</em>
+</td>
+<td>
+<em>(Optional)</em>
+<p>VpaUpdaterMinAllowed set the VPA minAllowed settings for the VpaUpdater</p>
+</td>
+</tr>
+<tr>
+<td>
+<code>vpaRecommenderMinAllowed</code></br>
+<em>
+<a href="#core.gardener.cloud/v1beta1.SeedSettingVerticalPodAutoscalerMinAllowed">
+SeedSettingVerticalPodAutoscalerMinAllowed
+</a>
+</em>
+</td>
+<td>
+<em>(Optional)</em>
+<p>VpaRecommenderMinAllowed set the VPA minAllowed settings for the VpaRecommender</p>
+</td>
+</tr>
+<tr>
+<td>
+<code>vpaExporterMinAllowed</code></br>
+<em>
+<a href="#core.gardener.cloud/v1beta1.SeedSettingVerticalPodAutoscalerMinAllowed">
+SeedSettingVerticalPodAutoscalerMinAllowed
+</a>
+</em>
+</td>
+<td>
+<em>(Optional)</em>
+<p>VpaExporterMinAllowed set the VPA minAllowed settings for the VpaExporter</p>
+</td>
+</tr>
+<tr>
+<td>
+<code>vpaAdmissionControllerMinAllowed</code></br>
+<em>
+<a href="#core.gardener.cloud/v1beta1.SeedSettingVerticalPodAutoscalerMinAllowed">
+SeedSettingVerticalPodAutoscalerMinAllowed
+</a>
+</em>
+</td>
+<td>
+<em>(Optional)</em>
+<p>VpaAdmissionControllerMinAllowed set the VPA minAllowed settings for the VpaAdmissionController</p>
 </td>
 </tr>
 </tbody>

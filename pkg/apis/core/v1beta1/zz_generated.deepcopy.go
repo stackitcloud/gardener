@@ -3156,6 +3156,41 @@ func (in *SeedSettingVerticalPodAutoscaler) DeepCopyInto(out *SeedSettingVertica
 		*out = new(SeedSettingVerticalPodAutoscalerMinAllowed)
 		**out = **in
 	}
+	if in.GardenerResourceManagerMinAllowed != nil {
+		in, out := &in.GardenerResourceManagerMinAllowed, &out.GardenerResourceManagerMinAllowed
+		*out = new(SeedSettingVerticalPodAutoscalerMinAllowed)
+		**out = **in
+	}
+	if in.GardenerSeedAdmissionControllerMinAllowed != nil {
+		in, out := &in.GardenerSeedAdmissionControllerMinAllowed, &out.GardenerSeedAdmissionControllerMinAllowed
+		*out = new(SeedSettingVerticalPodAutoscalerMinAllowed)
+		**out = **in
+	}
+	if in.AggregatePrometheusMinAllowed != nil {
+		in, out := &in.AggregatePrometheusMinAllowed, &out.AggregatePrometheusMinAllowed
+		*out = new(SeedSettingVerticalPodAutoscalerMinAllowed)
+		**out = **in
+	}
+	if in.VpaUpdaterMinAllowed != nil {
+		in, out := &in.VpaUpdaterMinAllowed, &out.VpaUpdaterMinAllowed
+		*out = new(SeedSettingVerticalPodAutoscalerMinAllowed)
+		**out = **in
+	}
+	if in.VpaRecommenderMinAllowed != nil {
+		in, out := &in.VpaRecommenderMinAllowed, &out.VpaRecommenderMinAllowed
+		*out = new(SeedSettingVerticalPodAutoscalerMinAllowed)
+		**out = **in
+	}
+	if in.VpaExporterMinAllowed != nil {
+		in, out := &in.VpaExporterMinAllowed, &out.VpaExporterMinAllowed
+		*out = new(SeedSettingVerticalPodAutoscalerMinAllowed)
+		**out = **in
+	}
+	if in.VpaAdmissionControllerMinAllowed != nil {
+		in, out := &in.VpaAdmissionControllerMinAllowed, &out.VpaAdmissionControllerMinAllowed
+		*out = new(SeedSettingVerticalPodAutoscalerMinAllowed)
+		**out = **in
+	}
 	return
 }
 

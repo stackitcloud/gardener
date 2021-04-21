@@ -5,6 +5,16 @@ metadata:
   name: vpa-updater
   namespace: {{ .Release.Namespace }}
 spec:
+  {{- if .Values.updater.vpa }}
+  {{- if .Values.updater.vpa.resourcePolicy }}
+  resourcePolicy:
+    containerPolicies:
+      - containerName: '*'
+        minAllowed:
+          cpu: {{ required ".Values.aggregatePrometheus.vpa.resourcePolicy.minAllowed.cpu is required" .Values.updater.vpa.resourcePolicy.minAllowed.cpu }}
+          memory: {{ required ".Values.aggregatePrometheus.vpa.resourcePolicy.minAllowed.memory is required" .Values.updater.vpa.resourcePolicy.minAllowed.memory }}
+  {{- end }}
+  {{- end }}
   targetRef:
     apiVersion: {{ include "deploymentversion" . }}
     kind: Deployment

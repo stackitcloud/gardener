@@ -10,6 +10,12 @@ aggregatePrometheus:
   seed: seed
   hostName: p.seed-1.example.com
   secretName: prometheus-tls
+#  vpa:
+#    resourcePolicy:
+#      minAllowed:
+#        cpu: 100m
+#        memory: 128Mi
+
 
 grafana:
   hostName: p.seed-1.example.com
@@ -221,6 +227,11 @@ gardenerResourceManager:
   healthSyncPeriod: 1m0s
   concurrentSyncs: 20
   podAnnotations: {}
+#  vpa:
+#    resourcePolicy:
+#      minAllowed:
+#        cpu: 100m
+#        memory: 128Mi
 
 gardenerSeedAdmissionController:
   resources:
@@ -232,3 +243,9 @@ gardenerSeedAdmissionController:
       memory: 100Mi
   replicas: 3
   port: 10250
+#  vpa:
+#    resourcePolicy:
+#      minAllowed:
+#        cpu: 100m
+#        memory: 128Mi
+

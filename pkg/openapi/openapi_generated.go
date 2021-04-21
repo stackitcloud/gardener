@@ -5436,9 +5436,65 @@ func schema_pkg_apis_core_v1alpha1_SeedSettingVerticalPodAutoscaler(ref common.R
 							Format:      "",
 						},
 					},
+					"updaterInterval": {
+						SchemaProps: spec.SchemaProps{
+							Description: "UpdaterInterval set the Interval",
+							Type:        []string{"string"},
+							Format:      "",
+						},
+					},
+					"updaterEvictAfterOOMThreshold": {
+						SchemaProps: spec.SchemaProps{
+							Description: "UpdaterEvictAfterOOMThreshold set the Interval",
+							Type:        []string{"string"},
+							Format:      "",
+						},
+					},
 					"gardenletMinAllowed": {
 						SchemaProps: spec.SchemaProps{
 							Description: "GardenletMinAllowed set the VPA minAllowed settings for the gardenlet",
+							Ref:         ref("github.com/gardener/gardener/pkg/apis/core/v1alpha1.SeedSettingVerticalPodAutoscalerMinAllowed"),
+						},
+					},
+					"gardenerResourceManagerMinAllowed": {
+						SchemaProps: spec.SchemaProps{
+							Description: "GardenerResourceManagerMinAllowed set the VPA minAllowed settings for the GardenerResourceManager",
+							Ref:         ref("github.com/gardener/gardener/pkg/apis/core/v1alpha1.SeedSettingVerticalPodAutoscalerMinAllowed"),
+						},
+					},
+					"gardenerSeedAdmissionControllerMinAllowed": {
+						SchemaProps: spec.SchemaProps{
+							Description: "GardenerSeedAdmissionControllerMinAllowed set the VPA minAllowed settings for the SeedAdmissionController",
+							Ref:         ref("github.com/gardener/gardener/pkg/apis/core/v1alpha1.SeedSettingVerticalPodAutoscalerMinAllowed"),
+						},
+					},
+					"aggregatePrometheusMinAllowed": {
+						SchemaProps: spec.SchemaProps{
+							Description: "AggregatePrometheusMinAllowed set the VPA minAllowed settings for the AggregatePrometheus",
+							Ref:         ref("github.com/gardener/gardener/pkg/apis/core/v1alpha1.SeedSettingVerticalPodAutoscalerMinAllowed"),
+						},
+					},
+					"vpaUpdaterMinAllowed": {
+						SchemaProps: spec.SchemaProps{
+							Description: "VpaUpdaterMinAllowed set the VPA minAllowed settings for the VpaUpdater",
+							Ref:         ref("github.com/gardener/gardener/pkg/apis/core/v1alpha1.SeedSettingVerticalPodAutoscalerMinAllowed"),
+						},
+					},
+					"vpaRecommenderMinAllowed": {
+						SchemaProps: spec.SchemaProps{
+							Description: "VpaRecommenderMinAllowed set the VPA minAllowed settings for the VpaRecommender",
+							Ref:         ref("github.com/gardener/gardener/pkg/apis/core/v1alpha1.SeedSettingVerticalPodAutoscalerMinAllowed"),
+						},
+					},
+					"vpaExporterMinAllowed": {
+						SchemaProps: spec.SchemaProps{
+							Description: "VpaExporterMinAllowed set the VPA minAllowed settings for the VpaExporter",
+							Ref:         ref("github.com/gardener/gardener/pkg/apis/core/v1alpha1.SeedSettingVerticalPodAutoscalerMinAllowed"),
+						},
+					},
+					"vpaAdmissionControllerMinAllowed": {
+						SchemaProps: spec.SchemaProps{
+							Description: "VpaAdmissionControllerMinAllowed set the VPA minAllowed settings for the VpaAdmissionController",
 							Ref:         ref("github.com/gardener/gardener/pkg/apis/core/v1alpha1.SeedSettingVerticalPodAutoscalerMinAllowed"),
 						},
 					},
@@ -11526,9 +11582,65 @@ func schema_pkg_apis_core_v1beta1_SeedSettingVerticalPodAutoscaler(ref common.Re
 							Format:      "",
 						},
 					},
+					"updaterInterval": {
+						SchemaProps: spec.SchemaProps{
+							Description: "UpdaterInterval set the Interval",
+							Type:        []string{"string"},
+							Format:      "",
+						},
+					},
+					"updaterEvictAfterOOMThreshold": {
+						SchemaProps: spec.SchemaProps{
+							Description: "UpdaterEvictAfterOOMThreshold set the Interval",
+							Type:        []string{"string"},
+							Format:      "",
+						},
+					},
 					"gardenletMinAllowed": {
 						SchemaProps: spec.SchemaProps{
 							Description: "GardenletMinAllowed set the VPA minAllowed settings for the gardenlet",
+							Ref:         ref("github.com/gardener/gardener/pkg/apis/core/v1beta1.SeedSettingVerticalPodAutoscalerMinAllowed"),
+						},
+					},
+					"gardenerResourceManagerMinAllowed": {
+						SchemaProps: spec.SchemaProps{
+							Description: "GardenerResourceManagerMinAllowed set the VPA minAllowed settings for the GardenerResourceManager",
+							Ref:         ref("github.com/gardener/gardener/pkg/apis/core/v1beta1.SeedSettingVerticalPodAutoscalerMinAllowed"),
+						},
+					},
+					"gardenerSeedAdmissionControllerMinAllowed": {
+						SchemaProps: spec.SchemaProps{
+							Description: "GardenerSeedAdmissionControllerMinAllowed set the VPA minAllowed settings for the SeedAdmissionController",
+							Ref:         ref("github.com/gardener/gardener/pkg/apis/core/v1beta1.SeedSettingVerticalPodAutoscalerMinAllowed"),
+						},
+					},
+					"aggregatePrometheusMinAllowed": {
+						SchemaProps: spec.SchemaProps{
+							Description: "AggregatePrometheusMinAllowed set the VPA minAllowed settings for the AggregatePrometheus",
+							Ref:         ref("github.com/gardener/gardener/pkg/apis/core/v1beta1.SeedSettingVerticalPodAutoscalerMinAllowed"),
+						},
+					},
+					"vpaUpdaterMinAllowed": {
+						SchemaProps: spec.SchemaProps{
+							Description: "VpaUpdaterMinAllowed set the VPA minAllowed settings for the VpaUpdater",
+							Ref:         ref("github.com/gardener/gardener/pkg/apis/core/v1beta1.SeedSettingVerticalPodAutoscalerMinAllowed"),
+						},
+					},
+					"vpaRecommenderMinAllowed": {
+						SchemaProps: spec.SchemaProps{
+							Description: "VpaRecommenderMinAllowed set the VPA minAllowed settings for the VpaRecommender",
+							Ref:         ref("github.com/gardener/gardener/pkg/apis/core/v1beta1.SeedSettingVerticalPodAutoscalerMinAllowed"),
+						},
+					},
+					"vpaExporterMinAllowed": {
+						SchemaProps: spec.SchemaProps{
+							Description: "VpaExporterMinAllowed set the VPA minAllowed settings for the VpaExporter",
+							Ref:         ref("github.com/gardener/gardener/pkg/apis/core/v1beta1.SeedSettingVerticalPodAutoscalerMinAllowed"),
+						},
+					},
+					"vpaAdmissionControllerMinAllowed": {
+						SchemaProps: spec.SchemaProps{
+							Description: "VpaAdmissionControllerMinAllowed set the VPA minAllowed settings for the VpaAdmissionController",
 							Ref:         ref("github.com/gardener/gardener/pkg/apis/core/v1beta1.SeedSettingVerticalPodAutoscalerMinAllowed"),
 						},
 					},

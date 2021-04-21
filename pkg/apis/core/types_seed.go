@@ -196,10 +196,27 @@ type SeedSettingVerticalPodAutoscaler struct {
 	// is enabled by default because Gardener heavily relies on a VPA being deployed. You should only disable this if
 	// your seed cluster already has another, manually/custom managed VPA deployment.
 	Enabled bool
+	// UpdaterInterval set the Interval
+	UpdaterInterval string
+	// UpdaterEvictAfterOOMThreshold set the Interval
+	UpdaterEvictAfterOOMThreshold string
 	// GardenletMinAllowed set the VPA minAllowed settings for the gardenlet
 	GardenletMinAllowed *SeedSettingVerticalPodAutoscalerMinAllowed
+	// GardenerResourceManagerMinAllowed set the VPA minAllowed settings for the GardenerResourceManager
+	GardenerResourceManagerMinAllowed *SeedSettingVerticalPodAutoscalerMinAllowed
+	// GardenerSeedAdmissionControllerMinAllowed set the VPA minAllowed settings for the SeedAdmissionController
+	GardenerSeedAdmissionControllerMinAllowed *SeedSettingVerticalPodAutoscalerMinAllowed
+	// AggregatePrometheusMinAllowed set the VPA minAllowed settings for the AggregatePrometheus
+	AggregatePrometheusMinAllowed *SeedSettingVerticalPodAutoscalerMinAllowed
+	// VpaUpdaterMinAllowed set the VPA minAllowed settings for the VpaUpdater
+	VpaUpdaterMinAllowed *SeedSettingVerticalPodAutoscalerMinAllowed
+	// VpaRecommenderMinAllowed set the VPA minAllowed settings for the VpaRecommender
+	VpaRecommenderMinAllowed *SeedSettingVerticalPodAutoscalerMinAllowed
+	// VpaExporterMinAllowed set the VPA minAllowed settings for the VpaExporter
+	VpaExporterMinAllowed *SeedSettingVerticalPodAutoscalerMinAllowed
+	// VpaAdmissionControllerMinAllowed set the VPA minAllowed settings for the VpaAdmissionController
+	VpaAdmissionControllerMinAllowed *SeedSettingVerticalPodAutoscalerMinAllowed
 }
-
 // SeedSettingVerticalPodAutoscalerMinAllowed controls certain settings for the vertical pod autoscaler minAllowed values
 // seed.
 type SeedSettingVerticalPodAutoscalerMinAllowed struct {
