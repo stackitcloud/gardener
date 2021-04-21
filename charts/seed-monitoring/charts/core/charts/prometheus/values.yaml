@@ -344,3 +344,10 @@ resources:
   limits:
     cpu: 350m
     memory: 760Mi
+
+
+#remoteWrite:
+#  url: coretexURL
+#  basic_auth:
+#    username: user
+#    password: password
