@@ -62,8 +62,11 @@
 # v1.10.31-ske: added ipFamily to apiserver-service
 # v1.10.32-ske: Add all IPv6 traffic to shoot api-server
 # v1.10.33-ske: added componentResources to shoot.spec.provider
+# v1.10.34-ske: add vpa config for gardenlet
+# ... try to get it working
+# v1.10.51-ske: add vpa config for gardenlet
 
-EFFECTIVE_VERSION=v1.10.33-ske
+EFFECTIVE_VERSION=v1.10.52-ske
 REGISTRY=registry.ske.eu01.stackit.cloud/gardener-ds
 APISERVER_IMAGE_REPOSITORY=$REGISTRY/apiserver
 CONROLLER_MANAGER_IMAGE_REPOSITORY=$REGISTRY/controller-manager

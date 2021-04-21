@@ -5,6 +5,16 @@ metadata:
   name: vpa-exporter-vpa
   namespace: {{ .Release.Namespace }}
 spec:
+  {{- if .Values.exporter.vpa }}
+  {{- if .Values.exporter.vpa.resourcePolicy }}
+  resourcePolicy:
+    containerPolicies:
+      - containerName: '*'
+        minAllowed:
+          cpu: {{ required ".Values.exporter.vpa.resourcePolicy.minAllowed.cpu is required" .Values.exporter.vpa.resourcePolicy.minAllowed.cpu }}
+          memory: {{ required ".Values.exporter.vpa.resourcePolicy.minAllowed.memory is required" .Values.exporter.vpa.resourcePolicy.minAllowed.memory }}
+  {{- end }}
+  {{- end }}
   targetRef:
     apiVersion: {{ include "deploymentversion" . }}
     kind: Deployment

@@ -7,6 +7,16 @@ metadata:
     app: gardener
     role: seed-admission-controller
 spec:
+  {{- if .Values.gardenerSeedAdmissionController.vpa }}
+  {{- if .Values.gardenerSeedAdmissionController.vpa.resourcePolicy }}
+  resourcePolicy:
+    containerPolicies:
+      - containerName: '*'
+        minAllowed:
+          cpu: {{ required ".Values.gardenerSeedAdmissionController.vpa.resourcePolicy.minAllowed.cpu is required" .Values.gardenerSeedAdmissionController.vpa.resourcePolicy.minAllowed.cpu }}
+          memory: {{ required ".Values.gardenerSeedAdmissionController.vpa.resourcePolicy.minAllowed.memory is required" .Values.gardenerSeedAdmissionController.vpa.resourcePolicy.minAllowed.memory }}
+  {{- end }}
+  {{- end }}
   targetRef:
     apiVersion: {{ include "deploymentversion" . }}
     kind: Deployment
