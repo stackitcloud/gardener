@@ -18,9 +18,8 @@ limitations under the License.
 
 syntax = 'proto2';
 
-package github.com.gardener.gardener.pkg.apis.core.v1alpha1;
+package github.com.gardener.gardener.pkg.apis.core.v1beta1;
 
-import "github.com/gardener/gardener/pkg/apis/core/v1beta1/generated.proto";
 import "k8s.io/api/autoscaling/v1/generated.proto";
 import "k8s.io/api/core/v1/generated.proto";
 import "k8s.io/api/rbac/v1/generated.proto";
@@ -31,7 +30,7 @@ import "k8s.io/apimachinery/pkg/runtime/schema/generated.proto";
 import "k8s.io/apimachinery/pkg/util/intstr/generated.proto";
 
 // Package-wide variables from generator "generated".
-option go_package = "v1alpha1";
+option go_package = "v1beta1";
 
 // Addon allows enabling or disabling a specific addon and is used to derive from.
 message Addon {
@@ -139,9 +138,9 @@ message BackupBucketSpec {
   // SecretRef is a reference to a secret that contains the credentials to access object store.
   optional k8s.io.api.core.v1.SecretReference secretRef = 3;
 
-  // Seed holds the name of the seed allocated to BackupBucket for running controller.
+  // SeedName holds the name of the seed allocated to BackupBucket for running controller.
   // +optional
-  optional string seed = 4;
+  optional string seedName = 4;
 }
 
 // BackupBucketStatus holds the most recently observed status of the Backup Bucket.
@@ -198,9 +197,9 @@ message BackupEntrySpec {
   // BucketName is the name of backup bucket for this Backup Entry.
   optional string bucketName = 1;
 
-  // Seed holds the name of the seed allocated to BackupEntry for running controller.
+  // SeedName holds the name of the seed allocated to BackupEntry for running controller.
   // +optional
-  optional string seed = 2;
+  optional string seedName = 2;
 }
 
 // BackupEntryStatus holds the most recently observed status of the Backup Entry.
@@ -382,9 +381,9 @@ message Condition {
 // ContainerRuntime contains information about worker's available container runtime
 message ContainerRuntime {
   // Type is the type of the Container Runtime.
-  optional string name = 1;
+  optional string type = 1;
 
-  // ProviderConfig is the configuration passed to the ContainerRuntime resource.
+  // ProviderConfig is the configuration passed to container runtime resource.
   // +optional
   optional k8s.io.apimachinery.pkg.runtime.RawExtension providerConfig = 2;
 }
@@ -616,29 +615,6 @@ message Extension {
   optional bool disabled = 3;
 }
 
-// ExtensionResourceState contains the kind of the extension custom resource and its last observed state in the Shoot's
-// namespace on the Seed cluster.
-message ExtensionResourceState {
-  // Kind (type) of the extension custom resource
-  optional string kind = 1;
-
-  // Name of the extension custom resource
-  // +optional
-  optional string name = 2;
-
-  // Purpose of the extension custom resource
-  // +optional
-  optional string purpose = 3;
-
-  // State of the extension resource
-  // +optional
-  optional k8s.io.apimachinery.pkg.runtime.RawExtension state = 4;
-
-  // Resources holds a list of named resource references that can be referred to in the state by their names.
-  // +optional
-  repeated github.com.gardener.gardener.pkg.apis.core.v1beta1.NamedResourceReference resources = 5;
-}
-
 // FeatureGates Some random comment
 message FeatureGates {
   // IPv6DualStack Some random comment
@@ -656,18 +632,6 @@ message Gardener {
 
   // Version is the version of the Gardener which last acted on a resource.
   optional string version = 3;
-}
-
-// GardenerResourceData holds the data which is used to generate resources, deployed in the Shoot's control plane.
-message GardenerResourceData {
-  // Name of the object required to generate resources
-  optional string name = 1;
-
-  // Type of the object
-  optional string type = 2;
-
-  // Data contains the payload required to generate resources
-  optional k8s.io.apimachinery.pkg.runtime.RawExtension data = 3;
 }
 
 // Hibernation contains information whether the Shoot is suspended or not.
@@ -1287,21 +1251,21 @@ message Networking {
 
 // NginxIngress describes configuration values for the nginx-ingress addon.
 message NginxIngress {
-  optional Addon addon = 4;
+  optional Addon addon = 1;
 
   // LoadBalancerSourceRanges is list of whitelist IP sources for NginxIngress
   // +optional
-  repeated string loadBalancerSourceRanges = 1;
+  repeated string loadBalancerSourceRanges = 2;
 
   // Config contains custom configuration for the nginx-ingress-controller configuration.
   // See https://github.com/kubernetes/ingress-nginx/blob/master/docs/user-guide/nginx-configuration/configmap.md#configuration-options
   // +optional
-  map<string, string> config = 2;
+  map<string, string> config = 3;
 
   // ExternalTrafficPolicy controls the `.spec.externalTrafficPolicy` value of the load balancer `Service`
   // exposing the nginx-ingress. Defaults to `Cluster`.
   // +optional
-  optional string externalTrafficPolicy = 3;
+  optional string externalTrafficPolicy = 4;
 }
 
 // OIDCConfig contains configuration settings for the OIDC provider.
@@ -1489,7 +1453,7 @@ message ProjectSpec {
   // +optional
   optional string namespace = 6;
 
-  // Tolerations contains the default tolerations and a whitelist for taints on seed clusters.
+  // Tolerations contains the tolerations for taints on seed clusters.
   // +optional
   optional ProjectTolerations tolerations = 7;
 }
@@ -1630,14 +1594,6 @@ message RegistryEndpoint {
   optional bool insecureSkipVerify = 3;
 }
 
-// ResourceData holds the data of a resource referred to by an extension controller state.
-message ResourceData {
-  optional k8s.io.api.autoscaling.v1.CrossVersionObjectReference ref = 1;
-
-  // Data of the resource
-  optional k8s.io.apimachinery.pkg.runtime.RawExtension data = 2;
-}
-
 // ResourceWatchCacheSize contains configuration of the API server's watch cache size for one specific resource.
 message ResourceWatchCacheSize {
   // APIGroup is the API group of the resource for which the watch cache size should be configured.
@@ -1739,6 +1695,11 @@ message SeedNetworks {
   // ShootDefaults contains the default networks CIDRs for shoots.
   // +optional
   optional ShootNetworks shootDefaults = 4;
+
+  // BlockCIDRs is a list of network addresses that should be blocked for shoot control plane components running
+  // in the seed cluster.
+  // +optional
+  repeated string blockCIDRs = 5;
 }
 
 // SeedProvider defines the provider type and region for this Seed cluster.
@@ -1890,53 +1851,48 @@ message SeedSpec {
   // +optional
   optional SeedBackup backup = 1;
 
-  // BlockCIDRs is a list of network addresses that should be blocked for shoot control plane components running
-  // in the seed cluster.
-  // +optional
-  repeated string blockCIDRs = 2;
-
   // DNS contains DNS-relevant information about this seed cluster.
-  optional SeedDNS dns = 3;
+  optional SeedDNS dns = 2;
 
   // Networks defines the pod, service and worker network of the Seed cluster.
-  optional SeedNetworks networks = 4;
+  optional SeedNetworks networks = 3;
 
   // Provider defines the provider type and region for this Seed cluster.
-  optional SeedProvider provider = 5;
+  optional SeedProvider provider = 4;
 
   // SecretRef is a reference to a Secret object containing the Kubeconfig and the cloud provider credentials for
   // the account the Seed cluster has been deployed to.
   // +optional
-  optional k8s.io.api.core.v1.SecretReference secretRef = 6;
+  optional k8s.io.api.core.v1.SecretReference secretRef = 5;
 
   // Taints describes taints on the seed.
   // +optional
-  repeated SeedTaint taints = 7;
+  repeated SeedTaint taints = 6;
 
   // Volume contains settings for persistentvolumes created in the seed cluster.
   // +optional
-  optional SeedVolume volume = 8;
+  optional SeedVolume volume = 7;
 
   // Settings contains certain settings for this seed cluster.
   // +optional
-  optional SeedSettings settings = 9;
+  optional SeedSettings settings = 8;
 }
 
 // SeedStatus is the status of a Seed.
 message SeedStatus {
+  // Gardener holds information about the Gardener which last acted on the Shoot.
+  // +optional
+  optional Gardener gardener = 1;
+
+  // KubernetesVersion is the Kubernetes version of the seed cluster.
+  // +optional
+  optional string kubernetesVersion = 2;
+
   // Conditions represents the latest available observations of a Seed's current state.
   // +patchMergeKey=type
   // +patchStrategy=merge
   // +optional
-  repeated Condition conditions = 1;
-
-  // Gardener holds information about the Gardener instance which last acted on the Seed.
-  // +optional
-  optional Gardener gardener = 2;
-
-  // KubernetesVersion is the Kubernetes version of the seed cluster.
-  // +optional
-  optional string kubernetesVersion = 3;
+  repeated Condition conditions = 3;
 
   // ObservedGeneration is the most recent generation observed for this Seed. It corresponds to the
   // Seed's generation, which is updated on mutation by the API Server.
@@ -2115,56 +2071,18 @@ message ShootSpec {
   repeated Toleration tolerations = 17;
 }
 
-// ShootState contains a snapshot of the Shoot's state required to migrate the Shoot's control plane to a new Seed.
-message ShootState {
-  // Standard object metadata.
-  // +optional
-  optional k8s.io.apimachinery.pkg.apis.meta.v1.ObjectMeta metadata = 1;
-
-  // Specification of the ShootState.
-  // +optional
-  optional ShootStateSpec spec = 2;
-}
-
-// ShootStateList is a list of ShootState objects.
-message ShootStateList {
-  // Standard list object metadata.
-  // +optional
-  optional k8s.io.apimachinery.pkg.apis.meta.v1.ListMeta metadata = 1;
-
-  // Items is the list of ShootStates.
-  repeated ShootState items = 2;
-}
-
-// ShootStateSpec is the specification of the ShootState.
-message ShootStateSpec {
-  // Gardener holds the data required to generate resources deployed by the gardenlet
-  // +patchMergeKey=name
-  // +patchStrategy=merge
-  // +optional
-  repeated GardenerResourceData gardener = 1;
-
-  // Extensions holds the state of custom resources reconciled by extension controllers in the seed
-  // +optional
-  repeated ExtensionResourceState extensions = 2;
-
-  // Resources holds the data of resources referred to by extension controller states
-  // +optional
-  repeated ResourceData resources = 3;
-}
-
 // ShootStatus holds the most recently observed status of the Shoot cluster.
 message ShootStatus {
   // Conditions represents the latest available observations of a Shoots's current state.
-  // +optional
   // +patchMergeKey=type
   // +patchStrategy=merge
+  // +optional
   repeated Condition conditions = 1;
 
   // Constraints represents conditions of a Shoot's current state that constraint some operations on it.
-  // +optional
   // +patchMergeKey=type
   // +patchStrategy=merge
+  // +optional
   repeated Condition constraints = 2;
 
   // Gardener holds information about the Gardener which last acted on the Shoot.
@@ -2177,40 +2095,36 @@ message ShootStatus {
   // +optional
   optional LastOperation lastOperation = 5;
 
-  // LastError holds information about the last occurred error during an operation.
-  // +optional
-  optional LastError lastError = 6;
-
   // LastErrors holds information about the last occurred error(s) during an operation.
   // +optional
-  repeated LastError lastErrors = 7;
+  repeated LastError lastErrors = 6;
 
   // ObservedGeneration is the most recent generation observed for this Shoot. It corresponds to the
   // Shoot's generation, which is updated on mutation by the API Server.
   // +optional
-  optional int64 observedGeneration = 8;
+  optional int64 observedGeneration = 7;
 
   // RetryCycleStartTime is the start time of the last retry cycle (used to determine how often an operation
   // must be retried until we give up).
   // +optional
-  optional k8s.io.apimachinery.pkg.apis.meta.v1.Time retryCycleStartTime = 9;
+  optional k8s.io.apimachinery.pkg.apis.meta.v1.Time retryCycleStartTime = 8;
 
-  // Seed is the name of the seed cluster that runs the control plane of the Shoot. This value is only written
+  // SeedName is the name of the seed cluster that runs the control plane of the Shoot. This value is only written
   // after a successful create/reconcile operation. It will be used when control planes are moved between Seeds.
   // +optional
-  optional string seed = 10;
+  optional string seedName = 9;
 
   // TechnicalID is the name that is used for creating the Seed namespace, the infrastructure resources, and
   // basically everything that is related to this particular Shoot.
-  optional string technicalID = 11;
+  optional string technicalID = 10;
 
   // UID is a unique identifier for the Shoot cluster to avoid portability between Kubernetes clusters.
   // It is used to compute unique hashes.
-  optional string uid = 12;
+  optional string uid = 11;
 
   // ClusterIdentity is the identity of the Shoot cluster
   // +optional
-  optional string clusterIdentity = 13;
+  optional string clusterIdentity = 12;
 }
 
 // Toleration is a toleration for a seed taint.
@@ -2261,7 +2175,7 @@ message VerticalPodAutoscaler {
   optional k8s.io.apimachinery.pkg.apis.meta.v1.Duration recommenderInterval = 8;
 }
 
-// Volume contains information about the volume type and size.
+// Volume contains information about the volume type, size, and encryption.
 message Volume {
   // Name of the volume to make it referencable.
   // +optional
@@ -2271,12 +2185,12 @@ message Volume {
   // +optional
   optional string type = 2;
 
-  // Size is the size of the volume.
+  // VolumeSize is the size of the volume.
   optional string size = 3;
 
   // Encrypted determines if the volume should be encrypted.
   // +optional
-  optional bool primary = 4;
+  optional bool encrypted = 4;
 }
 
 // VolumeType contains certain properties of a volume type.

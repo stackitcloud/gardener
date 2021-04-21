@@ -29,7 +29,7 @@ data:
 {{- if .Values.remoteWrite }}
 {{- if .Values.remoteWrite.url }}
     remote_write:
-      url: {{ .Values.remoteWrite.url }}
+    - url: {{ .Values.remoteWrite.url }}
 {{- if .Values.remoteWrite.basic_auth }}
       basic_auth:
         username: {{ .Values.remoteWrite.basic_auth.username }}
