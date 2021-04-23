@@ -192,6 +192,23 @@ func (b *Botanist) DeploySeedMonitoring(ctx context.Context) error {
 
 	prometheusConfig["podAnnotations"] = podAnnotations
 
+
+	if b.Shoot.CloudProfile.Spec.Monitoring.RemoteWriteURL != "" {
+		// if remoteWrite Url is set add config into values
+		remoteWriteConfig := map[string]interface{}{
+			"url": b.Shoot.CloudProfile.Spec.Monitoring.RemoteWriteURL,
+		}
+		if b.Shoot.CloudProfile.Spec.Monitoring.RemoteWriteUsername != "" &&
+		  b.Shoot.CloudProfile.Spec.Monitoring.RemoteWritePassword != "" {
+			remoteWriteConfig["basic_auth"] = map[string]interface{}{
+				"username": b.Shoot.CloudProfile.Spec.Monitoring.RemoteWriteUsername,
+				"password": b.Shoot.CloudProfile.Spec.Monitoring.RemoteWritePassword,
+			}
+		}
+			prometheusConfig["remoteWrite"] = remoteWriteConfig
+	}
+
+
 	prometheus, err := b.InjectSeedShootImages(prometheusConfig, prometheusImages...)
 	if err != nil {
 		return err

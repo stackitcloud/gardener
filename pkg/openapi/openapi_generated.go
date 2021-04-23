@@ -106,6 +106,7 @@ func GetOpenAPIDefinitions(ref common.ReferenceCallback) map[string]common.OpenA
 		"github.com/gardener/gardener/pkg/apis/core/v1alpha1.MaintenanceAutoUpdate":                      schema_pkg_apis_core_v1alpha1_MaintenanceAutoUpdate(ref),
 		"github.com/gardener/gardener/pkg/apis/core/v1alpha1.MaintenanceTimeWindow":                      schema_pkg_apis_core_v1alpha1_MaintenanceTimeWindow(ref),
 		"github.com/gardener/gardener/pkg/apis/core/v1alpha1.Monitoring":                                 schema_pkg_apis_core_v1alpha1_Monitoring(ref),
+		"github.com/gardener/gardener/pkg/apis/core/v1alpha1.MonitoringConfig":                           schema_pkg_apis_core_v1alpha1_MonitoringConfig(ref),
 		"github.com/gardener/gardener/pkg/apis/core/v1alpha1.NamedResourceReference":                     schema_pkg_apis_core_v1alpha1_NamedResourceReference(ref),
 		"github.com/gardener/gardener/pkg/apis/core/v1alpha1.Networking":                                 schema_pkg_apis_core_v1alpha1_Networking(ref),
 		"github.com/gardener/gardener/pkg/apis/core/v1alpha1.NginxIngress":                               schema_pkg_apis_core_v1alpha1_NginxIngress(ref),
@@ -241,6 +242,7 @@ func GetOpenAPIDefinitions(ref common.ReferenceCallback) map[string]common.OpenA
 		"github.com/gardener/gardener/pkg/apis/core/v1beta1.MaintenanceAutoUpdate":                       schema_pkg_apis_core_v1beta1_MaintenanceAutoUpdate(ref),
 		"github.com/gardener/gardener/pkg/apis/core/v1beta1.MaintenanceTimeWindow":                       schema_pkg_apis_core_v1beta1_MaintenanceTimeWindow(ref),
 		"github.com/gardener/gardener/pkg/apis/core/v1beta1.Monitoring":                                  schema_pkg_apis_core_v1beta1_Monitoring(ref),
+		"github.com/gardener/gardener/pkg/apis/core/v1beta1.MonitoringConfig":                            schema_pkg_apis_core_v1beta1_MonitoringConfig(ref),
 		"github.com/gardener/gardener/pkg/apis/core/v1beta1.NamedResourceReference":                      schema_pkg_apis_core_v1beta1_NamedResourceReference(ref),
 		"github.com/gardener/gardener/pkg/apis/core/v1beta1.Networking":                                  schema_pkg_apis_core_v1beta1_Networking(ref),
 		"github.com/gardener/gardener/pkg/apis/core/v1beta1.NginxIngress":                                schema_pkg_apis_core_v1beta1_NginxIngress(ref),
@@ -1454,12 +1456,18 @@ func schema_pkg_apis_core_v1alpha1_CloudProfileSpec(ref common.ReferenceCallback
 							},
 						},
 					},
+					"monitoring": {
+						SchemaProps: spec.SchemaProps{
+							Description: "MonitoringConfig contains settings for the monitoring stack",
+							Ref:         ref("github.com/gardener/gardener/pkg/apis/core/v1alpha1.MonitoringConfig"),
+						},
+					},
 				},
 				Required: []string{"kubernetes", "machineImages", "machineTypes", "regions", "type"},
 			},
 		},
 		Dependencies: []string{
-			"github.com/gardener/gardener/pkg/apis/core/v1alpha1.KubernetesSettings", "github.com/gardener/gardener/pkg/apis/core/v1alpha1.MachineImage", "github.com/gardener/gardener/pkg/apis/core/v1alpha1.MachineType", "github.com/gardener/gardener/pkg/apis/core/v1alpha1.Region", "github.com/gardener/gardener/pkg/apis/core/v1alpha1.SeedSelector", "github.com/gardener/gardener/pkg/apis/core/v1alpha1.VolumeType", "k8s.io/apimachinery/pkg/runtime.RawExtension"},
+			"github.com/gardener/gardener/pkg/apis/core/v1alpha1.KubernetesSettings", "github.com/gardener/gardener/pkg/apis/core/v1alpha1.MachineImage", "github.com/gardener/gardener/pkg/apis/core/v1alpha1.MachineType", "github.com/gardener/gardener/pkg/apis/core/v1alpha1.MonitoringConfig", "github.com/gardener/gardener/pkg/apis/core/v1alpha1.Region", "github.com/gardener/gardener/pkg/apis/core/v1alpha1.SeedSelector", "github.com/gardener/gardener/pkg/apis/core/v1alpha1.VolumeType", "k8s.io/apimachinery/pkg/runtime.RawExtension"},
 	}
 }
 
@@ -3748,6 +3756,40 @@ func schema_pkg_apis_core_v1alpha1_Monitoring(ref common.ReferenceCallback) comm
 		},
 		Dependencies: []string{
 			"github.com/gardener/gardener/pkg/apis/core/v1alpha1.Alerting"},
+	}
+}
+
+func schema_pkg_apis_core_v1alpha1_MonitoringConfig(ref common.ReferenceCallback) common.OpenAPIDefinition {
+	return common.OpenAPIDefinition{
+		Schema: spec.Schema{
+			SchemaProps: spec.SchemaProps{
+				Description: "MonitoringConfig contains settings for the monitoring stack",
+				Type:        []string{"object"},
+				Properties: map[string]spec.Schema{
+					"remoteWriteURL": {
+						SchemaProps: spec.SchemaProps{
+							Description: "RemoteWriteURL contains a Url for remote write",
+							Type:        []string{"string"},
+							Format:      "",
+						},
+					},
+					"remoteWriteUsername": {
+						SchemaProps: spec.SchemaProps{
+							Description: "RemoteWriteURL contains a username for remote write",
+							Type:        []string{"string"},
+							Format:      "",
+						},
+					},
+					"remoteWritePassword": {
+						SchemaProps: spec.SchemaProps{
+							Description: "RemoteWriteUsername contains a password for remote write",
+							Type:        []string{"string"},
+							Format:      "",
+						},
+					},
+				},
+			},
+		},
 	}
 }
 
@@ -7721,12 +7763,18 @@ func schema_pkg_apis_core_v1beta1_CloudProfileSpec(ref common.ReferenceCallback)
 							},
 						},
 					},
+					"monitoring": {
+						SchemaProps: spec.SchemaProps{
+							Description: "MonitoringConfig contains settings for the monitoring stack",
+							Ref:         ref("github.com/gardener/gardener/pkg/apis/core/v1beta1.MonitoringConfig"),
+						},
+					},
 				},
 				Required: []string{"kubernetes", "machineImages", "machineTypes", "regions", "type"},
 			},
 		},
 		Dependencies: []string{
-			"github.com/gardener/gardener/pkg/apis/core/v1beta1.KubernetesSettings", "github.com/gardener/gardener/pkg/apis/core/v1beta1.MachineImage", "github.com/gardener/gardener/pkg/apis/core/v1beta1.MachineType", "github.com/gardener/gardener/pkg/apis/core/v1beta1.Region", "github.com/gardener/gardener/pkg/apis/core/v1beta1.SeedSelector", "github.com/gardener/gardener/pkg/apis/core/v1beta1.VolumeType", "k8s.io/apimachinery/pkg/runtime.RawExtension"},
+			"github.com/gardener/gardener/pkg/apis/core/v1beta1.KubernetesSettings", "github.com/gardener/gardener/pkg/apis/core/v1beta1.MachineImage", "github.com/gardener/gardener/pkg/apis/core/v1beta1.MachineType", "github.com/gardener/gardener/pkg/apis/core/v1beta1.MonitoringConfig", "github.com/gardener/gardener/pkg/apis/core/v1beta1.Region", "github.com/gardener/gardener/pkg/apis/core/v1beta1.SeedSelector", "github.com/gardener/gardener/pkg/apis/core/v1beta1.VolumeType", "k8s.io/apimachinery/pkg/runtime.RawExtension"},
 	}
 }
 
@@ -9923,6 +9971,40 @@ func schema_pkg_apis_core_v1beta1_Monitoring(ref common.ReferenceCallback) commo
 		},
 		Dependencies: []string{
 			"github.com/gardener/gardener/pkg/apis/core/v1beta1.Alerting"},
+	}
+}
+
+func schema_pkg_apis_core_v1beta1_MonitoringConfig(ref common.ReferenceCallback) common.OpenAPIDefinition {
+	return common.OpenAPIDefinition{
+		Schema: spec.Schema{
+			SchemaProps: spec.SchemaProps{
+				Description: "MonitoringConfig contains settings for the monitoring stack",
+				Type:        []string{"object"},
+				Properties: map[string]spec.Schema{
+					"remoteWriteURL": {
+						SchemaProps: spec.SchemaProps{
+							Description: "RemoteWriteURL contains a Url for remote write",
+							Type:        []string{"string"},
+							Format:      "",
+						},
+					},
+					"remoteWriteUsername": {
+						SchemaProps: spec.SchemaProps{
+							Description: "RemoteWriteURL contains a username for remote write",
+							Type:        []string{"string"},
+							Format:      "",
+						},
+					},
+					"remoteWritePassword": {
+						SchemaProps: spec.SchemaProps{
+							Description: "RemoteWriteUsername contains a password for remote write",
+							Type:        []string{"string"},
+							Format:      "",
+						},
+					},
+				},
+			},
+		},
 	}
 }
 

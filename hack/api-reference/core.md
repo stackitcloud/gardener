@@ -445,6 +445,20 @@ string
 <p>VolumeTypes contains constraints regarding allowed values for volume types in the &lsquo;workers&rsquo; block in the Shoot specification.</p>
 </td>
 </tr>
+<tr>
+<td>
+<code>monitoring</code></br>
+<em>
+<a href="#core.gardener.cloud/v1beta1.MonitoringConfig">
+MonitoringConfig
+</a>
+</em>
+</td>
+<td>
+<em>(Optional)</em>
+<p>MonitoringConfig contains settings for the monitoring stack</p>
+</td>
+</tr>
 </table>
 </td>
 </tr>
@@ -2440,6 +2454,20 @@ string
 <td>
 <em>(Optional)</em>
 <p>VolumeTypes contains constraints regarding allowed values for volume types in the &lsquo;workers&rsquo; block in the Shoot specification.</p>
+</td>
+</tr>
+<tr>
+<td>
+<code>monitoring</code></br>
+<em>
+<a href="#core.gardener.cloud/v1beta1.MonitoringConfig">
+MonitoringConfig
+</a>
+</em>
+</td>
+<td>
+<em>(Optional)</em>
+<p>MonitoringConfig contains settings for the monitoring stack</p>
 </td>
 </tr>
 </tbody>
@@ -5675,6 +5703,61 @@ Alerting
 <td>
 <em>(Optional)</em>
 <p>Alerting contains information about the alerting configuration for the shoot cluster.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3 id="core.gardener.cloud/v1beta1.MonitoringConfig">MonitoringConfig
+</h3>
+<p>
+(<em>Appears on:</em>
+<a href="#core.gardener.cloud/v1beta1.CloudProfileSpec">CloudProfileSpec</a>)
+</p>
+<p>
+<p>MonitoringConfig contains settings for the monitoring stack</p>
+</p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<code>remoteWriteURL</code></br>
+<em>
+string
+</em>
+</td>
+<td>
+<em>(Optional)</em>
+<p>RemoteWriteURL contains a Url for remote write</p>
+</td>
+</tr>
+<tr>
+<td>
+<code>remoteWriteUsername</code></br>
+<em>
+string
+</em>
+</td>
+<td>
+<em>(Optional)</em>
+<p>RemoteWriteURL contains a username for remote write</p>
+</td>
+</tr>
+<tr>
+<td>
+<code>remoteWritePassword</code></br>
+<em>
+string
+</em>
+</td>
+<td>
+<em>(Optional)</em>
+<p>RemoteWriteUsername contains a password for remote write</p>
 </td>
 </tr>
 </tbody>
