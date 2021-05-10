@@ -3787,6 +3787,13 @@ func schema_pkg_apis_core_v1alpha1_MonitoringConfig(ref common.ReferenceCallback
 							Format:      "",
 						},
 					},
+					"remoteWriteName": {
+						SchemaProps: spec.SchemaProps{
+							Description: "RemoteWriteName contains a name for the external write. This name will be appended as label",
+							Type:        []string{"string"},
+							Format:      "",
+						},
+					},
 				},
 			},
 		},
@@ -9998,6 +10005,13 @@ func schema_pkg_apis_core_v1beta1_MonitoringConfig(ref common.ReferenceCallback)
 					"remoteWritePassword": {
 						SchemaProps: spec.SchemaProps{
 							Description: "RemoteWriteUsername contains a password for remote write",
+							Type:        []string{"string"},
+							Format:      "",
+						},
+					},
+					"remoteWriteName": {
+						SchemaProps: spec.SchemaProps{
+							Description: "RemoteWriteName contains a name for the external write. This name will be appended as label",
 							Type:        []string{"string"},
 							Format:      "",
 						},

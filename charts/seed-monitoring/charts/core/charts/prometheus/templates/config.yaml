@@ -20,6 +20,7 @@ data:
         cluster: {{ .Release.Namespace }}
         project: {{ .Values.shoot.project }}
         shoot_name: {{ .Values.shoot.name }}
+        ske_env: {{ .Values.remoteWrite.name }}
         name: {{ .Values.shoot.name }}
         seed_api: {{ .Values.seed.apiserver }}
         seed_region: {{ .Values.seed.region }}
@@ -30,7 +31,6 @@ data:
 {{- if .Values.remoteWrite.url }}
     remote_write:
     - url: {{ .Values.remoteWrite.url }}
-      name: {{ .Values.remoteWrite.name }}
 {{- if .Values.remoteWrite.basic_auth }}
       basic_auth:
         username: {{ .Values.remoteWrite.basic_auth.username }}
