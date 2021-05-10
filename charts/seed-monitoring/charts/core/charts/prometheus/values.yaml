@@ -348,6 +348,7 @@ resources:
 
 #remoteWrite:
 #  url: coretexURL
+#  name: dns name of seed
 #  basic_auth:
 #    username: user
 #    password: password
