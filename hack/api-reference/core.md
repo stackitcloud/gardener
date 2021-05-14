@@ -6843,7 +6843,7 @@ definition in the documentation of your provider extension.</p>
 <td>
 <code>componentResources</code></br>
 <em>
-<a href="https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.15/#resourcerequirements-v1-core">
+<a href="https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.19/#resourcerequirements-v1-core">
 map[string]k8s.io/api/core/v1.ResourceRequirements
 </a>
 </em>

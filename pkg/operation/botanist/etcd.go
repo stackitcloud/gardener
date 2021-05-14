@@ -58,6 +58,7 @@ func (b *Botanist) DefaultEtcd(role string, class etcd.Class, proxyConfig *garde
 		b.Shoot.HibernationEnabled,
 		b.Seed.GetValidVolumeSize("10Gi"),
 		&defragmentationSchedule,
+		proxyConfig,
 	)
 
 	hvpaEnabled := gardenletfeatures.FeatureGate.Enabled(features.HVPA)
