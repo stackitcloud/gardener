@@ -67,8 +67,9 @@
 # v1.10.51-ske: add vpa config for gardenlet
 # v1.10.53-ske: prometheus remote write
 # v1.10.54-ske: fix remote write settings
+# v1.17.0-ske: rebase on v1.17.0
 
-EFFECTIVE_VERSION=v1.10.54-ske
+EFFECTIVE_VERSION=v1.17.0-ske
 REGISTRY=registry.ske.eu01.stackit.cloud/gardener-ds
 APISERVER_IMAGE_REPOSITORY=$REGISTRY/apiserver
 CONROLLER_MANAGER_IMAGE_REPOSITORY=$REGISTRY/controller-manager
