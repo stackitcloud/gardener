@@ -69,8 +69,9 @@
 # v1.10.54-ske: fix remote write settings
 # v1.17.0-ske: rebase on v1.17.0
 # v1.17.0-ske-1: fixed node-cidr-mask-size-ipv4 for kube-controller-manager deployment in IPV6DualStack setup
+# v1.17.0-ske-2: fixed gardener.cloud--allow-dns to support dual stack
 
-EFFECTIVE_VERSION=v1.17.0-ske-1
+EFFECTIVE_VERSION=v1.17.0-ske-2
 REGISTRY=registry.ske.eu01.stackit.cloud/gardener-ds
 APISERVER_IMAGE_REPOSITORY=$REGISTRY/apiserver
 CONROLLER_MANAGER_IMAGE_REPOSITORY=$REGISTRY/controller-manager
