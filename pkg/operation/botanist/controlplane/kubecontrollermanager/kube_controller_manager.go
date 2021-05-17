@@ -386,9 +386,11 @@ func (k *kubeControllerManager) computeCommand(port int32) []string {
 	)
 
 	if k.config.NodeCIDRMaskSize != nil {
-		command = append(command, fmt.Sprintf("--node-cidr-mask-size=%d", *k.config.NodeCIDRMaskSize))
 		if val, ok := k.config.FeatureGates["IPv6DualStack"]; ok && val {
+			command = append(command, fmt.Sprintf("--node-cidr-mask-size-ipv4=%d", *k.config.NodeCIDRMaskSize))
 			command = append(command, "--node-cidr-mask-size-ipv6=120")
+		} else {
+			command = append(command, fmt.Sprintf("--node-cidr-mask-size=%d", *k.config.NodeCIDRMaskSize))
 		}
 	}
 
