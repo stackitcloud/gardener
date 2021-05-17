@@ -68,8 +68,9 @@
 # v1.10.53-ske: prometheus remote write
 # v1.10.54-ske: fix remote write settings
 # v1.17.0-ske: rebase on v1.17.0
+# v1.17.0-ske-1: fixed node-cidr-mask-size-ipv4 for kube-controller-manager deployment in IPV6DualStack setup
 
-EFFECTIVE_VERSION=v1.17.0-ske
+EFFECTIVE_VERSION=v1.17.0-ske-1
 REGISTRY=registry.ske.eu01.stackit.cloud/gardener-ds
 APISERVER_IMAGE_REPOSITORY=$REGISTRY/apiserver
 CONROLLER_MANAGER_IMAGE_REPOSITORY=$REGISTRY/controller-manager
