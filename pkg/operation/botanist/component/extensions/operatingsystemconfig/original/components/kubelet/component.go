@@ -16,9 +16,8 @@ package kubelet
 
 import (
 	"bytes"
-	gardencore "github.com/gardener/gardener/pkg/apis/core"
-	"path/filepath"
 	_ "embed"
+	gardencore "github.com/gardener/gardener/pkg/apis/core"
 	"strings"
 	"text/template"
 

@@ -16,9 +16,8 @@ package containerd
 
 import (
 	"bytes"
-	"path/filepath"
-	"strconv"
 	_ "embed"
+	"strconv"
 	"text/template"
 
 	"github.com/gardener/gardener/charts"

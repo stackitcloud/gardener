@@ -452,8 +452,8 @@ func (b *Botanist) generateCoreAddonsChart(ctx context.Context) (*chartrenderer.
 			vpnShootConfig   = map[string]interface{}{
 				"endpoint":       b.outOfClusterAPIServerFQDN(),
 				"port":           "8132",
-				"podNetwork":     b.Shoot.Networks.Pods.String(),
-				"serviceNetwork": b.Shoot.Networks.Services.String(),
+				"podNetwork":     b.Shoot.Networks.Pods,
+				"serviceNetwork": b.Shoot.Networks.Services,
 				"tlsAuth":        vpnTLSAuthSecret.Data["vpn.tlsauth"],
 				"vpnShootSecretData": map[string]interface{}{
 					"ca":     vpnShootSecret.Data["ca.crt"],

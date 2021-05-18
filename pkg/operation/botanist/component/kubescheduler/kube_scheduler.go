@@ -143,7 +143,7 @@ func (k *kubeScheduler) Deploy(ctx context.Context) error {
 		return err
 	}
 
-	ipFamily := corev1.IPFamily("IPv4")
+	ipFamilies := []corev1.IPFamily{corev1.IPv4Protocol}
 	if _, err := controllerutil.CreateOrUpdate(ctx, k.client, service, func() error {
 		service.Labels = getLabels()
 		service.Spec.Selector = getLabels()
@@ -155,7 +155,7 @@ func (k *kubeScheduler) Deploy(ctx context.Context) error {
 				Port:     port,
 			},
 		})
-		service.Spec.IPFamily = &ipFamily
+		service.Spec.IPFamilies = ipFamilies
 		return nil
 	}); err != nil {
 		return err

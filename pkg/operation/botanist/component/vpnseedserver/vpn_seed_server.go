@@ -94,8 +94,8 @@ func New(
 	imageAPIServerProxy string,
 	imageVPNSeedServer string,
 	kubeAPIServerHost *string,
-	serviceNetwork string,
-	podNetwork string,
+	serviceNetwork []string,
+	podNetwork []string,
 	nodeNetwork *string,
 	replicas int32,
 ) VPNSeedServer {
@@ -118,8 +118,8 @@ type vpnSeedServer struct {
 	imageAPIServerProxy string
 	imageVPNSeedServer  string
 	kubeAPIServerHost   *string
-	serviceNetwork      string
-	podNetwork          string
+	serviceNetwork      []string
+	podNetwork          []string
 	nodeNetwork         *string
 	replicas            int32
 
@@ -305,11 +305,11 @@ func (v *vpnSeedServer) Deploy(ctx context.Context) error {
 							Env: []corev1.EnvVar{
 								{
 									Name:  "SERVICE_NETWORK",
-									Value: v.serviceNetwork,
+									Value: v.serviceNetwork[0],
 								},
 								{
 									Name:  "POD_NETWORK",
-									Value: v.podNetwork,
+									Value: v.podNetwork[0],
 								},
 							},
 							Resources: corev1.ResourceRequirements{
