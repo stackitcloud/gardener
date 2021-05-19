@@ -85,4 +85,5 @@ replace (
 	k8s.io/helm => k8s.io/helm v2.13.1+incompatible
 	k8s.io/kube-aggregator => k8s.io/kube-aggregator v0.20.6
 	sigs.k8s.io/controller-runtime => github.com/gardener/controller-runtime v0.8.3-gardener.1
+	github.com/gardener/etcd-druid v0.3.0 => github.com/stackitcloud/etcd-druid v0.5.0-ske
 )
