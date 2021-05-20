@@ -72,8 +72,9 @@
 # v1.17.0-ske-2: fixed gardener.cloud--allow-dns to support dual stack
 # v1.17.0-ske-3: changed kubelet version check in checker.go
 # v1.22.3-ske: rebase on v1.22.3
+# v1.22.3-ske-1: vendor generate and import stuff
 
-EFFECTIVE_VERSION=v1.22.3-ske
+EFFECTIVE_VERSION=v1.22.3-ske-1
 REGISTRY=registry.ske.eu01.stackit.cloud/gardener-ds
 APISERVER_IMAGE_REPOSITORY=$REGISTRY/apiserver
 CONROLLER_MANAGER_IMAGE_REPOSITORY=$REGISTRY/controller-manager
