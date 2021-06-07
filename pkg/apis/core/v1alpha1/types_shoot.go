@@ -861,9 +861,6 @@ type Networking struct {
 	// Services is the CIDR of the service network.
 	// +optional
 	Services *string `json:"services,omitempty" protobuf:"bytes,5,opt,name=services"`
-	// FeatureGates Some random comment
-	// +optional
-	FeatureGates *FeatureGates `json:"featureGates,omitempty" protobuf:"bytes,6,opt,name=featureGates"`
 	// ProxyConfig
 	// +optional
 	ProxyConfig *ProxyConfig `json:"proxyConfig,omitempty" protobuf:"bytes,7,opt,name=proxyConfig"`
@@ -877,13 +874,6 @@ type ProxyConfig struct {
 	// NoProxy defines the destinations to reach without proxy
 	// +optional
 	NoProxy *string `json:"noProxy,omitempty" protobuf:"bytes,2,opt,name=noProxy"`
-}
-
-// FeatureGates Some random comment
-type FeatureGates struct {
-	// IPv6DualStack Some random comment
-	// +optional
-	IPv6DualStack *bool `json:"IPv6DualStack,omitempty" protobuf:"varint,1,opt,name=IPv6DualStack"`
 }
 
 const (

@@ -679,8 +679,6 @@ type Networking struct {
 	Nodes *string
 	// Services is the CIDR of the service network.
 	Services *string
-	// Map for Feature Gates
-	FeatureGates *FeatureGates
 	// ProxyConfig defines proxy settings for gardener components
 	ProxyConfig *ProxyConfig
 }
@@ -691,10 +689,6 @@ type ProxyConfig struct {
 	HttpProxy *string
 	// NoProxy defines the destinations to reach without proxy
 	NoProxy *string
-}
-
-type FeatureGates struct {
-	IPv6DualStack *bool
 }
 
 const (

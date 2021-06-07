@@ -699,9 +699,6 @@ func validateNetworking(networking core.Networking, fldPath *field.Path) field.E
 	}
 
 	dualstack := false
-	if networking.FeatureGates != nil && networking.FeatureGates.IPv6DualStack != nil {
-		dualstack = *networking.FeatureGates.IPv6DualStack
-	}
 
 	if networking.Nodes != nil {
 		path := fldPath.Child("nodes")
