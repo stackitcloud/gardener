@@ -698,9 +698,13 @@ func validateNetworking(networking core.Networking, fldPath *field.Path) field.E
 		allErrs = append(allErrs, field.Required(fldPath.Child("type"), "networking type must be provided"))
 	}
 
-	dualstack, err := net.IsDualStackCIDRStrings(strings.Split(*networking.Nodes, ","))
-	if err != nil {
-		allErrs = append(allErrs, field.Invalid(fldPath.Child("nodes"), networking.Nodes, "dualStack check error"))
+	dualstack := false
+	if networking.Nodes != nil {
+		var err error
+		dualstack, err = net.IsDualStackCIDRStrings(strings.Split(*networking.Nodes, ","))
+		if err != nil {
+			allErrs = append(allErrs, field.Invalid(fldPath.Child("nodes"), networking.Nodes, "dualStack check error"))
+		}
 	}
 
 	if networking.Nodes != nil {
