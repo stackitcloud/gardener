@@ -160,6 +160,20 @@ func (vp *valuesHelper) GetGardenletChartValues(
 		return nil, err
 	}
 
+	// Set gardenlet VPA MinAllowed settings, if available
+	if vp.config.SeedConfig.Spec.Settings.VerticalPodAutoscaler != nil &&
+		vp.config.SeedConfig.Spec.Settings.VerticalPodAutoscaler.GardenletMinAllowed != nil {
+		gardenletValues["vpa"] = map[string]interface{}{
+			"enabled": vp.config.SeedConfig.Spec.Settings.VerticalPodAutoscaler.Enabled,
+			"resourcePolicy": map[string]interface{}{
+				"minAllowed": map[string]interface{}{
+					"cpu":    vp.config.SeedConfig.Spec.Settings.VerticalPodAutoscaler.GardenletMinAllowed.Cpu,
+					"memory": vp.config.SeedConfig.Spec.Settings.VerticalPodAutoscaler.GardenletMinAllowed.Memory,
+				},
+			},
+		}
+	}
+
 	// Return gardenlet chart values
 	return map[string]interface{}{
 		"global": map[string]interface{}{
