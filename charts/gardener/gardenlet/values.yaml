@@ -21,8 +21,7 @@ global:
     additionalVolumes: []
     additionalVolumeMounts: []
     env: []
-    vpa:
-      enabled: false
+    vpa: false
   # imageVectorOverwrite: |
   #  Please find documentation in docs/deployment/image_vector.md
   # componentImageVectorOverwrites: |
