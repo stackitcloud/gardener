@@ -76,8 +76,9 @@
 # v1.22.3-ske-2: New dualStack validation
 # v1.22.3-ske-3: fix error in dualstack validation
 # v1.22.3-ske-4: more dualstack validation
+# v1.22.3-ske-5: fix coredns chart
 
-EFFECTIVE_VERSION=v1.22.3-ske-4
+EFFECTIVE_VERSION=v1.22.3-ske-5
 REGISTRY=registry.ske.eu01.stackit.cloud/gardener-ds
 APISERVER_IMAGE_REPOSITORY=$REGISTRY/apiserver
 CONROLLER_MANAGER_IMAGE_REPOSITORY=$REGISTRY/controller-manager
