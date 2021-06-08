@@ -38,7 +38,7 @@ spec:
     - ipBlock:
         cidr: {{ . }}
     {{- end }}
-    {{- range (split "," .Values.global.nodeNetwork)}}
+    {{- range (split "," .Values.nodeNetwork)}}
     - ipBlock:
         cidr: {{ . }}
     {{- end }}
