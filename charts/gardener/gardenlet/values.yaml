@@ -23,10 +23,6 @@ global:
     env: []
     vpa:
       enabled: false
-  #   resourcePolicy:
-  #     minAllowed:
-  #       cpu: 100m
-  #       memory: 128Mi
   # imageVectorOverwrite: |
   #  Please find documentation in docs/deployment/image_vector.md
   # componentImageVectorOverwrites: |
