@@ -77,9 +77,9 @@
 # v1.22.3-ske-3: fix error in dualstack validation
 # v1.22.3-ske-4: more dualstack validation
 # v1.22.3-ske-5: fix coredns chart
-# v1.22.3-ske-6: Readd gardenlet minallowed
+# v1.22.3-ske-7: Drop gardenlet vpa minallowed until time to implement nicely
 
-EFFECTIVE_VERSION=v1.22.3-ske-6
+EFFECTIVE_VERSION=v1.22.3-ske-7
 REGISTRY=registry.ske.eu01.stackit.cloud/gardener-ds
 APISERVER_IMAGE_REPOSITORY=$REGISTRY/apiserver
 CONROLLER_MANAGER_IMAGE_REPOSITORY=$REGISTRY/controller-manager
