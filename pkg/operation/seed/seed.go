@@ -977,9 +977,12 @@ func runCreateSeedFlow(
 
 	dnsEntry := getManagedIngressDNSEntry(sc, seed.GetIngressFQDN("*"), ingressLoadBalancerAddress, seedLogger)
 
-	networks := []string{seed.Info.Spec.Networks.Pods, seed.Info.Spec.Networks.Services}
+	var networks []string
+	networks = append(networks, strings.Split(seed.Info.Spec.Networks.Pods, ",")...)
+	networks = append(networks, strings.Split(seed.Info.Spec.Networks.Services, ",")...)
+
 	if v := seed.Info.Spec.Networks.Nodes; v != nil {
-		networks = append(networks, *v)
+		networks = append(networks, strings.Split(*v, ",")...)
 	}
 	privateNetworkPeers, err := networkpolicies.ToNetworkPolicyPeersWithExceptions(networkpolicies.AllPrivateNetworkBlocks(), networks...)
 	if err != nil {

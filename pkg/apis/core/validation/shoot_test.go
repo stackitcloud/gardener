@@ -770,8 +770,8 @@ var _ = Describe("Shoot Validation Tests", func() {
 
 			It("aaa", func() {
 				nodeCIDR := "10.250.0.3/16,2a05:b540:caf9::7c:0/112"
-				podCIDR := "10.250.0.0/16,2a05:b540:caf9::7c:0/112"
-				serviceCIDR := "10.250.0.0/16,2a05:b540:caf9::7c:0/112"
+				podCIDR := "100.96.0.0/11,2a05:b540:caf9::7d:0/112"
+				serviceCIDR := "100.64.0.0/13,2a05:b540:caf9::7e:0/112"
 
 				shoot.Spec.Networking.Nodes = &nodeCIDR
 				shoot.Spec.Networking.Services = &serviceCIDR

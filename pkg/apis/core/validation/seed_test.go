@@ -43,7 +43,7 @@ var _ = Describe("Seed Validation Tests", func() {
 		region := "some-region"
 		pods := "10.240.0.0/16"
 		services := "10.241.0.0/16"
-		nodesCIDR := "10.250.0.0/16"
+		nodesCIDR := "10.250.0.3/16,2a05:b540:caf9::7c:0/112"
 		seed = &core.Seed{
 			ObjectMeta: metav1.ObjectMeta{
 				Name: "seed-1",
@@ -65,8 +65,8 @@ var _ = Describe("Seed Validation Tests", func() {
 				},
 				Networks: core.SeedNetworks{
 					Nodes:    &nodesCIDR,
-					Pods:     "100.96.0.0/11",
-					Services: "100.64.0.0/13",
+					Pods:     "100.96.0.0/11,2a05:b540:caf9::7d:0/112",
+					Services: "100.64.0.0/13,2a05:b540:caf9::7e:0/112",
 					ShootDefaults: &core.ShootNetworks{
 						Pods:     &pods,
 						Services: &services,
@@ -90,6 +90,20 @@ var _ = Describe("Seed Validation Tests", func() {
 			},
 			Spec: seed.Spec,
 		}
+	})
+
+	It("aaa", func() {
+		nodeCIDR := "10.250.0.3/16,2a05:b540:caf9::7c:0/112"
+		podCIDR := "100.96.0.0/11,2a05:b540:caf9::7d:0/112"
+		serviceCIDR := "100.64.0.0/13,2a05:b540:caf9::7e:0/112"
+
+		seed.Spec.Networks.Nodes = &nodeCIDR
+		seed.Spec.Networks.Services = serviceCIDR
+		seed.Spec.Networks.Pods = podCIDR
+
+		errorList := ValidateSeed(seed)
+
+		Expect(errorList).Should(BeEmpty())
 	})
 
 	Describe("#ValidateSeed, #ValidateSeedUpdate", func() {
