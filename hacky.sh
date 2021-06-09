@@ -79,8 +79,9 @@
 # v1.22.3-ske-5: fix coredns chart
 # v1.22.3-ske-7: Drop gardenlet vpa minallowed until time to implement nicely
 # v1.22.3-ske-7: Revert vpa min allowed stuff
+# v1.24.0-ske: rebased on v1.24.0
 
-EFFECTIVE_VERSION=v1.22.3-ske-8
+EFFECTIVE_VERSION=v1.24.0-ske
 REGISTRY=registry.ske.eu01.stackit.cloud/gardener-ds
 APISERVER_IMAGE_REPOSITORY=$REGISTRY/apiserver
 CONROLLER_MANAGER_IMAGE_REPOSITORY=$REGISTRY/controller-manager
