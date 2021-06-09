@@ -777,7 +777,7 @@ func (b *Botanist) kubeAPIServiceService(sniPhase component.Phase) component.Dep
 		nil,
 		b.setAPIServerServiceClusterIP,
 		func(address string) { b.setAPIServerAddress(address, b.K8sSeedClient.DirectClient()) },
-		ipFamily,
+		[]corev1.IPFamily{ipFamily},
 	)
 }
 
