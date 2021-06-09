@@ -17,6 +17,7 @@ package network
 import (
 	"context"
 	"net"
+	"strings"
 	"time"
 
 	"github.com/gardener/gardener/pkg/apis/core/v1alpha1"
@@ -56,9 +57,9 @@ type Values struct {
 	// ProviderConfig contains the provider config for the Network extension.
 	ProviderConfig *runtime.RawExtension
 	// PodCIDR is the Shoot's pod CIDR in the Shoot VPC
-	PodCIDR *net.IPNet
+	PodCIDR []net.IPNet
 	// ServiceCIDR is the Shoot's service CIDR in the Shoot VPC
-	ServiceCIDR *net.IPNet
+	ServiceCIDR []net.IPNet
 }
 
 // New creates a new instance of DeployWaiter for a Network.
@@ -188,13 +189,23 @@ func (n *network) internalDeploy(ctx context.Context, operation string) (extensi
 		metav1.SetMetaDataAnnotation(&network.ObjectMeta, v1beta1constants.GardenerOperation, operation)
 		metav1.SetMetaDataAnnotation(&network.ObjectMeta, v1beta1constants.GardenerTimestamp, TimeNow().UTC().String())
 
+		var podCidrs []string
+		for _, pod := range n.values.PodCIDR {
+			podCidrs = append(podCidrs, pod.String())
+		}
+
+		var svcCidrs []string
+		for _, svc := range n.values.ServiceCIDR {
+			svcCidrs = append(svcCidrs, svc.String())
+		}
+
 		network.Spec = extensionsv1alpha1.NetworkSpec{
 			DefaultSpec: extensionsv1alpha1.DefaultSpec{
 				Type:           n.values.Type,
 				ProviderConfig: n.values.ProviderConfig,
 			},
-			PodCIDR:     n.values.PodCIDR.String(),
-			ServiceCIDR: n.values.ServiceCIDR.String(),
+			PodCIDR:     strings.Join(podCidrs, ","),
+			ServiceCIDR: strings.Join(svcCidrs, ","),
 		}
 
 		return nil

@@ -34,10 +34,14 @@ spec:
     from:
     - namespaceSelector: {}
       podSelector: {}
+    {{- range (split "," .Values.global.podNetwork)}}
     - ipBlock:
-        cidr: {{ .Values.global.podNetwork }}
+        cidr: {{ . }}
+    {{- end }}
+    {{- range (split "," .Values.nodeNetwork)}}
     - ipBlock:
-        cidr: {{ .Values.nodeNetwork }}
+        cidr: {{ . }}
+    {{- end }}
   policyTypes:
   - Egress
   - Ingress

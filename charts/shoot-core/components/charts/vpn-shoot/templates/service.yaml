@@ -8,6 +8,7 @@ metadata:
   labels:
     app: vpn-shoot
 spec:
+  ipFamily: IPv4
   selector:
     app: vpn-shoot
   type: LoadBalancer

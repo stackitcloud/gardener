@@ -16,7 +16,6 @@ package botanist
 
 import (
 	"context"
-
 	"github.com/gardener/gardener/charts"
 	v1beta1constants "github.com/gardener/gardener/pkg/apis/core/v1beta1/constants"
 	"github.com/gardener/gardener/pkg/operation/botanist/component"
@@ -63,14 +62,24 @@ func (b *Botanist) DefaultVPNSeedServer() (vpnseedserver.VPNSeedServer, error) {
 		kubeAPIServerHost = pointer.StringPtr(b.outOfClusterAPIServerFQDN())
 	}
 
+	var netPods []string
+	for _, IPNetPod := range b.Shoot.Networks.Services {
+		netPods = append(netPods, IPNetPod.String())
+	}
+
+	var netServices []string
+	for _, IPNetService := range b.Shoot.Networks.Services {
+		netServices = append(netServices, IPNetService.String())
+	}
+
 	return vpnseedserver.New(
 		b.K8sSeedClient.Client(),
 		b.Shoot.SeedNamespace,
 		imageAPIServerProxy.String(),
 		imageVPNSeedServer.String(),
 		kubeAPIServerHost,
-		b.Shoot.Networks.Services.String(),
-		b.Shoot.Networks.Pods.String(),
+		netServices,
+		netPods,
 		b.Shoot.GetNodeNetwork(),
 		b.Shoot.GetReplicas(1),
 	), nil
