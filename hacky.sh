@@ -82,8 +82,9 @@
 # v1.24.0-ske: rebased on v1.24.0
 # v1.24.1-ske-1: vendor generate and import stuff
 # v1.24.1-ske-2: Change IngressPrefix to i
+# v1.24.1-ske-3: add disk metrics from node exporter
 
-EFFECTIVE_VERSION=v1.24.0-ske-2
+EFFECTIVE_VERSION=v1.24.0-ske-3
 REGISTRY=registry.ske.eu01.stackit.cloud/gardener-ds
 APISERVER_IMAGE_REPOSITORY=$REGISTRY/apiserver
 CONROLLER_MANAGER_IMAGE_REPOSITORY=$REGISTRY/controller-manager
