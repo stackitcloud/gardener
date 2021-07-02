@@ -20,6 +20,11 @@ data:
         cluster: {{ .Release.Namespace }}
         project: {{ .Values.shoot.project }}
         shoot_name: {{ .Values.shoot.name }}
+{{- if .Values.remoteWrite }}
+{{- if .Values.remoteWrite.name }}
+        ske_env: {{ .Values.remoteWrite.name }}
+{{- end }}
+{{- end }}
         name: {{ .Values.shoot.name }}
         seed_api: {{ .Values.seed.apiserver }}
         seed_region: {{ .Values.seed.region }}

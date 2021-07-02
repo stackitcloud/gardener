@@ -260,6 +260,7 @@ func (b *Botanist) DeploySeedMonitoring(ctx context.Context) error {
 		// if remoteWrite Url is set add config into values
 		remoteWriteConfig := map[string]interface{}{
 			"url": b.Shoot.CloudProfile.Spec.Monitoring.RemoteWriteURL,
+			"name": b.Shoot.CloudProfile.Spec.Monitoring.RemoteWriteName,
 		}
 		if b.Shoot.CloudProfile.Spec.Monitoring.RemoteWriteUsername != "" &&
 		  b.Shoot.CloudProfile.Spec.Monitoring.RemoteWritePassword != "" {
