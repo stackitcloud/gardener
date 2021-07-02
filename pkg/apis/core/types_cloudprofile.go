@@ -83,6 +83,8 @@ type MonitoringConfig struct {
 	RemoteWritePassword string
 	// RemoteWriteName contains a name for the external write. This name will be appended as label
 	RemoteWriteName string
+	// RemoteWriteKeep contains a list of metrics that will be remote written
+	RemoteWriteKeep []string
 }
 
 func (c *CloudProfile) GetProviderType() string {

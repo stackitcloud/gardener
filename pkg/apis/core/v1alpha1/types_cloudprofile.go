@@ -103,6 +103,9 @@ type MonitoringConfig struct {
 	// RemoteWriteName contains a name for the external write. This name will be appended as label
 	// +optional
 	RemoteWriteName string `json:"remoteWriteName,omitempty" protobuf:"bytes,4,opt,name=remoteWriteName"`
+	// RemoteWriteKeep contains a list of metrics that will be remote written
+	// +optional
+	RemoteWriteKeep []string `json:"remoteWriteKeep,omitempty" protobuf:"bytes,4,opt,name=remoteWriteKeep"`
 }
 
 // SeedSelector contains constraints for selecting seed to be usable for shoots using a profile

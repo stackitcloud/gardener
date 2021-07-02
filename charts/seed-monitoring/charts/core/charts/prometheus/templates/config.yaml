@@ -40,6 +40,10 @@ data:
         username: {{ .Values.remoteWrite.basic_auth.username }}
         password: {{ .Values.remoteWrite.basic_auth.password }}
 {{- end }}
+{{- if .Values.remoteWrite.keep }}
+      write_relabel_configs:
+{{ include "prometheus.keep-metrics.metric-relabel-config" .Values.remoteWrite.keep | indent 6 }}
+{{- end }}
 {{- end }}
 {{- end }}
     rule_files:

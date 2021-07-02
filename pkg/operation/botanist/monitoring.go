@@ -269,6 +269,9 @@ func (b *Botanist) DeploySeedMonitoring(ctx context.Context) error {
 				"password": b.Shoot.CloudProfile.Spec.Monitoring.RemoteWritePassword,
 			}
 		}
+		if len(b.Shoot.CloudProfile.Spec.Monitoring.RemoteWriteKeep) != 0 {
+			remoteWriteConfig["keep"] = b.Shoot.CloudProfile.Spec.Monitoring.RemoteWriteKeep
+		}
 			prometheusConfig["remoteWrite"] = remoteWriteConfig
 	}
 
