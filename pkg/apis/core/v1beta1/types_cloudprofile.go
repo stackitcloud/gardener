@@ -105,7 +105,7 @@ type MonitoringConfig struct {
 	RemoteWriteName string `json:"remoteWriteName,omitempty" protobuf:"bytes,4,opt,name=remoteWriteName"`
 	// RemoteWriteKeep contains a list of metrics that will be remote written
 	// +optional
-	RemoteWriteKeep []string `json:"remoteWriteKeep,omitempty" protobuf:"bytes,4,opt,name=remoteWriteKeep"`
+	RemoteWriteKeep []string `json:"remoteWriteKeep,omitempty" protobuf:"bytes,5,opt,name=remoteWriteKeep"`
 }
 
 // SeedSelector contains constraints for selecting seed to be usable for shoots using a profile

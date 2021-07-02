@@ -3728,6 +3728,7 @@ func autoConvert_v1alpha1_MonitoringConfig_To_core_MonitoringConfig(in *Monitori
 	out.RemoteWriteUsername = in.RemoteWriteUsername
 	out.RemoteWritePassword = in.RemoteWritePassword
 	out.RemoteWriteName = in.RemoteWriteName
+	out.RemoteWriteKeep = *(*[]string)(unsafe.Pointer(&in.RemoteWriteKeep))
 	return nil
 }
 
@@ -3741,6 +3742,7 @@ func autoConvert_core_MonitoringConfig_To_v1alpha1_MonitoringConfig(in *core.Mon
 	out.RemoteWriteUsername = in.RemoteWriteUsername
 	out.RemoteWritePassword = in.RemoteWritePassword
 	out.RemoteWriteName = in.RemoteWriteName
+	out.RemoteWriteKeep = *(*[]string)(unsafe.Pointer(&in.RemoteWriteKeep))
 	return nil
 }
 
