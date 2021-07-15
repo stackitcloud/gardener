@@ -1293,6 +1293,14 @@ message MonitoringConfig {
   // RemoteWriteUsername contains a password for remote write
   // +optional
   optional string remoteWritePassword = 3;
+
+  // RemoteWriteName contains a name for the external write. This name will be appended as label
+  // +optional
+  optional string remoteWriteName = 4;
+
+  // RemoteWriteKeep contains a list of metrics that will be remote written
+  // +optional
+  repeated string remoteWriteKeep = 5;
 }
 
 // NamedResourceReference is a named reference to a resource.

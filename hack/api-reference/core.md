@@ -6093,6 +6093,30 @@ string
 <p>RemoteWriteUsername contains a password for remote write</p>
 </td>
 </tr>
+<tr>
+<td>
+<code>remoteWriteName</code></br>
+<em>
+string
+</em>
+</td>
+<td>
+<em>(Optional)</em>
+<p>RemoteWriteName contains a name for the external write. This name will be appended as label</p>
+</td>
+</tr>
+<tr>
+<td>
+<code>remoteWriteKeep</code></br>
+<em>
+[]string
+</em>
+</td>
+<td>
+<em>(Optional)</em>
+<p>RemoteWriteKeep contains a list of metrics that will be remote written</p>
+</td>
+</tr>
 </tbody>
 </table>
 <h3 id="core.gardener.cloud/v1beta1.NamedResourceReference">NamedResourceReference

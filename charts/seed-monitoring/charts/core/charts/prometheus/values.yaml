@@ -356,3 +356,8 @@ resources:
 #  basic_auth:
 #    username: user
 #    password: password
+#  keep:
+#  - metric1
+#  - metric2
+#  - metric3
+#  - metric4

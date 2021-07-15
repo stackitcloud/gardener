@@ -4508,6 +4508,28 @@ func schema_pkg_apis_core_v1alpha1_MonitoringConfig(ref common.ReferenceCallback
 							Format:      "",
 						},
 					},
+					"remoteWriteName": {
+						SchemaProps: spec.SchemaProps{
+							Description: "RemoteWriteName contains a name for the external write. This name will be appended as label",
+							Type:        []string{"string"},
+							Format:      "",
+						},
+					},
+					"remoteWriteKeep": {
+						SchemaProps: spec.SchemaProps{
+							Description: "RemoteWriteKeep contains a list of metrics that will be remote written",
+							Type:        []string{"array"},
+							Items: &spec.SchemaOrArray{
+								Schema: &spec.Schema{
+									SchemaProps: spec.SchemaProps{
+										Default: "",
+										Type:    []string{"string"},
+										Format:  "",
+									},
+								},
+							},
+						},
+					},
 				},
 			},
 		},
@@ -11415,6 +11437,28 @@ func schema_pkg_apis_core_v1beta1_MonitoringConfig(ref common.ReferenceCallback)
 							Description: "RemoteWriteUsername contains a password for remote write",
 							Type:        []string{"string"},
 							Format:      "",
+						},
+					},
+					"remoteWriteName": {
+						SchemaProps: spec.SchemaProps{
+							Description: "RemoteWriteName contains a name for the external write. This name will be appended as label",
+							Type:        []string{"string"},
+							Format:      "",
+						},
+					},
+					"remoteWriteKeep": {
+						SchemaProps: spec.SchemaProps{
+							Description: "RemoteWriteKeep contains a list of metrics that will be remote written",
+							Type:        []string{"array"},
+							Items: &spec.SchemaOrArray{
+								Schema: &spec.Schema{
+									SchemaProps: spec.SchemaProps{
+										Default: "",
+										Type:    []string{"string"},
+										Format:  "",
+									},
+								},
+							},
 						},
 					},
 				},
