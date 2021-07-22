@@ -85,6 +85,8 @@ allowedMetrics:
   - apiserver_current_inqueue_requests
   - apiserver_response_sizes_bucket
   - apiserver_request_duration_seconds_bucket
+  - apiserver_request_duration_seconds_count
+  - apiserver_request_duration_seconds_sum
   - apiserver_request_terminations_total
   - apiserver_storage_transformation_duration_seconds_bucket
   - apiserver_storage_transformation_operations_total
