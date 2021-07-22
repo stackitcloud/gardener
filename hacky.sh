@@ -85,8 +85,9 @@
 # v1.24.1-ske-3: add disk metrics from node exporter
 # v1.24.1-ske-4: add remote write name
 # v1.24.1-ske-5: add remote write name
+# v1.24.1-ske-8: remote write queue tuning try1
 
-EFFECTIVE_VERSION=v1.24.0-ske-5
+EFFECTIVE_VERSION=v1.24.0-ske-8
 REGISTRY=registry.ske.eu01.stackit.cloud/gardener-ds
 APISERVER_IMAGE_REPOSITORY=$REGISTRY/apiserver
 CONROLLER_MANAGER_IMAGE_REPOSITORY=$REGISTRY/controller-manager
