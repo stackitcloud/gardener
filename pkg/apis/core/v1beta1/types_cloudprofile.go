@@ -112,6 +112,12 @@ type MonitoringConfig struct {
 	// ExternalBlackboxExporterModule define the module used in target blackbox exporter
 	// +optional
 	ExternalBlackboxExporterModule string `json:"externalBlackboxExporterModule,omitempty" protobuf:"bytes,7,opt,name=externalBlackboxExporterModule"`
+	// ExternalBlackboxExporterUsername define a user for basic auth
+	// +optional
+	ExternalBlackboxExporterUsername string `json:"externalBlackboxExporterUsername,omitempty" protobuf:"bytes,8,opt,name=externalBlackboxExporterUsername"`
+	// ExternalBlackboxExporterPassword define a password for basic auth
+	// +optional
+	ExternalBlackboxExporterPassword string `json:"externalBlackboxExporterPassword,omitempty" protobuf:"bytes,9,opt,name=externalBlackboxExporterPassword"`
 }
 
 // SeedSelector contains constraints for selecting seed to be usable for shoots using a profile
