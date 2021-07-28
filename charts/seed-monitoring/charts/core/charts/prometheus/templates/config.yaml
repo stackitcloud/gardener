@@ -638,7 +638,11 @@ data:
         module: [{{ .Values.externalBlackboxExporter.module }}]
       static_configs:
         - targets:
+{{- if .Values.externalBlackboxExporter.externalApiUrl }}
+          - {{ .Values.externalBlackboxExporter.externalApiUrl }}
+{{- else }}
           - {{ .Values.shoot.apiserver }}
+{{- end }}
       relabel_configs:
         - source_labels: [__address__]
           target_label: __param_target

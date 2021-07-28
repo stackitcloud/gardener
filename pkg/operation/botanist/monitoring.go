@@ -288,6 +288,11 @@ func (b *Botanist) DeploySeedMonitoring(ctx context.Context) error {
 				"password": b.Shoot.CloudProfile.Spec.Monitoring.ExternalBlackboxExporterPassword,
 			}
 		}
+		for _, advertisedAddresse := range b.Shoot.Info.Status.AdvertisedAddresses {
+			if advertisedAddresse.Name == "external" {
+				externalBlackboxExporter["externalApiUrl"] = advertisedAddresse.URL
+			}
+		}
 		prometheusConfig["externalBlackboxExporter"] = externalBlackboxExporter
 	}
 

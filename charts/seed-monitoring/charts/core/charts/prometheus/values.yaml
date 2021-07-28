@@ -373,6 +373,7 @@ resources:
 #externalBlackboxExporter:
 #  url: blackboxURL
 #  module: module
+#  externalApiUrl: https://apu-url
 #  basic_auth:
 #    username: user
 #    password: password
