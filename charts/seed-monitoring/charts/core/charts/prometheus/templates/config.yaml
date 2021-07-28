@@ -645,6 +645,11 @@ data:
           target_label: instance
         - target_label: __address__
           replacement: {{ .Values.externalBlackboxExporter.url }}
+{{- if .Values.externalBlackboxExporter.basic_auth }}
+      basic_auth:
+        username: {{ .Values.externalBlackboxExporter.basic_auth.username }}
+        password: {{ .Values.externalBlackboxExporter.basic_auth.password }}
+{{- end }}
       metric_relabel_configs:
 {{ include "prometheus.keep-metrics.metric-relabel-config" .Values.allowedMetrics.externalBlackboxExporter | indent 6 }}
 {{- end }}

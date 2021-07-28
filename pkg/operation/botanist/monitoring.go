@@ -281,6 +281,13 @@ func (b *Botanist) DeploySeedMonitoring(ctx context.Context) error {
 			"url": b.Shoot.CloudProfile.Spec.Monitoring.ExternalBlackboxExporterURL,
 			"module": b.Shoot.CloudProfile.Spec.Monitoring.ExternalBlackboxExporterModule,
 		}
+		if b.Shoot.CloudProfile.Spec.Monitoring.ExternalBlackboxExporterUsername != "" &&
+			b.Shoot.CloudProfile.Spec.Monitoring.ExternalBlackboxExporterPassword != "" {
+			externalBlackboxExporter["basic_auth"] = map[string]interface{}{
+				"username": b.Shoot.CloudProfile.Spec.Monitoring.ExternalBlackboxExporterUsername,
+				"password": b.Shoot.CloudProfile.Spec.Monitoring.ExternalBlackboxExporterPassword,
+			}
+		}
 		prometheusConfig["externalBlackboxExporter"] = externalBlackboxExporter
 	}
 

@@ -89,6 +89,10 @@ type MonitoringConfig struct {
 	ExternalBlackboxExporterURL string
 	// ExternalBlackboxExporterModule define the module used in target blackbox exporter
 	ExternalBlackboxExporterModule string
+	// ExternalBlackboxExporterUsername define a user for basic auth
+	ExternalBlackboxExporterUsername string
+	// ExternalBlackboxExporterPassword define a password for basic auth
+	ExternalBlackboxExporterPassword string
 }
 
 func (c *CloudProfile) GetProviderType() string {

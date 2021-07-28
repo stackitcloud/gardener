@@ -373,3 +373,6 @@ resources:
 #externalBlackboxExporter:
 #  url: blackboxURL
 #  module: module
+#  basic_auth:
+#    username: user
+#    password: password
