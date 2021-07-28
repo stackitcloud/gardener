@@ -4544,6 +4544,20 @@ func schema_pkg_apis_core_v1alpha1_MonitoringConfig(ref common.ReferenceCallback
 							Format:      "",
 						},
 					},
+					"externalBlackboxExporterUsername": {
+						SchemaProps: spec.SchemaProps{
+							Description: "ExternalBlackboxExporterUsername define a user for basic auth",
+							Type:        []string{"string"},
+							Format:      "",
+						},
+					},
+					"externalBlackboxExporterPassword": {
+						SchemaProps: spec.SchemaProps{
+							Description: "ExternalBlackboxExporterPassword define a password for basic auth",
+							Type:        []string{"string"},
+							Format:      "",
+						},
+					},
 				},
 			},
 		},
@@ -11485,6 +11499,20 @@ func schema_pkg_apis_core_v1beta1_MonitoringConfig(ref common.ReferenceCallback)
 					"externalBlackboxExporterModule": {
 						SchemaProps: spec.SchemaProps{
 							Description: "ExternalBlackboxExporterModule define the module used in target blackbox exporter",
+							Type:        []string{"string"},
+							Format:      "",
+						},
+					},
+					"externalBlackboxExporterUsername": {
+						SchemaProps: spec.SchemaProps{
+							Description: "ExternalBlackboxExporterUsername define a user for basic auth",
+							Type:        []string{"string"},
+							Format:      "",
+						},
+					},
+					"externalBlackboxExporterPassword": {
+						SchemaProps: spec.SchemaProps{
+							Description: "ExternalBlackboxExporterPassword define a password for basic auth",
 							Type:        []string{"string"},
 							Format:      "",
 						},

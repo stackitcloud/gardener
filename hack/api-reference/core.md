@@ -6141,6 +6141,30 @@ string
 <p>ExternalBlackboxExporterModule define the module used in target blackbox exporter</p>
 </td>
 </tr>
+<tr>
+<td>
+<code>externalBlackboxExporterUsername</code></br>
+<em>
+string
+</em>
+</td>
+<td>
+<em>(Optional)</em>
+<p>ExternalBlackboxExporterUsername define a user for basic auth</p>
+</td>
+</tr>
+<tr>
+<td>
+<code>externalBlackboxExporterPassword</code></br>
+<em>
+string
+</em>
+</td>
+<td>
+<em>(Optional)</em>
+<p>ExternalBlackboxExporterPassword define a password for basic auth</p>
+</td>
+</tr>
 </tbody>
 </table>
 <h3 id="core.gardener.cloud/v1beta1.NamedResourceReference">NamedResourceReference
