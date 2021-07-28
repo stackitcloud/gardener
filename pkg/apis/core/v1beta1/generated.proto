@@ -1309,6 +1309,14 @@ message MonitoringConfig {
   // ExternalBlackboxExporterModule define the module used in target blackbox exporter
   // +optional
   optional string externalBlackboxExporterModule = 7;
+
+  // ExternalBlackboxExporterUsername define a user for basic auth
+  // +optional
+  optional string externalBlackboxExporterUsername = 8;
+
+  // ExternalBlackboxExporterPassword define a password for basic auth
+  // +optional
+  optional string externalBlackboxExporterPassword = 9;
 }
 
 // NamedResourceReference is a named reference to a resource.
