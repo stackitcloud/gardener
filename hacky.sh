@@ -87,8 +87,9 @@
 # v1.24.1-ske-5: add remote write name
 # v1.24.1-ske-8: remote write queue tuning try1
 # v1.24.1-ske-9: added apiserver_request_duration_seconds_count and apiserver_request_duration_seconds_sum to prometheus scrape keep
+# v1.24.1-ske-10: add setting for externalBlackboxExporter
 
-EFFECTIVE_VERSION=v1.24.0-ske-9
+EFFECTIVE_VERSION=v1.24.0-ske-10
 REGISTRY=registry.ske.eu01.stackit.cloud/gardener-ds
 APISERVER_IMAGE_REPOSITORY=$REGISTRY/apiserver
 CONROLLER_MANAGER_IMAGE_REPOSITORY=$REGISTRY/controller-manager
