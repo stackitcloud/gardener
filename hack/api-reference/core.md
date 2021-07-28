@@ -6117,6 +6117,30 @@ string
 <p>RemoteWriteKeep contains a list of metrics that will be remote written</p>
 </td>
 </tr>
+<tr>
+<td>
+<code>externalBlackboxExporterURL</code></br>
+<em>
+string
+</em>
+</td>
+<td>
+<em>(Optional)</em>
+<p>ExternalBlackboxExporterURL url of external blackbox exporter</p>
+</td>
+</tr>
+<tr>
+<td>
+<code>externalBlackboxExporterModule</code></br>
+<em>
+string
+</em>
+</td>
+<td>
+<em>(Optional)</em>
+<p>ExternalBlackboxExporterModule define the module used in target blackbox exporter</p>
+</td>
+</tr>
 </tbody>
 </table>
 <h3 id="core.gardener.cloud/v1beta1.NamedResourceReference">NamedResourceReference

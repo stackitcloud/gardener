@@ -3478,6 +3478,8 @@ func autoConvert_v1beta1_MonitoringConfig_To_core_MonitoringConfig(in *Monitorin
 	out.RemoteWritePassword = in.RemoteWritePassword
 	out.RemoteWriteName = in.RemoteWriteName
 	out.RemoteWriteKeep = *(*[]string)(unsafe.Pointer(&in.RemoteWriteKeep))
+	out.ExternalBlackboxExporterURL = in.ExternalBlackboxExporterURL
+	out.ExternalBlackboxExporterModule = in.ExternalBlackboxExporterModule
 	return nil
 }
 
@@ -3492,6 +3494,8 @@ func autoConvert_core_MonitoringConfig_To_v1beta1_MonitoringConfig(in *core.Moni
 	out.RemoteWritePassword = in.RemoteWritePassword
 	out.RemoteWriteName = in.RemoteWriteName
 	out.RemoteWriteKeep = *(*[]string)(unsafe.Pointer(&in.RemoteWriteKeep))
+	out.ExternalBlackboxExporterURL = in.ExternalBlackboxExporterURL
+	out.ExternalBlackboxExporterModule = in.ExternalBlackboxExporterModule
 	return nil
 }
 
