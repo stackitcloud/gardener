@@ -646,7 +646,7 @@ data:
         - target_label: __address__
           replacement: {{ .Values.externalBlackboxExporter.url }}
       metric_relabel_configs:
-    {{ include "prometheus.keep-metrics.metric-relabel-config" .Values.allowedMetrics.externalBlackboxExporter | indent 6 }}
+{{ include "prometheus.keep-metrics.metric-relabel-config" .Values.allowedMetrics.externalBlackboxExporter | indent 6 }}
 {{- end }}
 {{- end }}
 {{- if .Values.additionalScrapeConfigs }}
