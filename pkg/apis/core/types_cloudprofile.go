@@ -85,6 +85,10 @@ type MonitoringConfig struct {
 	RemoteWriteName string
 	// RemoteWriteKeep contains a list of metrics that will be remote written
 	RemoteWriteKeep []string
+	// ExternalBlackboxExporterURL url of external blackbox exporter
+	ExternalBlackboxExporterURL string
+	// ExternalBlackboxExporterModule define the module used in target blackbox exporter
+	ExternalBlackboxExporterModule string
 }
 
 func (c *CloudProfile) GetProviderType() string {
