@@ -304,6 +304,12 @@ allowedMetrics:
   - envoy_tcp_downstream_cx_rx_bytes_total
   - envoy_tcp_downstream_cx_total
   - envoy_tcp_downstream_cx_tx_bytes_total
+  externalBlackboxExporter:
+    - probe_duration_seconds
+    - probe_http_duration_seconds
+    - probe_success
+    - probe_http_status_code
+    - up
 seed:
   apiserver: https://api.foo.bar
   region: antarctica-1
@@ -363,3 +369,7 @@ resources:
 #  - metric2
 #  - metric3
 #  - metric4
+
+#externalBlackboxExporter:
+#  url: blackboxURL
+#  module: module

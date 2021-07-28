@@ -275,6 +275,14 @@ func (b *Botanist) DeploySeedMonitoring(ctx context.Context) error {
 			prometheusConfig["remoteWrite"] = remoteWriteConfig
 	}
 
+	if b.Shoot.CloudProfile.Spec.Monitoring.ExternalBlackboxExporterURL != "" &&
+		b.Shoot.CloudProfile.Spec.Monitoring.ExternalBlackboxExporterModule != "" {
+		externalBlackboxExporter := map[string]interface{}{
+			"url": b.Shoot.CloudProfile.Spec.Monitoring.ExternalBlackboxExporterURL,
+			"module": b.Shoot.CloudProfile.Spec.Monitoring.ExternalBlackboxExporterModule,
+		}
+		prometheusConfig["externalBlackboxExporter"] = externalBlackboxExporter
+	}
 
 	prometheus, err := b.InjectSeedShootImages(prometheusConfig, prometheusImages...)
 	if err != nil {

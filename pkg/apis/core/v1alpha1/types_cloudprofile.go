@@ -106,6 +106,12 @@ type MonitoringConfig struct {
 	// RemoteWriteKeep contains a list of metrics that will be remote written
 	// +optional
 	RemoteWriteKeep []string `json:"remoteWriteKeep,omitempty" protobuf:"bytes,5,opt,name=remoteWriteKeep"`
+	// ExternalBlackboxExporterURL url of external blackbox exporter
+	// +optional
+	ExternalBlackboxExporterURL string `json:"externalBlackboxExporterURL,omitempty" protobuf:"bytes,6,opt,name=externalBlackboxExporterURL"`
+	// ExternalBlackboxExporterModule define the module used in target blackbox exporter
+	// +optional
+	ExternalBlackboxExporterModule string `json:"externalBlackboxExporterModule,omitempty" protobuf:"bytes,7,opt,name=externalBlackboxExporterModule"`
 }
 
 // SeedSelector contains constraints for selecting seed to be usable for shoots using a profile

@@ -629,7 +629,24 @@ data:
       metric_relabel_configs:
 {{ include "prometheus.keep-metrics.metric-relabel-config" .Values.allowedMetrics.loki | indent 6 }}
 {{- end }}
-
+{{- if and .Values.externalBlackboxExporter .Values.externalBlackboxExporter.url .Values.externalBlackboxExporter.module}}
+    - job_name: 'external-blackbox'
+      metrics_path: /probe
+      params:
+        module: [{{ .Values.externalBlackboxExporter.module }}]
+      static_configs:
+        - targets:
+          - {{ .Values.shoot.apiserver }}
+      relabel_configs:
+        - source_labels: [__address__]
+          target_label: __param_target
+        - source_labels: [__param_target]
+          target_label: instance
+        - target_label: __address__
+          replacement: {{ .Values.externalBlackboxExporter.url }}
+      metric_relabel_configs:
+    {{ include "prometheus.keep-metrics.metric-relabel-config" .Values.allowedMetrics.externalBlackboxExporter | indent 6 }}
+{{- end }}
 {{- if .Values.additionalScrapeConfigs }}
 {{ toString .Values.additionalScrapeConfigs | indent 4 }}
 {{- end }}
