@@ -4530,6 +4530,20 @@ func schema_pkg_apis_core_v1alpha1_MonitoringConfig(ref common.ReferenceCallback
 							},
 						},
 					},
+					"externalBlackboxExporterURL": {
+						SchemaProps: spec.SchemaProps{
+							Description: "ExternalBlackboxExporterURL url of external blackbox exporter",
+							Type:        []string{"string"},
+							Format:      "",
+						},
+					},
+					"externalBlackboxExporterModule": {
+						SchemaProps: spec.SchemaProps{
+							Description: "ExternalBlackboxExporterModule define the module used in target blackbox exporter",
+							Type:        []string{"string"},
+							Format:      "",
+						},
+					},
 				},
 			},
 		},
@@ -11459,6 +11473,20 @@ func schema_pkg_apis_core_v1beta1_MonitoringConfig(ref common.ReferenceCallback)
 									},
 								},
 							},
+						},
+					},
+					"externalBlackboxExporterURL": {
+						SchemaProps: spec.SchemaProps{
+							Description: "ExternalBlackboxExporterURL url of external blackbox exporter",
+							Type:        []string{"string"},
+							Format:      "",
+						},
+					},
+					"externalBlackboxExporterModule": {
+						SchemaProps: spec.SchemaProps{
+							Description: "ExternalBlackboxExporterModule define the module used in target blackbox exporter",
+							Type:        []string{"string"},
+							Format:      "",
 						},
 					},
 				},

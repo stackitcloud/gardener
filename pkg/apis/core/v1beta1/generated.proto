@@ -1301,6 +1301,14 @@ message MonitoringConfig {
   // RemoteWriteKeep contains a list of metrics that will be remote written
   // +optional
   repeated string remoteWriteKeep = 5;
+
+  // ExternalBlackboxExporterURL url of external blackbox exporter
+  // +optional
+  optional string externalBlackboxExporterURL = 6;
+
+  // ExternalBlackboxExporterModule define the module used in target blackbox exporter
+  // +optional
+  optional string externalBlackboxExporterModule = 7;
 }
 
 // NamedResourceReference is a named reference to a resource.
