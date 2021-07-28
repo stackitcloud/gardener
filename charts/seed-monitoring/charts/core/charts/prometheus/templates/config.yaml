@@ -631,8 +631,9 @@ data:
 {{- end }}
 {{- if .Values.externalBlackboxExporter }}
 {{- if and .Values.externalBlackboxExporter.url .Values.externalBlackboxExporter.module }}
-    - job_name: 'external-blackbox'
+    - job_name: external-blackbox
       metrics_path: /probe
+      scheme: https
       params:
         module: [{{ .Values.externalBlackboxExporter.module }}]
       static_configs:
