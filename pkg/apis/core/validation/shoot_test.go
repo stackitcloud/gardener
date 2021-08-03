@@ -221,7 +221,10 @@ var _ = Describe("Shoot Validation Tests", func() {
 						},
 					},
 					Networking: core.Networking{
-						Type: "some-network-plugin",
+						Type:     "some-network-plugin",
+						Nodes:    pointer.String("100.250.0.0/16"),
+						Pods:     pointer.String("10.96.0.0/11"),
+						Services: pointer.String("10.64.0.0/13"),
 					},
 					Provider: core.Provider{
 						Type:    "aws",
@@ -2052,6 +2055,12 @@ var _ = Describe("Shoot Validation Tests", func() {
 					"Field": Equal("spec.networking.type"),
 				}))))
 			})
+
+			It("should allow v4 nodes,svc and pod cidr", func() {
+				errorList := ValidateShoot(shoot)
+				Expect(errorList).To(BeEmpty())
+			})
+
 		})
 
 		Context("maintenance section", func() {
