@@ -740,26 +740,29 @@ func validateNetworking(networking core.Networking, fldPath *field.Path) field.E
 
 	if networking.Nodes != nil {
 		path := fldPath.Child("nodes")
-		cidr := cidrvalidation.NewCIDR(*networking.Nodes, path)
-
-		allErrs = append(allErrs, cidr.ValidateParse()...)
-		allErrs = append(allErrs, cidrvalidation.ValidateCIDRIsCanonical(path, cidr.GetCIDR())...)
+		for _, cidrString := range strings.Split(*networking.Nodes, ",") {
+			cidr := cidrvalidation.NewCIDR(cidrString, path)
+			allErrs = append(allErrs, cidr.ValidateParse()...)
+			allErrs = append(allErrs, cidrvalidation.ValidateCIDRIsCanonical(path, cidr.GetCIDR())...)
+		}
 	}
 
 	if networking.Pods != nil {
 		path := fldPath.Child("pods")
-		cidr := cidrvalidation.NewCIDR(*networking.Pods, path)
-
-		allErrs = append(allErrs, cidr.ValidateParse()...)
-		allErrs = append(allErrs, cidrvalidation.ValidateCIDRIsCanonical(path, cidr.GetCIDR())...)
+		for _, cidrString := range strings.Split(*networking.Pods, ",") {
+			cidr := cidrvalidation.NewCIDR(cidrString, path)
+			allErrs = append(allErrs, cidr.ValidateParse()...)
+			allErrs = append(allErrs, cidrvalidation.ValidateCIDRIsCanonical(path, cidr.GetCIDR())...)
+		}
 	}
 
 	if networking.Services != nil {
 		path := fldPath.Child("services")
-		cidr := cidrvalidation.NewCIDR(*networking.Services, path)
-
-		allErrs = append(allErrs, cidr.ValidateParse()...)
-		allErrs = append(allErrs, cidrvalidation.ValidateCIDRIsCanonical(path, cidr.GetCIDR())...)
+		for _, cidrString := range strings.Split(*networking.Services, ",") {
+			cidr := cidrvalidation.NewCIDR(cidrString, path)
+			allErrs = append(allErrs, cidr.ValidateParse()...)
+			allErrs = append(allErrs, cidrvalidation.ValidateCIDRIsCanonical(path, cidr.GetCIDR())...)
+		}
 	}
 
 	return allErrs
