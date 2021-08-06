@@ -380,18 +380,24 @@ func validateKubeControllerManagerUpdate(newConfig, oldConfig *core.KubeControll
 	allErrs := field.ErrorList{}
 
 	var (
-		nodeCIDRMaskNew *int32
-		nodeCIDRMaskOld *int32
+		nodeCIDRMaskNew   *int32
+		nodeCIDRMaskOld   *int32
+		nodeCIDRMaskV6New *int32
+		nodeCIDRMaskV6Old *int32
 	)
 
 	if newConfig != nil {
 		nodeCIDRMaskNew = newConfig.NodeCIDRMaskSize
+		nodeCIDRMaskV6New = newConfig.NodeCIDRMaskSizeV6
+
 	}
 	if oldConfig != nil {
 		nodeCIDRMaskOld = oldConfig.NodeCIDRMaskSize
+		nodeCIDRMaskV6Old = oldConfig.NodeCIDRMaskSizeV6
 	}
 
 	allErrs = append(allErrs, apivalidation.ValidateImmutableField(nodeCIDRMaskNew, nodeCIDRMaskOld, fldPath.Child("nodeCIDRMaskSize"))...)
+	allErrs = append(allErrs, apivalidation.ValidateImmutableField(nodeCIDRMaskV6New, nodeCIDRMaskV6Old, fldPath.Child("nodeCIDRMaskSizeV6"))...)
 
 	return allErrs
 }
@@ -845,6 +851,12 @@ func validateKubeControllerManager(kcm *core.KubeControllerManagerConfig, versio
 		if maskSize := kcm.NodeCIDRMaskSize; maskSize != nil {
 			if *maskSize < 16 || *maskSize > 28 {
 				allErrs = append(allErrs, field.Invalid(fldPath.Child("nodeCIDRMaskSize"), *maskSize, "nodeCIDRMaskSize must be between 16 and 28"))
+			}
+		}
+
+		if maskSize := kcm.NodeCIDRMaskSizeV6; maskSize != nil {
+			if *maskSize < 64 || *maskSize > 120 {
+				allErrs = append(allErrs, field.Invalid(fldPath.Child("nodeCIDRMaskSizeV6"), *maskSize, "nodeCIDRMaskSizeV6 must be between 64 and 120"))
 			}
 		}
 

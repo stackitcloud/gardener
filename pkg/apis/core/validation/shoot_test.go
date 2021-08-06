@@ -1016,6 +1016,55 @@ var _ = Describe("Shoot Validation Tests", func() {
 				})
 			})
 
+			Context("NodeCIDRMaskV6 validation", func() {
+				var (
+					defaultMaxPod             int32 = 110
+					defaultNodeCIDRMaskSize   int32 = 24
+					defaultNodeCIDRMaskSizeV6 int32 = 64
+					testWorker                core.Worker
+				)
+
+				BeforeEach(func() {
+					shoot.Spec.Kubernetes.KubeControllerManager.NodeCIDRMaskSize = &defaultNodeCIDRMaskSize
+					shoot.Spec.Kubernetes.KubeControllerManager.NodeCIDRMaskSizeV6 = &defaultNodeCIDRMaskSizeV6
+					shoot.Spec.Kubernetes.Kubelet = &core.KubeletConfig{MaxPods: &defaultMaxPod}
+					testWorker = *worker.DeepCopy()
+					testWorker.Name = "testworker"
+				})
+
+				It("should allow default", func() {
+					errorList := ValidateShoot(shoot)
+					Expect(errorList).To(HaveLen(0))
+				})
+
+				It("should allow not allow above 120", func() {
+					var maskSize int32 = 121
+					shoot.Spec.Kubernetes.KubeControllerManager.NodeCIDRMaskSizeV6 = &maskSize
+					errorList := ValidateShoot(shoot)
+
+					Expect(errorList).To(ConsistOf(PointTo(MatchFields(IgnoreExtras, Fields{
+						"Type":     Equal(field.ErrorTypeInvalid),
+						"Field":    Equal("spec.kubernetes.kubeControllerManager.nodeCIDRMaskSizeV6"),
+						"Detail":   Equal("nodeCIDRMaskSizeV6 must be between 64 and 120"),
+						"BadValue": Equal(maskSize),
+					}))))
+				})
+
+				It("should allow not allow below 64", func() {
+					var maskSize int32 = 60
+					shoot.Spec.Kubernetes.KubeControllerManager.NodeCIDRMaskSizeV6 = &maskSize
+					errorList := ValidateShoot(shoot)
+
+					Expect(errorList).To(ConsistOf(PointTo(MatchFields(IgnoreExtras, Fields{
+						"Type":     Equal(field.ErrorTypeInvalid),
+						"Field":    Equal("spec.kubernetes.kubeControllerManager.nodeCIDRMaskSizeV6"),
+						"Detail":   Equal("nodeCIDRMaskSizeV6 must be between 64 and 120"),
+						"BadValue": Equal(maskSize),
+					}))))
+				})
+
+			})
+
 			It("should allow adding a worker pool", func() {
 				newShoot := prepareShootForUpdate(shoot)
 
