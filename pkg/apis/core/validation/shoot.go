@@ -16,7 +16,9 @@ package validation
 
 import (
 	"fmt"
+	k8snet "k8s.io/utils/net"
 	"math"
+	"net"
 	"net/url"
 	"regexp"
 	"strconv"
@@ -738,30 +740,48 @@ func validateNetworking(networking core.Networking, fldPath *field.Path) field.E
 		allErrs = append(allErrs, field.Required(fldPath.Child("type"), "networking type must be provided"))
 	}
 
+	isNodeDualStack := false
 	if networking.Nodes != nil {
 		path := fldPath.Child("nodes")
+		cidrs := make([]*net.IPNet, 0)
 		for _, cidrString := range strings.Split(*networking.Nodes, ",") {
 			cidr := cidrvalidation.NewCIDR(cidrString, path)
+			cidrs = append(cidrs, cidr.GetIPNet())
 			allErrs = append(allErrs, cidr.ValidateParse()...)
 			allErrs = append(allErrs, cidrvalidation.ValidateCIDRIsCanonical(path, cidr.GetCIDR())...)
 		}
+		isNodeDualStack, _ = k8snet.IsDualStackCIDRs(cidrs)
 	}
 
 	if networking.Pods != nil {
 		path := fldPath.Child("pods")
+		cidrs := make([]*net.IPNet, 0)
 		for _, cidrString := range strings.Split(*networking.Pods, ",") {
 			cidr := cidrvalidation.NewCIDR(cidrString, path)
+			cidrs = append(cidrs, cidr.GetIPNet())
 			allErrs = append(allErrs, cidr.ValidateParse()...)
 			allErrs = append(allErrs, cidrvalidation.ValidateCIDRIsCanonical(path, cidr.GetCIDR())...)
+		}
+
+		isPodDualStack, _ := k8snet.IsDualStackCIDRs(cidrs)
+		if isNodeDualStack != isPodDualStack {
+			allErrs = append(allErrs, field.Forbidden(path, "pod cidr is dual-stack/single-stack while nodes are not"))
 		}
 	}
 
 	if networking.Services != nil {
 		path := fldPath.Child("services")
+		cidrs := make([]*net.IPNet, 0)
 		for _, cidrString := range strings.Split(*networking.Services, ",") {
 			cidr := cidrvalidation.NewCIDR(cidrString, path)
+			cidrs = append(cidrs, cidr.GetIPNet())
 			allErrs = append(allErrs, cidr.ValidateParse()...)
 			allErrs = append(allErrs, cidrvalidation.ValidateCIDRIsCanonical(path, cidr.GetCIDR())...)
+		}
+
+		isSvcDualStack, _ := k8snet.IsDualStackCIDRs(cidrs)
+		if isNodeDualStack != isSvcDualStack {
+			allErrs = append(allErrs, field.Forbidden(path, "svc cidr is dual-stack/single-stack while nodes are not"))
 		}
 	}
 

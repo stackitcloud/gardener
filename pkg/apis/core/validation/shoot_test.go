@@ -2070,6 +2070,18 @@ var _ = Describe("Shoot Validation Tests", func() {
 				Expect(errorList).To(BeEmpty())
 			})
 
+			It("should not allow dual-stack and single stack nodes,svc and pod cidrs combined", func() {
+				shoot.Spec.Networking.Nodes = pointer.String("100.250.0.0/16,fd02::/64")
+				shoot.Spec.Networking.Pods = pointer.String("10.96.0.0/11")
+				shoot.Spec.Networking.Services = pointer.String("10.64.0.0/13,fd02:2::/64")
+
+				errorList := ValidateShoot(shoot)
+				Expect(errorList).To(ConsistOf(PointTo(MatchFields(IgnoreExtras, Fields{
+					"Type":  Equal(field.ErrorTypeForbidden),
+					"Field": Equal("spec.networking.pods"),
+				}))))
+			})
+
 		})
 
 		Context("maintenance section", func() {
