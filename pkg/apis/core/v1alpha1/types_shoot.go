@@ -628,6 +628,9 @@ type KubeControllerManagerConfig struct {
 	// NodeCIDRMaskSize defines the mask size for node cidr in cluster (default is 24)
 	// +optional
 	NodeCIDRMaskSize *int32 `json:"nodeCIDRMaskSize,omitempty" protobuf:"varint,3,opt,name=nodeCIDRMaskSize"`
+	// NodeCIDRMaskSizeV6 defines the mask size for node cidr for IPv6 in dual-stack cluster (default is 64)
+	// +optional
+	NodeCIDRMaskSizeV6 *int32 `json:"nodeCIDRMaskSizeV6,omitempty" protobuf:"varint,6,opt,name=nodeCIDRMaskSizeV6"`
 	// PodEvictionTimeout defines the grace period for deleting pods on failed nodes. Defaults to 2m.
 	// +optional
 	PodEvictionTimeout *metav1.Duration `json:"podEvictionTimeout,omitempty" protobuf:"bytes,4,opt,name=podEvictionTimeout"`

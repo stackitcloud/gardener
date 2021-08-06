@@ -1673,6 +1673,11 @@ func (in *KubeControllerManagerConfig) DeepCopyInto(out *KubeControllerManagerCo
 		*out = new(int32)
 		**out = **in
 	}
+	if in.NodeCIDRMaskSizeV6 != nil {
+		in, out := &in.NodeCIDRMaskSizeV6, &out.NodeCIDRMaskSizeV6
+		*out = new(int32)
+		**out = **in
+	}
 	if in.PodEvictionTimeout != nil {
 		in, out := &in.PodEvictionTimeout, &out.PodEvictionTimeout
 		*out = new(metav1.Duration)

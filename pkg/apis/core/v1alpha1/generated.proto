@@ -906,6 +906,10 @@ message KubeControllerManagerConfig {
   // +optional
   optional int32 nodeCIDRMaskSize = 3;
 
+  // NodeCIDRMaskSizeV6 defines the mask size for node cidr for IPv6 in dual-stack cluster (default is 64)
+  // +optional
+  optional int32 nodeCIDRMaskSizeV6 = 6;
+
   // PodEvictionTimeout defines the grace period for deleting pods on failed nodes. Defaults to 2m.
   // +optional
   optional k8s.io.apimachinery.pkg.apis.meta.v1.Duration podEvictionTimeout = 4;

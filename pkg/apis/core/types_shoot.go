@@ -502,6 +502,8 @@ type KubeControllerManagerConfig struct {
 	HorizontalPodAutoscalerConfig *HorizontalPodAutoscalerConfig
 	// NodeCIDRMaskSize defines the mask size for node cidr in cluster (default is 24)
 	NodeCIDRMaskSize *int32
+	// NodeCIDRMaskSizeV6 defines the mask size for node cidr for IPv6 in dual-stack cluster (default is 64)
+	NodeCIDRMaskSizeV6 *int32
 	// PodEvictionTimeout defines the grace period for deleting pods on failed nodes.
 	PodEvictionTimeout *metav1.Duration
 	// NodeMonitorGracePeriod defines the grace period before an unresponsive node is marked unhealthy.

@@ -4261,6 +4261,18 @@ int32
 </tr>
 <tr>
 <td>
+<code>nodeCIDRMaskSizeV6</code></br>
+<em>
+int32
+</em>
+</td>
+<td>
+<em>(Optional)</em>
+<p>NodeCIDRMaskSizeV6 defines the mask size for node cidr for IPv6 in dual-stack cluster (default is 64)</p>
+</td>
+</tr>
+<tr>
+<td>
 <code>podEvictionTimeout</code></br>
 <em>
 <a href="https://godoc.org/k8s.io/apimachinery/pkg/apis/meta/v1#Duration">

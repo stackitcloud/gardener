@@ -3363,6 +3363,13 @@ func schema_pkg_apis_core_v1alpha1_KubeControllerManagerConfig(ref common.Refere
 							Format:      "int32",
 						},
 					},
+					"nodeCIDRMaskSizeV6": {
+						SchemaProps: spec.SchemaProps{
+							Description: "NodeCIDRMaskSizeV6 defines the mask size for node cidr for IPv6 in dual-stack cluster (default is 64)",
+							Type:        []string{"integer"},
+							Format:      "int32",
+						},
+					},
 					"podEvictionTimeout": {
 						SchemaProps: spec.SchemaProps{
 							Description: "PodEvictionTimeout defines the grace period for deleting pods on failed nodes. Defaults to 2m.",
@@ -10049,6 +10056,13 @@ func schema_pkg_apis_core_v1beta1_KubeControllerManagerConfig(ref common.Referen
 					"nodeCIDRMaskSize": {
 						SchemaProps: spec.SchemaProps{
 							Description: "NodeCIDRMaskSize defines the mask size for node cidr in cluster (default is 24)",
+							Type:        []string{"integer"},
+							Format:      "int32",
+						},
+					},
+					"nodeCIDRMaskSizeV6": {
+						SchemaProps: spec.SchemaProps{
+							Description: "NodeCIDRMaskSizeV6 defines the mask size for node cidr for IPv6 in dual-stack cluster (default is 64)",
 							Type:        []string{"integer"},
 							Format:      "int32",
 						},
