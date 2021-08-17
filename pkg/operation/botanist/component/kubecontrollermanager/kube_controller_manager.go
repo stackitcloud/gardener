@@ -17,7 +17,9 @@ package kubecontrollermanager
 import (
 	"context"
 	"fmt"
+	k8snet "k8s.io/utils/net"
 	"net"
+	"strings"
 	"time"
 
 	gardencorev1beta1 "github.com/gardener/gardener/pkg/apis/core/v1beta1"
@@ -106,8 +108,8 @@ func New(
 	version *semver.Version,
 	image string,
 	config *gardencorev1beta1.KubeControllerManagerConfig,
-	podNetwork *net.IPNet,
-	serviceNetwork *net.IPNet,
+	podNetwork []net.IPNet,
+	serviceNetwork []net.IPNet,
 	hvpaConfig *HVPAConfig,
 ) Interface {
 	return &kubeControllerManager{
@@ -133,8 +135,8 @@ type kubeControllerManager struct {
 	replicas       int32
 	config         *gardencorev1beta1.KubeControllerManagerConfig
 	secrets        Secrets
-	podNetwork     *net.IPNet
-	serviceNetwork *net.IPNet
+	podNetwork     []net.IPNet
+	serviceNetwork []net.IPNet
 	hvpaConfig     *HVPAConfig
 }
 
@@ -461,12 +463,33 @@ func (k *kubeControllerManager) computeCommand(port int32) []string {
 		"--controllers=*,bootstrapsigner,tokencleaner",
 	)
 
-	if k.config.NodeCIDRMaskSize != nil {
+	var podNetIp []*net.IPNet
+	for _, pod := range k.podNetwork {
+		podNetIp = append(podNetIp, &pod)
+	}
+	isDualStackCIDR, _ := k8snet.IsDualStackCIDRs(podNetIp)
+
+	if !isDualStackCIDR && k.config.NodeCIDRMaskSize != nil {
 		command = append(command, fmt.Sprintf("--node-cidr-mask-size=%d", *k.config.NodeCIDRMaskSize))
 	}
 
+	if k.config.NodeCIDRMaskSizeV6 != nil {
+		command = append(command, fmt.Sprintf("--node-cidr-mask-size-ipv4=%d", *k.config.NodeCIDRMaskSize))
+		command = append(command, fmt.Sprintf("--node-cidr-mask-size-ipv6=%d", *k.config.NodeCIDRMaskSizeV6))
+	}
+
+	var podCidrs []string
+	for _, pod := range k.podNetwork {
+		podCidrs = append(podCidrs, pod.String())
+	}
+
+	var svcCidrs []string
+	for _, svc := range k.serviceNetwork {
+		svcCidrs = append(svcCidrs, svc.String())
+	}
+
 	command = append(command,
-		fmt.Sprintf("--cluster-cidr=%s", k.podNetwork.String()),
+		fmt.Sprintf("--cluster-cidr=%s", strings.Join(podCidrs, ",")),
 		fmt.Sprintf("--cluster-name=%s", k.namespace),
 		fmt.Sprintf("--cluster-signing-cert-file=%s/%s", volumeMountPathCA, secrets.DataKeyCertificateCA),
 		fmt.Sprintf("--cluster-signing-key-file=%s/%s", volumeMountPathCA, secrets.DataKeyPrivateKeyCA),
@@ -510,7 +533,7 @@ func (k *kubeControllerManager) computeCommand(port int32) []string {
 		fmt.Sprintf("--pod-eviction-timeout=%s", podEvictionTimeout.Duration),
 		fmt.Sprintf("--root-ca-file=%s/%s", volumeMountPathCA, secrets.DataKeyCertificateCA),
 		fmt.Sprintf("--service-account-private-key-file=%s/%s", volumeMountPathServiceAccountKey, secrets.DataKeyRSAPrivateKey),
-		fmt.Sprintf("--service-cluster-ip-range=%s", k.serviceNetwork.String()),
+		fmt.Sprintf("--service-cluster-ip-range=%s", strings.Join(svcCidrs, ",")),
 		fmt.Sprintf("--secure-port=%d", port),
 		"--port=0",
 		fmt.Sprintf("--horizontal-pod-autoscaler-downscale-stabilization=%s", defaultHorizontalPodAutoscalerConfig.DownscaleStabilization.Duration.String()),
