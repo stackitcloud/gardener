@@ -89,8 +89,9 @@
 # v1.24.1-ske-9: added apiserver_request_duration_seconds_count and apiserver_request_duration_seconds_sum to prometheus scrape keep
 # v1.24.1-ske-10: add setting for externalBlackboxExporter
 # v1.24.1-ske-11: revert osconfig
+# v1.24.1-ske-12: changed livenes probe initial start to initial grace period
 
-EFFECTIVE_VERSION=v1.24.0-ske-11
+EFFECTIVE_VERSION=v1.24.0-ske-12
 REGISTRY=registry.ske.eu01.stackit.cloud/gardener-ds
 APISERVER_IMAGE_REPOSITORY=$REGISTRY/apiserver
 CONROLLER_MANAGER_IMAGE_REPOSITORY=$REGISTRY/controller-manager
