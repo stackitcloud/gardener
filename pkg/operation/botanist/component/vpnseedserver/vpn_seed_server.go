@@ -420,7 +420,7 @@ func (v *vpnSeedServer) Deploy(ctx context.Context) error {
 		if v.nodeNetwork != nil {
 			deployment.Spec.Template.Spec.Containers[0].Env = append(
 				deployment.Spec.Template.Spec.Containers[0].Env,
-				corev1.EnvVar{Name: "NODE_NETWORK", Value: *v.nodeNetwork},
+				corev1.EnvVar{Name: "NODE_NETWORK", Value: v.podNetwork[0]},
 			)
 		}
 		return nil
