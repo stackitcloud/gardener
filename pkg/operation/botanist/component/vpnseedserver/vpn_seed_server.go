@@ -96,7 +96,7 @@ func New(
 	kubeAPIServerHost *string,
 	serviceNetwork []string,
 	podNetwork []string,
-	nodeNetwork *string,
+	nodeNetwork []string,
 	replicas int32,
 ) Interface {
 	return &vpnSeedServer{
@@ -120,7 +120,7 @@ type vpnSeedServer struct {
 	kubeAPIServerHost   *string
 	serviceNetwork      []string
 	podNetwork          []string
-	nodeNetwork         *string
+	nodeNetwork         []string
 	replicas            int32
 
 	secrets Secrets
@@ -420,7 +420,7 @@ func (v *vpnSeedServer) Deploy(ctx context.Context) error {
 		if v.nodeNetwork != nil {
 			deployment.Spec.Template.Spec.Containers[0].Env = append(
 				deployment.Spec.Template.Spec.Containers[0].Env,
-				corev1.EnvVar{Name: "NODE_NETWORK", Value: v.podNetwork[0]},
+				corev1.EnvVar{Name: "NODE_NETWORK", Value: v.nodeNetwork[0]},
 			)
 		}
 		return nil

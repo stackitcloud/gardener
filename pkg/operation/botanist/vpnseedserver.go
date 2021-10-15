@@ -22,6 +22,7 @@ import (
 	"github.com/gardener/gardener/pkg/operation/botanist/component/vpnseedserver"
 	"github.com/gardener/gardener/pkg/utils"
 	"github.com/gardener/gardener/pkg/utils/imagevector"
+	"strings"
 
 	"k8s.io/utils/pointer"
 )
@@ -72,6 +73,12 @@ func (b *Botanist) DefaultVPNSeedServer() (vpnseedserver.Interface, error) {
 		netServices = append(netServices, IPNetService.String())
 	}
 
+	var netNodes []string
+	var nodeNetworks = b.Shoot.GetNodeNetwork()
+	for _, IPNetNode := range strings.Split(*nodeNetworks, ",") {
+		netNodes = append(netNodes, IPNetNode)
+	}
+
 	return vpnseedserver.New(
 		b.K8sSeedClient.Client(),
 		b.Shoot.SeedNamespace,
@@ -80,7 +87,7 @@ func (b *Botanist) DefaultVPNSeedServer() (vpnseedserver.Interface, error) {
 		kubeAPIServerHost,
 		netServices,
 		netPods,
-		b.Shoot.GetNodeNetwork(),
+		netNodes,
 		b.Shoot.GetReplicas(1),
 	), nil
 }
