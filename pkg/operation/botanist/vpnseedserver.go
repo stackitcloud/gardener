@@ -64,7 +64,7 @@ func (b *Botanist) DefaultVPNSeedServer() (vpnseedserver.Interface, error) {
 	}
 
 	var netPods []string
-	for _, IPNetPod := range b.Shoot.Networks.Services {
+	for _, IPNetPod := range b.Shoot.Networks.Pods {
 		netPods = append(netPods, IPNetPod.String())
 	}
 

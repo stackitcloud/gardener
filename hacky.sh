@@ -93,8 +93,9 @@
 # v1.24.1-ske-13: ReversedVPN fix for chart
 # v1.24.0-ske-14: ReversedVPN fix for vpn seed server
 # v1.24.0-ske-15: Real ReversedVPN fix for vpn seed server
+# v1.24.0-ske-16: Very Real ReversedVPN fix for vpn seed server
 
-EFFECTIVE_VERSION=v1.24.0-ske-15
+EFFECTIVE_VERSION=v1.24.0-ske-16
 REGISTRY=registry.ske.eu01.stackit.cloud/gardener-ds
 APISERVER_IMAGE_REPOSITORY=$REGISTRY/apiserver
 CONROLLER_MANAGER_IMAGE_REPOSITORY=$REGISTRY/controller-manager
