@@ -6288,20 +6288,6 @@ string
 <p>Services is the CIDR of the service network.</p>
 </td>
 </tr>
-<tr>
-<td>
-<code>proxyConfig</code></br>
-<em>
-<a href="#core.gardener.cloud/v1beta1.ProxyConfig">
-ProxyConfig
-</a>
-</em>
-</td>
-<td>
-<em>(Optional)</em>
-<p>ProxyConfig</p>
-</td>
-</tr>
 </tbody>
 </table>
 <h3 id="core.gardener.cloud/v1beta1.NginxIngress">NginxIngress
@@ -7065,49 +7051,6 @@ map[string]k8s.io/api/core/v1.ResourceRequirements
 <td>
 <em>(Optional)</em>
 <p>ComponentResources</p>
-</td>
-</tr>
-</tbody>
-</table>
-<h3 id="core.gardener.cloud/v1beta1.ProxyConfig">ProxyConfig
-</h3>
-<p>
-(<em>Appears on:</em>
-<a href="#core.gardener.cloud/v1beta1.Networking">Networking</a>)
-</p>
-<p>
-<p>ProxyConfig defines proxy settings for gardener components</p>
-</p>
-<table>
-<thead>
-<tr>
-<th>Field</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-<code>httpProxy</code></br>
-<em>
-string
-</em>
-</td>
-<td>
-<em>(Optional)</em>
-<p>HttpProxy defines the http proxy to use</p>
-</td>
-</tr>
-<tr>
-<td>
-<code>noProxy</code></br>
-<em>
-string
-</em>
-</td>
-<td>
-<em>(Optional)</em>
-<p>NoProxy defines the destinations to reach without proxy</p>
 </td>
 </tr>
 </tbody>

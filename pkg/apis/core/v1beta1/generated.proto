@@ -1348,10 +1348,6 @@ message Networking {
   // Services is the CIDR of the service network.
   // +optional
   optional string services = 5;
-
-  // ProxyConfig
-  // +optional
-  optional ProxyConfig proxyConfig = 7;
 }
 
 // NginxIngress describes configuration values for the nginx-ingress addon.
@@ -1621,17 +1617,6 @@ message Provider {
   // ComponentResources
   // +optional
   map<string, k8s.io.api.core.v1.ResourceRequirements> componentResources = 5;
-}
-
-// ProxyConfig defines proxy settings for gardener components
-message ProxyConfig {
-  // HttpProxy defines the http proxy to use
-  // +optional
-  optional string httpProxy = 1;
-
-  // NoProxy defines the destinations to reach without proxy
-  // +optional
-  optional string noProxy = 2;
 }
 
 message Quota {
