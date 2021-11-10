@@ -685,16 +685,6 @@ type Networking struct {
 	Nodes *string
 	// Services is the CIDR of the service network.
 	Services *string
-	// ProxyConfig defines proxy settings for gardener components
-	ProxyConfig *ProxyConfig
-}
-
-// ProxyConfig defines proxy settings for gardener components
-type ProxyConfig struct {
-	// HttpProxy defines the http proxy to use
-	HttpProxy *string
-	// NoProxy defines the destinations to reach without proxy
-	NoProxy *string
 }
 
 const (

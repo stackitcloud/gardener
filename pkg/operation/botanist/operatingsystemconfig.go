@@ -58,12 +58,6 @@ func (b *Botanist) DefaultOperatingSystemConfig(seedClient client.Client) (opera
 		clusterDNSAddress = NodeLocalIPVSAddress
 	}
 
-	proxyConfig := gardencore.ProxyConfig{}
-	if b.Operation.Shoot.Info.Spec.Networking.ProxyConfig != nil {
-		proxyConfig.HttpProxy = b.Operation.Shoot.Info.Spec.Networking.ProxyConfig.HttpProxy
-		proxyConfig.NoProxy = b.Operation.Shoot.Info.Spec.Networking.ProxyConfig.NoProxy
-	}
-
 	var criEndpoints []gardencore.RegistryEndpoint
 	if len(b.Shoot.Info.Spec.Provider.Workers) > 0 &&
 		b.Shoot.Info.Spec.Provider.Workers[0].CRI != nil &&
@@ -95,8 +89,7 @@ func (b *Botanist) DefaultOperatingSystemConfig(seedClient client.Client) (opera
 				KubeletCLIFlags:         components.KubeletCLIFlagsFromCoreV1beta1KubeletConfig(b.Shoot.Info.Spec.Kubernetes.Kubelet),
 				MachineTypes:            b.Shoot.CloudProfile.Spec.MachineTypes,
 			},
-			CriEndpoints:      criEndpoints,
-			ProxyConfig:       &proxyConfig,
+			CriEndpoints: criEndpoints,
 		},
 		operatingsystemconfig.DefaultInterval,
 		operatingsystemconfig.DefaultSevereThreshold,

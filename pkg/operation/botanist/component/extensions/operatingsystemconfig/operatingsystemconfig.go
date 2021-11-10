@@ -90,7 +90,6 @@ type Values struct {
 	// OriginalValues are configuration values required for the 'reconcile' OperatingSystemConfigPurpose.
 	OriginalValues
 
-	ProxyConfig  *gardencore.ProxyConfig
 	CriEndpoints []gardencore.RegistryEndpoint
 }
 
@@ -423,7 +422,6 @@ func (o *operatingSystemConfig) newDeployer(worker gardencorev1beta1.Worker, pur
 		kubeletDataVolumeName:   worker.KubeletDataVolumeName,
 		kubernetesVersion:       o.values.KubernetesVersion,
 		sshPublicKey:            o.values.SSHPublicKey,
-		proxyConfig:             o.values.ProxyConfig,
 		criEndpoints:            o.values.CriEndpoints,
 	}
 }
@@ -480,7 +478,6 @@ type deployer struct {
 	kubeletDataVolumeName   *string
 	kubernetesVersion       *semver.Version
 	sshPublicKey            string
-	proxyConfig             *gardencore.ProxyConfig
 	criEndpoints            []gardencore.RegistryEndpoint
 }
 
@@ -529,7 +526,6 @@ func (d *deployer) deploy(ctx context.Context, operation string) (extensionsv1al
 			KubeletDataVolumeName:   d.kubeletDataVolumeName,
 			KubernetesVersion:       d.kubernetesVersion,
 			SSHPublicKey:            d.sshPublicKey,
-			ProxyConfig:             d.proxyConfig,
 			CriEndpoints:            d.criEndpoints,
 		})
 		if err != nil {
