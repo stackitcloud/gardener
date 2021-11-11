@@ -263,7 +263,7 @@ func (b *Botanist) DeploySeedMonitoring(ctx context.Context) error {
 	if b.Shoot.CloudProfile.Spec.Monitoring.ExternalBlackboxExporterURL != "" &&
 		b.Shoot.CloudProfile.Spec.Monitoring.ExternalBlackboxExporterModule != "" {
 		externalBlackboxExporter := map[string]interface{}{
-			"url": b.Shoot.CloudProfile.Spec.Monitoring.ExternalBlackboxExporterURL,
+			"url":    b.Shoot.CloudProfile.Spec.Monitoring.ExternalBlackboxExporterURL,
 			"module": b.Shoot.CloudProfile.Spec.Monitoring.ExternalBlackboxExporterModule,
 		}
 		if b.Shoot.CloudProfile.Spec.Monitoring.ExternalBlackboxExporterUsername != "" &&
