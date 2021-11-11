@@ -18,7 +18,6 @@ import (
 	"context"
 	"fmt"
 	gardencore "github.com/gardener/gardener/pkg/apis/core"
-	"time"
 
 	"github.com/gardener/gardener/charts"
 	gardencorev1beta1 "github.com/gardener/gardener/pkg/apis/core/v1beta1"
