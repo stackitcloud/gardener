@@ -36,6 +36,11 @@ func (b *Botanist) newKubeAPIServiceServiceComponent(sniPhase component.Phase) c
 		sniServiceKey.Namespace = *b.ExposureClassHandler.SNI.Ingress.Namespace
 	}
 
+	ipFamily := corev1.IPv4Protocol
+	if b.Seed.LoadBalancerServiceAnnotations["ske.ipFamily"] == "IPv6" {
+		ipFamily = corev1.IPv6Protocol
+	}
+
 	return kubeapiserverexposure.NewService(
 		b.Logger,
 		b.K8sSeedClient.Client(),
@@ -51,6 +56,7 @@ func (b *Botanist) newKubeAPIServiceServiceComponent(sniPhase component.Phase) c
 			b.APIServerAddress = address
 			b.newDNSComponentsTargetingAPIServerAddress()
 		},
+		[]corev1.IPFamily{ipFamily},
 	)
 }
 
