@@ -44,7 +44,7 @@ func (b *Botanist) DefaultCoreDNS() (coredns.Interface, error) {
 		ClusterDomain:   gardencorev1beta1.DefaultDomain,
 		ClusterIP:       b.Shoot.Networks.CoreDNS.String(),
 		Image:           image.String(),
-		PodNetworkCIDR:  b.Shoot.Networks.Pods.String(),
+		PodNetworkCIDR:  *b.Shoot.GetInfo().Spec.Networking.Pods,
 		NodeNetworkCIDR: b.Shoot.GetInfo().Spec.Networking.Nodes,
 	}
 

@@ -108,8 +108,8 @@ func (b *Botanist) DefaultKubeAPIServer(ctx context.Context) (kubeapiserver.Inte
 			Version:                        b.Shoot.KubernetesVersion,
 			VPN: kubeapiserver.VPNConfig{
 				ReversedVPNEnabled: b.Shoot.ReversedVPNEnabled,
-				PodNetworkCIDR:     b.Shoot.Networks.Pods.String(),
-				ServiceNetworkCIDR: b.Shoot.Networks.Services.String(),
+				PodNetworkCIDR:     *b.Shoot.GetInfo().Spec.Networking.Pods,
+				ServiceNetworkCIDR: *b.Shoot.GetInfo().Spec.Networking.Services,
 				NodeNetworkCIDR:    b.Shoot.GetInfo().Spec.Networking.Nodes,
 			},
 			WatchCacheSizes: watchCacheSizes,
