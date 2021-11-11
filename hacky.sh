@@ -95,8 +95,9 @@
 # v1.24.0-ske-15: Real ReversedVPN fix for vpn seed server
 # v1.24.0-ske-16: Very Real ReversedVPN fix for vpn seed server
 # v1.24.1-ske-17: removed proxyConfig settings
+# v1.31.4-ske-1: rebased on v1.31.4 (ohne remote write)
 
-EFFECTIVE_VERSION=v1.24.0-ske-17
+EFFECTIVE_VERSION=v1.31.4-ske-1
 REGISTRY=registry.ske.eu01.stackit.cloud/gardener-ds
 APISERVER_IMAGE_REPOSITORY=$REGISTRY/apiserver
 CONROLLER_MANAGER_IMAGE_REPOSITORY=$REGISTRY/controller-manager
