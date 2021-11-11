@@ -43,6 +43,8 @@ const (
 	monitoringMetricApiserverResponseSizesBucket                               = "apiserver_response_sizes_bucket"
 	monitoringMetricApiserverRegisteredWatchers                                = "apiserver_registered_watchers"
 	monitoringMetricApiserverRequestDurationSecondsBucket                      = "apiserver_request_duration_seconds_bucket"
+	monitoringMetricApiserverRequestDurationSecondsCount                       = "apiserver_request_duration_seconds_count"
+	monitoringMetricApiserverRequestDurationSecondsSum                         = "apiserver_request_duration_seconds_sum"
 	monitoringMetricApiserverRequestTerminationsTotal                          = "apiserver_request_terminations_total"
 	monitoringMetricApiserverRequestTotal                                      = "apiserver_request_total"
 	monitoringMetricApiserverRequestCount                                      = "apiserver_request_count"
@@ -197,6 +199,8 @@ var (
 		monitoringMetricApiserverResponseSizesBucket,
 		monitoringMetricApiserverRegisteredWatchers,
 		monitoringMetricApiserverRequestDurationSecondsBucket,
+		monitoringMetricApiserverRequestDurationSecondsCount,
+		monitoringMetricApiserverRequestDurationSecondsSum,
 		monitoringMetricApiserverRequestTerminationsTotal,
 		monitoringMetricApiserverRequestTotal,
 		monitoringMetricApiserverRequestCount,
