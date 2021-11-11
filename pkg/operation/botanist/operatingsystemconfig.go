@@ -61,10 +61,10 @@ func (b *Botanist) DefaultOperatingSystemConfig() (operatingsystemconfig.Interfa
 	}
 
 	var criEndpoints []gardencore.RegistryEndpoint
-	if len(b.Shoot.Info.Spec.Provider.Workers) > 0 &&
-		b.Shoot.Info.Spec.Provider.Workers[0].CRI != nil &&
-		b.Shoot.Info.Spec.Provider.Workers[0].CRI.Endpoints != nil {
-		for _, endpoint := range b.Shoot.Info.Spec.Provider.Workers[0].CRI.Endpoints {
+	if len(b.Shoot.GetInfo().Spec.Provider.Workers) > 0 &&
+		b.Shoot.GetInfo().Spec.Provider.Workers[0].CRI != nil &&
+		b.Shoot.GetInfo().Spec.Provider.Workers[0].CRI.Endpoints != nil {
+		for _, endpoint := range b.Shoot.GetInfo().Spec.Provider.Workers[0].CRI.Endpoints {
 			criEndpoints = append(criEndpoints, gardencore.RegistryEndpoint{
 				Name:               endpoint.Name,
 				Endpoint:           endpoint.Endpoint,

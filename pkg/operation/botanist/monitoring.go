@@ -220,7 +220,7 @@ func (b *Botanist) DeploySeedMonitoring(ctx context.Context) error {
 	if b.Shoot.CloudProfile.Spec.Monitoring.ExternalBlackboxExporterURL != "" &&
 		b.Shoot.CloudProfile.Spec.Monitoring.ExternalBlackboxExporterModule != "" {
 		externalBlackboxExporter := map[string]interface{}{
-			"url": b.Shoot.CloudProfile.Spec.Monitoring.ExternalBlackboxExporterURL,
+			"url":    b.Shoot.CloudProfile.Spec.Monitoring.ExternalBlackboxExporterURL,
 			"module": b.Shoot.CloudProfile.Spec.Monitoring.ExternalBlackboxExporterModule,
 		}
 		if b.Shoot.CloudProfile.Spec.Monitoring.ExternalBlackboxExporterUsername != "" &&
@@ -230,7 +230,7 @@ func (b *Botanist) DeploySeedMonitoring(ctx context.Context) error {
 				"password": b.Shoot.CloudProfile.Spec.Monitoring.ExternalBlackboxExporterPassword,
 			}
 		}
-		for _, advertisedAddresse := range b.Shoot.Info.Status.AdvertisedAddresses {
+		for _, advertisedAddresse := range b.Shoot.GetInfo().Status.AdvertisedAddresses {
 			if advertisedAddresse.Name == "external" {
 				externalBlackboxExporter["externalApiUrl"] = advertisedAddresse.URL
 			}
