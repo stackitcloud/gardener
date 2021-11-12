@@ -45,7 +45,7 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/client"
 )
 
-// DeploySeedMonitoring will install the Helm release "seed-monitoring" in the Seed clusters. It comprises components
+// DeploySeedMonitoring installs the Helm release "seed-monitoring" in the Seed clusters. It comprises components
 // to monitor the Shoot cluster whose control plane runs in the Seed cluster.
 func (b *Botanist) DeploySeedMonitoring(ctx context.Context) error {
 	if b.Shoot.Purpose == gardencorev1beta1.ShootPurposeTesting {
@@ -217,25 +217,45 @@ func (b *Botanist) DeploySeedMonitoring(ctx context.Context) error {
 
 	prometheusConfig["podAnnotations"] = podAnnotations
 
-	if b.Shoot.CloudProfile.Spec.Monitoring.ExternalBlackboxExporterURL != "" &&
-		b.Shoot.CloudProfile.Spec.Monitoring.ExternalBlackboxExporterModule != "" {
-		externalBlackboxExporter := map[string]interface{}{
-			"url":    b.Shoot.CloudProfile.Spec.Monitoring.ExternalBlackboxExporterURL,
-			"module": b.Shoot.CloudProfile.Spec.Monitoring.ExternalBlackboxExporterModule,
+	// Add remotewrite to prometheus when enabled
+	if b.Config.Monitoring != nil &&
+		b.Config.Monitoring.Shoot != nil &&
+		b.Config.Monitoring.Shoot.RemoteWrite != nil &&
+		b.Config.Monitoring.Shoot.RemoteWrite.URL != "" {
+		// if remoteWrite Url is set add config into values
+		remoteWriteConfig := map[string]interface{}{
+			"url": b.Config.Monitoring.Shoot.RemoteWrite.URL,
 		}
-		if b.Shoot.CloudProfile.Spec.Monitoring.ExternalBlackboxExporterUsername != "" &&
-			b.Shoot.CloudProfile.Spec.Monitoring.ExternalBlackboxExporterPassword != "" {
-			externalBlackboxExporter["basic_auth"] = map[string]interface{}{
-				"username": b.Shoot.CloudProfile.Spec.Monitoring.ExternalBlackboxExporterUsername,
-				"password": b.Shoot.CloudProfile.Spec.Monitoring.ExternalBlackboxExporterPassword,
+		// get secret for basic_auth in remote write
+		remoteWriteBasicAuth := b.LoadSecret(v1beta1constants.GardenRoleGlobalShootRemoteWriteMonitoring)
+		if remoteWriteBasicAuth != nil {
+			remoteWriteUsername := string(remoteWriteBasicAuth.Data["username"])
+			remoteWritePassword := string(remoteWriteBasicAuth.Data["password"])
+			if remoteWriteUsername != "" &&
+				remoteWritePassword != "" {
+				remoteWriteConfig["basic_auth"] = map[string]interface{}{
+					"username": remoteWriteUsername,
+					"password": remoteWritePassword,
+				}
 			}
 		}
-		for _, advertisedAddresse := range b.Shoot.GetInfo().Status.AdvertisedAddresses {
-			if advertisedAddresse.Name == "external" {
-				externalBlackboxExporter["externalApiUrl"] = advertisedAddresse.URL
-			}
+		// add list with keep metrics if set
+		if len(b.Config.Monitoring.Shoot.RemoteWrite.Keep) != 0 {
+			remoteWriteConfig["keep"] = b.Config.Monitoring.Shoot.RemoteWrite.Keep
 		}
-		prometheusConfig["externalBlackboxExporter"] = externalBlackboxExporter
+		// add queue_config if set
+		if b.Config.Monitoring.Shoot.RemoteWrite.QueueConfig != nil &&
+			len(*b.Config.Monitoring.Shoot.RemoteWrite.QueueConfig) != 0 {
+			remoteWriteConfig["queue_config"] = b.Config.Monitoring.Shoot.RemoteWrite.QueueConfig
+		}
+		prometheusConfig["remoteWrite"] = remoteWriteConfig
+	}
+
+	// set externalLabels
+	if b.Config.Monitoring != nil &&
+		b.Config.Monitoring.Shoot != nil &&
+		len(b.Config.Monitoring.Shoot.ExternalLabels) != 0 {
+		prometheusConfig["externalLabels"] = b.Config.Monitoring.Shoot.ExternalLabels
 	}
 
 	prometheus, err := b.InjectSeedShootImages(prometheusConfig, prometheusImages...)
@@ -325,6 +345,7 @@ func (b *Botanist) DeploySeedMonitoring(ctx context.Context) error {
 	return nil
 }
 
+// DeploySeedGrafana deploys the grafana charts to the Seed cluster.
 func (b *Botanist) DeploySeedGrafana(ctx context.Context) error {
 	if b.Shoot.Purpose == gardencorev1beta1.ShootPurposeTesting {
 		return b.DeleteGrafana(ctx)
