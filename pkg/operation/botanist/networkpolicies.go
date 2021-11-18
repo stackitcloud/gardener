@@ -63,7 +63,7 @@ func (b *Botanist) DefaultNetworkPolicies(sniPhase component.Phase) (component.D
 		return nil, err
 	}
 
-	_, seedServiceCIDR, err := net.ParseCIDR(b.Seed.GetInfo().Spec.Networks.Services)
+	_, seedServiceCIDR, err := net.ParseCIDR(strings.Split(b.Seed.GetInfo().Spec.Networks.Services, ",")[0])
 	if err != nil {
 		return nil, err
 	}
