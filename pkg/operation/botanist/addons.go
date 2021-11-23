@@ -305,7 +305,7 @@ func (b *Botanist) generateCoreAddonsChart(ctx context.Context) (*chartrenderer.
 				"checksum/secret-kube-proxy": b.LoadCheckSum("kube-proxy"),
 			},
 			"enableIPVS": b.Shoot.IPVSEnabled(),
-			"podNetwork": b.Shoot.Networks.Pods.String(),
+			"podNetwork": strings.Join(podCidrs, ","),
 			"vpaEnabled": b.Shoot.WantsVerticalPodAutoscaler,
 		}
 		verticalPodAutoscaler = map[string]interface{}{
