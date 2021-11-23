@@ -16,6 +16,7 @@ package botanist
 
 import (
 	"context"
+	"strings"
 	"time"
 
 	gardencorev1beta1 "github.com/gardener/gardener/pkg/apis/core/v1beta1"
@@ -39,13 +40,18 @@ func (b *Botanist) DefaultCoreDNS() (coredns.Interface, error) {
 		return nil, err
 	}
 
+	var podCidrs []string
+	for _, pod := range b.Shoot.Networks.Pods {
+		podCidrs = append(podCidrs, pod.String())
+	}
+
 	values := coredns.Values{
 		// resolve conformance test issue (https://github.com/kubernetes/kubernetes/blob/master/test/e2e/network/dns.go#L44)
 		// before changing
 		ClusterDomain:   gardencorev1beta1.DefaultDomain,
 		ClusterIP:       b.Shoot.Networks.CoreDNS.String(),
 		Image:           image.String(),
-		PodNetworkCIDR:  b.Shoot.Networks.Pods.String(),
+		PodNetworkCIDR:  strings.Join(podCidrs, ","),
 		NodeNetworkCIDR: b.Shoot.GetInfo().Spec.Networking.Nodes,
 		AutoscalingMode: gardencorev1beta1.CoreDNSAutoscalingModeHorizontal,
 	}

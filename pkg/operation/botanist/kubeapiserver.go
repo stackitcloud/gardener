@@ -17,6 +17,7 @@ package botanist
 import (
 	"context"
 	"fmt"
+	"strings"
 
 	gardencorev1alpha1 "github.com/gardener/gardener/pkg/apis/core/v1alpha1"
 	gardencorev1alpha1helper "github.com/gardener/gardener/pkg/apis/core/v1alpha1/helper"
@@ -53,6 +54,16 @@ func (b *Botanist) DefaultKubeAPIServer(ctx context.Context) (kubeapiserver.Inte
 	images, err := b.computeKubeAPIServerImages()
 	if err != nil {
 		return nil, err
+	}
+
+	var podCidrs []string
+	for _, pod := range b.Shoot.Networks.Pods {
+		podCidrs = append(podCidrs, pod.String())
+	}
+
+	var svcCidrs []string
+	for _, svc := range b.Shoot.Networks.Services {
+		svcCidrs = append(svcCidrs, svc.String())
 	}
 
 	var (
@@ -113,8 +124,8 @@ func (b *Botanist) DefaultKubeAPIServer(ctx context.Context) (kubeapiserver.Inte
 			Version:                        b.Shoot.KubernetesVersion,
 			VPN: kubeapiserver.VPNConfig{
 				ReversedVPNEnabled: b.Shoot.ReversedVPNEnabled,
-				PodNetworkCIDR:     b.Shoot.Networks.Pods.String(),
-				ServiceNetworkCIDR: b.Shoot.Networks.Services.String(),
+				PodNetworkCIDR:     strings.Join(podCidrs, ","),
+				ServiceNetworkCIDR: strings.Join(svcCidrs, ","),
 				NodeNetworkCIDR:    b.Shoot.GetInfo().Spec.Networking.Nodes,
 			},
 			WatchCacheSizes: watchCacheSizes,
