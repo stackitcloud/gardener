@@ -102,8 +102,9 @@
 # v1.31.4-ske-5: Fix seedDNSServerAddress generate
 # v1.36.0-ske-1: Rebase 1.36.0
 # v1.36.0-ske-2: Split nodes network for vpn
+# v1.36.0-ske-3: only ipv4 for vpn
 
-EFFECTIVE_VERSION=v1.36.0-ske-2
+EFFECTIVE_VERSION=v1.36.0-ske-3
 REGISTRY=registry.ske.eu01.stackit.cloud/gardener-ds
 APISERVER_IMAGE_REPOSITORY=$REGISTRY/apiserver
 CONROLLER_MANAGER_IMAGE_REPOSITORY=$REGISTRY/controller-manager
