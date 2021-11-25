@@ -126,7 +126,7 @@ func (b *Botanist) DefaultKubeAPIServer(ctx context.Context) (kubeapiserver.Inte
 				ReversedVPNEnabled: b.Shoot.ReversedVPNEnabled,
 				PodNetworkCIDR:     strings.Join(podCidrs, ","),
 				ServiceNetworkCIDR: strings.Join(svcCidrs, ","),
-				NodeNetworkCIDR:    b.Shoot.GetInfo().Spec.Networking.Nodes,
+				NodeNetworkCIDR:    &strings.Split(*b.Shoot.GetInfo().Spec.Networking.Nodes, ",")[0],
 			},
 			WatchCacheSizes: watchCacheSizes,
 		},
