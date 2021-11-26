@@ -100,8 +100,9 @@
 # v1.31.4-ske-3: Revert changes in containerd init.tpl.sh
 # v1.31.4-ske-4: Change metrics server preferred addresses
 # v1.31.4-ske-5: Fix seedDNSServerAddress generate
+# v1.31.4-ske-6: cherry pick remote write feature
 
-EFFECTIVE_VERSION=v1.31.4-ske-5
+EFFECTIVE_VERSION=v1.31.4-ske-6
 REGISTRY=registry.ske.eu01.stackit.cloud/gardener-ds
 APISERVER_IMAGE_REPOSITORY=$REGISTRY/apiserver
 CONROLLER_MANAGER_IMAGE_REPOSITORY=$REGISTRY/controller-manager
