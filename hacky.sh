@@ -103,6 +103,7 @@
 # v1.36.0-ske-1: Rebase 1.36.0
 # v1.36.0-ske-2: Split nodes network for vpn
 # v1.36.0-ske-3: only ipv4 for vpn
+# v1.36.0-ske-4: Revert changes for metrics server preferred addresses
 
 EFFECTIVE_VERSION=v1.36.0-ske-3
 REGISTRY=registry.ske.eu01.stackit.cloud/gardener-ds
