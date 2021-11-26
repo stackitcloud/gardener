@@ -104,8 +104,9 @@
 # v1.36.0-ske-2: Split nodes network for vpn
 # v1.36.0-ske-3: only ipv4 for vpn
 # v1.36.0-ske-4: Revert changes for metrics server preferred addresses
+# v1.36.0-ske-5: add monitoring config to gardenlet chart
 
-EFFECTIVE_VERSION=v1.36.0-ske-3
+EFFECTIVE_VERSION=v1.36.0-ske-5
 REGISTRY=registry.ske.eu01.stackit.cloud/gardener-ds
 APISERVER_IMAGE_REPOSITORY=$REGISTRY/apiserver
 CONROLLER_MANAGER_IMAGE_REPOSITORY=$REGISTRY/controller-manager
