@@ -101,8 +101,9 @@
 # v1.31.4-ske-4: Change metrics server preferred addresses
 # v1.31.4-ske-5: Fix seedDNSServerAddress generate
 # v1.31.4-ske-6: cherry pick remote write feature
+# v1.31.4-ske-7: cherry pick remote write into gardenlet chart
 
-EFFECTIVE_VERSION=v1.31.4-ske-6
+EFFECTIVE_VERSION=v1.31.4-ske-7
 REGISTRY=registry.ske.eu01.stackit.cloud/gardener-ds
 APISERVER_IMAGE_REPOSITORY=$REGISTRY/apiserver
 CONROLLER_MANAGER_IMAGE_REPOSITORY=$REGISTRY/controller-manager
