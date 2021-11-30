@@ -17,6 +17,7 @@ package care
 import (
 	"context"
 	"fmt"
+	"github.com/gardener/gardener/pkg/gardenlet/apis/config"
 	"time"
 
 	"github.com/gardener/gardener/pkg/api/extensions"
