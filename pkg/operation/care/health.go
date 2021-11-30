@@ -17,6 +17,7 @@ package care
 import (
 	"context"
 	"fmt"
+	"github.com/gardener/gardener/pkg/gardenlet/apis/config"
 	"time"
 
 	"github.com/gardener/gardener/pkg/api/extensions"
@@ -58,6 +59,8 @@ type Health struct {
 	shootClient            kubernetes.Interface
 
 	logger logrus.FieldLogger
+
+	gardenletConfiguration *config.GardenletConfiguration
 }
 
 // ShootClientInit is a function that initializes a kubernetes client for a Shoot.
@@ -71,6 +74,7 @@ func NewHealth(op *operation.Operation, shootClientInit ShootClientInit) *Health
 		initializeShootClients: shootClientInit,
 		shootClient:            op.K8sShootClient,
 		logger:                 op.Logger,
+		gardenletConfiguration: op.Config,
 	}
 }
 
@@ -277,7 +281,17 @@ func (h *Health) checkControlPlane(
 	if exitCondition, err := checker.CheckMonitoringControlPlane(h.shoot.SeedNamespace, h.shoot.Purpose == gardencorev1beta1.ShootPurposeTesting, wantsAlertmanager, condition, seedDeploymentLister, seedStatefulSetLister); err != nil || exitCondition != nil {
 		return exitCondition, err
 	}
-	if gardenletfeatures.FeatureGate.Enabled(features.Logging) {
+
+	lokiEnabled := true
+	if h.gardenletConfiguration != nil &&
+		h.gardenletConfiguration.Logging != nil &&
+		h.gardenletConfiguration.Logging.Loki != nil &&
+		h.gardenletConfiguration.Logging.Loki.Enabled != nil &&
+		!*h.gardenletConfiguration.Logging.Loki.Enabled {
+		lokiEnabled = false
+	}
+
+	if gardenletfeatures.FeatureGate.Enabled(features.Logging) && lokiEnabled {
 		if exitCondition, err := checker.CheckLoggingControlPlane(h.shoot.SeedNamespace, h.shoot.Purpose == gardencorev1beta1.ShootPurposeTesting, condition, seedStatefulSetLister); err != nil || exitCondition != nil {
 			return exitCondition, err
 		}
