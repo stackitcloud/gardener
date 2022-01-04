@@ -105,8 +105,10 @@
 # v1.36.0-ske-3: only ipv4 for vpn
 # v1.36.0-ske-4: Revert changes for metrics server preferred addresses
 # v1.36.0-ske-5: add monitoring config to gardenlet chart
+# v1.37.3-ske-1: rebase
+# v1.37.3-ske-2: cherry-pick default domains
 
-EFFECTIVE_VERSION=v1.36.0-ske-5
+EFFECTIVE_VERSION=v1.37.3-ske-2
 REGISTRY=registry.ske.eu01.stackit.cloud/gardener-ds
 APISERVER_IMAGE_REPOSITORY=$REGISTRY/apiserver
 CONROLLER_MANAGER_IMAGE_REPOSITORY=$REGISTRY/controller-manager
