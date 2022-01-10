@@ -73,10 +73,15 @@ spec:
         imagePullPolicy: IfNotPresent
         args:
         - --config.file=/etc/prometheus/config/prometheus.yaml
+{{- if not (eq (include "prometheus.agentMode" .) "true")}}
         - --storage.tsdb.path=/var/prometheus/data
         - --storage.tsdb.no-lockfile
         - --storage.tsdb.retention.time=30d
         - --storage.tsdb.retention.size=15GB
+{{- end }}
+{{- if eq (include "prometheus.agentMode" .) "true" }}
+        - --enable-feature=agent
+{{- end }}
         - --web.route-prefix=/
         - --web.enable-lifecycle
         - --web.listen-address=0.0.0.0:{{ .Values.port }}
@@ -125,9 +130,11 @@ spec:
         - mountPath: /etc/prometheus/rules
           name: rules
           readOnly: true
+{{- if not (eq (include "prometheus.agentMode" .) "true")}}
         - mountPath: /var/prometheus/data
           name: prometheus-db
           subPath: prometheus-
+{{- end }}
         # TODO(rfranzke): Delete this in a future release once all monitoring configurations of extensions have been
         # adapted.
         - mountPath: /etc/prometheus/seed
@@ -225,6 +232,7 @@ spec:
         secret:
           secretName: prometheus-remote-am-tls
 {{- end }}
+{{- if not (eq (include "prometheus.agentMode" .) "true")}}
   volumeClaimTemplates:
   - metadata:
       name: prometheus-db
@@ -234,3 +242,4 @@ spec:
       resources:
         requests:
           storage: {{ .Values.storage }}
+{{- end }}

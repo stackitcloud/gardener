@@ -277,6 +277,17 @@ func (b *Botanist) DeploySeedMonitoring(ctx context.Context) error {
 
 		prometheusConfig["externalBlackboxExporter"] = externalBlackboxExporterConfig
 	}
+
+	// Add agentMode to prometheus config when enabled
+	if b.Config.Monitoring != nil &&
+		b.Config.Monitoring.Shoot != nil &&
+		b.Config.Monitoring.Shoot.AgentMode != nil &&
+		b.Config.Monitoring.Shoot.AgentMode.Enabled != nil {
+		prometheusConfig["agentMode"] = map[string]interface{}{
+			"enabled": *b.Config.Monitoring.Shoot.AgentMode.Enabled,
+		}
+	}
+
 	// Add remotewrite to prometheus when enabled
 	if b.Config.Monitoring != nil &&
 		b.Config.Monitoring.Shoot != nil &&

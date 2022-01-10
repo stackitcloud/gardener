@@ -58,3 +58,15 @@ authorization:
 {{- end }}
 {{- end -}}
 
+
+{{- define "prometheus.agentMode" -}}
+{{- if .Values.agentMode -}}
+    {{- if .Values.agentMode.enabled -}}
+true
+    {{- else }}
+false
+    {{- end }}
+{{- else }}
+false
+{{- end }}
+{{- end -}}
