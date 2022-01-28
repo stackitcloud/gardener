@@ -107,8 +107,9 @@
 # v1.36.0-ske-5: add monitoring config to gardenlet chart
 # v1.37.3-ske-1: rebase
 # v1.37.3-ske-2: cherry-pick default domains
+# v1.37.3-ske-3: cherry-pick add cgroupdriver setting to cloudprofile
 
-EFFECTIVE_VERSION=v1.37.3-ske-2
+EFFECTIVE_VERSION=v1.37.3-ske-3
 REGISTRY=registry.ske.eu01.stackit.cloud/gardener-ds
 APISERVER_IMAGE_REPOSITORY=$REGISTRY/apiserver
 CONROLLER_MANAGER_IMAGE_REPOSITORY=$REGISTRY/controller-manager
