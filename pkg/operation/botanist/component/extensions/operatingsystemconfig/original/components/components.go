@@ -47,4 +47,5 @@ type Context struct {
 	SSHPublicKeys           []string
 	LokiIngress             string
 	PromtailRBACAuthToken   string
+	CGroupDriver            *string
 }

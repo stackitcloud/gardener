@@ -93,6 +93,8 @@ type Values struct {
 	KubernetesVersion *semver.Version
 	// Workers is the list of worker pools.
 	Workers []gardencorev1beta1.Worker
+	// MachineImages is the list of all MachineImages from the cloudprofile.
+	MachineImages []gardencorev1beta1.MachineImage
 
 	// DownloaderValues are configuration values required for the 'provision' OperatingSystemConfigPurpose.
 	DownloaderValues
@@ -511,6 +513,7 @@ func (o *operatingSystemConfig) newDeployer(osc *extensionsv1alpha1.OperatingSys
 		lokiIngressHostName:     o.values.LokiIngressHostName,
 		promtailRBACAuthToken:   o.values.PromtailRBACAuthToken,
 		criEndpoints:            o.values.CriEndpoints,
+		machineImages:           o.values.MachineImages,
 	}, nil
 }
 
@@ -570,6 +573,7 @@ type deployer struct {
 	lokiIngressHostName     string
 	promtailRBACAuthToken   string
 	criEndpoints            []gardencore.RegistryEndpoint
+	machineImages           []gardencorev1beta1.MachineImage
 }
 
 // exposed for testing
@@ -598,6 +602,19 @@ func (d *deployer) deploy(ctx context.Context, operation string) (extensionsv1al
 		return nil, err
 	}
 
+	var cGroupDriver *string
+	for image := range d.machineImages {
+		for version := range d.machineImages[image].Versions {
+			if d.machineImages[image].Versions[version].Version == *d.worker.Machine.Image.Version {
+				cGroupDriver = d.machineImages[image].Versions[version].KubeletConfigOverwrites.CGroupDriver
+				break
+			}
+		}
+		if cGroupDriver != nil {
+			break
+		}
+	}
+
 	switch d.purpose {
 	case extensionsv1alpha1.OperatingSystemConfigPurposeProvision:
 		units, files = downloaderUnits, downloaderFiles
@@ -618,6 +635,7 @@ func (d *deployer) deploy(ctx context.Context, operation string) (extensionsv1al
 			PromtailRBACAuthToken:   d.promtailRBACAuthToken,
 			LokiIngress:             d.lokiIngressHostName,
 			CriEndpoints:            d.criEndpoints,
+			CGroupDriver:            cGroupDriver,
 		})
 		if err != nil {
 			return nil, err
