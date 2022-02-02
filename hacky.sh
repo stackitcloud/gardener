@@ -108,8 +108,9 @@
 # v1.37.3-ske-1: rebase
 # v1.37.3-ske-2: cherry-pick default domains
 # v1.37.3-ske-3: cherry-pick add cgroupdriver setting to cloudprofile
+# v1.37.3-ske-4: cGroupDriver config for containerd
 
-EFFECTIVE_VERSION=v1.37.3-ske-3
+EFFECTIVE_VERSION=v1.37.3-ske-4
 REGISTRY=registry.ske.eu01.stackit.cloud/gardener-ds
 APISERVER_IMAGE_REPOSITORY=$REGISTRY/apiserver
 CONROLLER_MANAGER_IMAGE_REPOSITORY=$REGISTRY/controller-manager
