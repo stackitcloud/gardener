@@ -61,8 +61,8 @@ func (b *Botanist) DefaultVPNShoot() (vpnshoot.Interface, error) {
 		VPAEnabled:  b.Shoot.WantsVerticalPodAutoscaler,
 		ReversedVPN: reversedVPNValues,
 		Network: vpnshoot.NetworkValues{
-			PodCIDR:     b.Shoot.Networks.Pods.String(),
-			ServiceCIDR: b.Shoot.Networks.Services.String(),
+			PodCIDR:     b.Shoot.Networks.Pods[0].String(),
+			ServiceCIDR: b.Shoot.Networks.Services[0].String(),
 			NodeCIDR:    nodeNetworkCIDR,
 		},
 	}
