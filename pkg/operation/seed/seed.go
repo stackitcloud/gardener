@@ -16,7 +16,6 @@ package seed
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
 	"path/filepath"
 	"regexp"
@@ -728,11 +727,6 @@ func RunReconcileSeedFlow(
 				}
 			}
 		}
-	}
-
-	jsonString, err := json.Marshal(deployedSecretsMap[common.VPASecretName].Data)
-	if err != nil {
-		return err
 	}
 
 	// AlertManager configuration
