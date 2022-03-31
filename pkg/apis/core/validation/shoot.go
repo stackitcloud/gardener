@@ -16,7 +16,7 @@ package validation
 
 import (
 	"fmt"
-	"k8s.io/utils/net"
+	k8snet "k8s.io/utils/net"
 	"math"
 	"net"
 	"net/url"
@@ -864,7 +864,7 @@ func validateNetworking(networking core.Networking, fldPath *field.Path) field.E
 	dualstack := false
 	if networking.Nodes != nil {
 		var err error
-		dualstack, err = net.IsDualStackCIDRStrings(strings.Split(*networking.Nodes, ","))
+		dualstack, err = k8snet.IsDualStackCIDRStrings(strings.Split(*networking.Nodes, ","))
 		if err != nil {
 			allErrs = append(allErrs, field.Invalid(fldPath.Child("nodes"), networking.Nodes, "dualStack check error"))
 		}
@@ -875,7 +875,7 @@ func validateNetworking(networking core.Networking, fldPath *field.Path) field.E
 
 		// validate for dual-stack
 		if dualstack {
-			res, err := net.IsDualStackCIDRStrings(strings.Split(*networking.Nodes, ","))
+			res, err := k8snet.IsDualStackCIDRStrings(strings.Split(*networking.Nodes, ","))
 			if err != nil || !res {
 				allErrs = append(allErrs, field.Invalid(path, networking.Nodes, "when IPv6DualStack enabled, you have to define ipv4 and ipv6"))
 			}
@@ -890,7 +890,7 @@ func validateNetworking(networking core.Networking, fldPath *field.Path) field.E
 		path := fldPath.Child("pods")
 		// validate for dual-stack
 		if dualstack {
-			res, err := net.IsDualStackCIDRStrings(strings.Split(*networking.Pods, ","))
+			res, err := k8snet.IsDualStackCIDRStrings(strings.Split(*networking.Pods, ","))
 			if err != nil || !res {
 				allErrs = append(allErrs, field.Invalid(path, networking.Pods, "when IPv6DualStack enabled, you have to define ipv4 and ipv6"))
 			}
@@ -906,7 +906,7 @@ func validateNetworking(networking core.Networking, fldPath *field.Path) field.E
 		path := fldPath.Child("services")
 		// validate for dual-stack
 		if dualstack {
-			res, err := net.IsDualStackCIDRStrings(strings.Split(*networking.Services, ","))
+			res, err := k8snet.IsDualStackCIDRStrings(strings.Split(*networking.Services, ","))
 			if err != nil || !res {
 				allErrs = append(allErrs, field.Invalid(path, networking.Services, "when IPv6DualStack enabled, you have to define ipv4 and ipv6"))
 			}
