@@ -78,15 +78,6 @@ spec:
         - --path.sysfs=/host/sys
         - --path.rootfs=/host
         - --log.level=error
-        - --collector.disable-defaults
-        - --collector.conntrack
-        - --collector.cpu
-        - --collector.filefd
-        - --collector.filesystem
-        - --collector.filesystem.ignored-mount-points=^/.+$
-        - --collector.loadavg
-        - --collector.meminfo
-        - --collector.uname
 {{- range (concat .Values.collectorArgs .Values.additionalArgs | uniq ) }}
         - {{ . }}
 {{- end }}
