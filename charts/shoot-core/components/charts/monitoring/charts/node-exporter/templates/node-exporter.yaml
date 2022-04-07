@@ -87,9 +87,6 @@ spec:
         - --collector.loadavg
         - --collector.meminfo
         - --collector.uname
-        - --collector.stat
-        - --collector.pressure
-        - --collector.diskstats
 {{- range (concat .Values.collectorArgs .Values.additionalArgs | uniq ) }}
         - {{ . }}
 {{- end }}
