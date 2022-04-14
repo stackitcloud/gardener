@@ -179,6 +179,7 @@ require (
 )
 
 replace (
+	github.com/gardener/etcd-druid => github.com/stackitcloud/etcd-druid v0.7.3-ske-2
 	github.com/emicklei/go-restful => github.com/emicklei/go-restful v2.9.5+incompatible // keep this value in sync with k8s.io/apiserver
 	github.com/envoyproxy/go-control-plane => github.com/envoyproxy/go-control-plane v0.9.4
 	github.com/googleapis/gnostic => github.com/googleapis/gnostic v0.5.5 // keep this value in sync with k8s.io/apiserver
