@@ -512,7 +512,7 @@ func (v *vpnShoot) getEnvVars() []corev1.EnvVar {
 		},
 		{
 			Name:  "NODE_NETWORK",
-			Value: v.values.Network.NodeCIDR,
+			Value: nodeCidr,
 		},
 	}
 	if v.values.ReversedVPN.Enabled {
