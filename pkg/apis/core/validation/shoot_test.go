@@ -1111,7 +1111,7 @@ var _ = Describe("Shoot Validation Tests", func() {
 
 				It("should not allow invalid total number of worker nodes", func() {
 					shoot.Spec.Kubernetes.KubeControllerManager.NodeCIDRMaskSize = pointer.Int32(24)
-					shoot.Spec.Networking.Pods = pointer.String("100.96.0.0/20")
+					shoot.Spec.Networking.Pods = pointer.String("100.96.0.0/20,ff:ac::/64")
 					worker1.Maximum = 16
 					worker2.Maximum = 16
 
@@ -1122,10 +1122,16 @@ var _ = Describe("Shoot Validation Tests", func() {
 
 					errorList := ValidateTotalNodeCountWithPodCIDR(shoot)
 
-					Expect(errorList).To(ConsistOf(PointTo(MatchFields(IgnoreExtras, Fields{
-						"Type":  Equal(field.ErrorTypeInvalid),
-						"Field": Equal("spec.provider.workers"),
-					}))))
+					Expect(errorList).To(ConsistOf(
+						PointTo(MatchFields(IgnoreExtras, Fields{
+							"Type":  Equal(field.ErrorTypeInvalid),
+							"Field": Equal("spec.provider.workers"),
+						})),
+						PointTo(MatchFields(IgnoreExtras, Fields{
+							"Type":  Equal(field.ErrorTypeInvalid),
+							"Field": Equal("spec.provider.workers"),
+						})),
+					))
 				})
 
 				It("should not allow invalid total number of worker nodes", func() {
