@@ -763,7 +763,7 @@ import custom/*.server
 	}
 
 	if c.values.NodeNetworkCIDR != nil {
-		nodeNetworkCIDR := strings.Split(c.values.PodNetworkCIDR, ",")
+		nodeNetworkCIDR := strings.Split(*c.values.NodeNetworkCIDR, ",")
 		for _, cidr := range nodeNetworkCIDR {
 			networkPolicy.Spec.Ingress[0].From = append(
 				networkPolicy.Spec.Ingress[0].From,
