@@ -763,9 +763,15 @@ import custom/*.server
 	}
 
 	if c.values.NodeNetworkCIDR != nil {
-		networkPolicy.Spec.Ingress[0].From = append(networkPolicy.Spec.Ingress[0].From, networkingv1.NetworkPolicyPeer{
-			IPBlock: &networkingv1.IPBlock{CIDR: *c.values.NodeNetworkCIDR},
-		})
+		nodeNetworkCIDR := strings.Split(c.values.PodNetworkCIDR, ",")
+		for _, cidr := range nodeNetworkCIDR {
+			networkPolicy.Spec.Ingress[0].From = append(
+				networkPolicy.Spec.Ingress[0].From,
+				networkingv1.NetworkPolicyPeer{
+					IPBlock: &networkingv1.IPBlock{CIDR: cidr},
+				},
+			)
+		}
 	}
 
 	if c.values.AutoscalingMode == gardencorev1beta1.CoreDNSAutoscalingModeClusterProportional {
