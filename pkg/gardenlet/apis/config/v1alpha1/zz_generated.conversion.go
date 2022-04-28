@@ -1705,6 +1705,7 @@ func autoConvert_v1alpha1_ShootMonitoringConfig_To_config_ShootMonitoringConfig(
 	out.ExternalLabels = *(*map[string]string)(unsafe.Pointer(&in.ExternalLabels))
 	out.AdditionalAllowedMetrics = *(*map[string][]string)(unsafe.Pointer(&in.AdditionalAllowedMetrics))
 	out.NodeExporter = (*config.NodeExporterConfig)(unsafe.Pointer(in.NodeExporter))
+	out.AgentMode = (*config.AgentModeMonitoringConfig)(unsafe.Pointer(in.AgentMode))
 	return nil
 }
 
@@ -1719,6 +1720,7 @@ func autoConvert_config_ShootMonitoringConfig_To_v1alpha1_ShootMonitoringConfig(
 	out.ExternalLabels = *(*map[string]string)(unsafe.Pointer(&in.ExternalLabels))
 	out.AdditionalAllowedMetrics = *(*map[string][]string)(unsafe.Pointer(&in.AdditionalAllowedMetrics))
 	out.NodeExporter = (*NodeExporterConfig)(unsafe.Pointer(in.NodeExporter))
+	out.AgentMode = (*AgentModeMonitoringConfig)(unsafe.Pointer(in.AgentMode))
 	return nil
 }
 
