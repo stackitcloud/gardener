@@ -48,7 +48,7 @@ data:
     {{- end }}
     {{- end }}
     {{- end }}
-{{- if not (eq (include "prometheus.agentMode" .) "true")}}
+{{- if not .Values.agentMode.enabled}}
     rule_files:
     - /etc/prometheus/rules/*.yaml
     alerting:
