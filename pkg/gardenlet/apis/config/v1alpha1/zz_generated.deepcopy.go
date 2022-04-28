@@ -1285,7 +1285,6 @@ func (in *ShootMonitoringConfig) DeepCopyInto(out *ShootMonitoringConfig) {
 			(*out)[key] = val
 		}
 	}
-<<<<<<< HEAD
 	if in.AdditionalAllowedMetrics != nil {
 		in, out := &in.AdditionalAllowedMetrics, &out.AdditionalAllowedMetrics
 		*out = make(map[string][]string, len(*in))
@@ -1304,11 +1303,11 @@ func (in *ShootMonitoringConfig) DeepCopyInto(out *ShootMonitoringConfig) {
 	if in.NodeExporter != nil {
 		in, out := &in.NodeExporter, &out.NodeExporter
 		*out = new(NodeExporterConfig)
-=======
+		(*in).DeepCopyInto(*out)
+	}
 	if in.AgentMode != nil {
 		in, out := &in.AgentMode, &out.AgentMode
 		*out = new(AgentModeMonitoringConfig)
->>>>>>> 51fb0b74b... add draft for prometheus agent mode
 		(*in).DeepCopyInto(*out)
 	}
 	return
