@@ -332,9 +332,7 @@ func RunReconcileSeedFlow(
 
 	vpaGK := schema.GroupKind{Group: "autoscaling.k8s.io", Kind: "VerticalPodAutoscaler"}
 
-	vpaEnabled := (seed.GetInfo().Spec.Settings == nil || seed.GetInfo().Spec.Settings.VerticalPodAutoscaler == nil || seed.GetInfo().Spec.Settings.VerticalPodAutoscaler.Enabled) &&
-		!(*conf.Monitoring.Shoot.AgentMode.Enabled && conf.Monitoring.Shoot.RemoteWrite != nil)
-
+	vpaEnabled := seed.GetInfo().Spec.Settings == nil || seed.GetInfo().Spec.Settings.VerticalPodAutoscaler == nil || seed.GetInfo().Spec.Settings.VerticalPodAutoscaler.Enabled
 	if !vpaEnabled {
 		// VPA is a prerequisite. If it's not enabled via the seed spec it must be provided through some other mechanism.
 		if _, err := seedClient.RESTMapper().RESTMapping(vpaGK); err != nil {
@@ -350,7 +348,6 @@ func RunReconcileSeedFlow(
 		seedBoostrapChartName     = "seed-bootstrap"
 		seedBoostrapCRDsChartName = "seed-bootstrap-crds"
 	)
-
 	var (
 		loggingConfig   = conf.Logging
 		gardenNamespace = &corev1.Namespace{
@@ -423,7 +420,7 @@ func RunReconcileSeedFlow(
 	}
 
 	// HVPA feature gate
-	hvpaEnabled := gardenletfeatures.FeatureGate.Enabled(features.HVPA) && !(*conf.Monitoring.Shoot.AgentMode.Enabled && conf.Monitoring.Shoot.RemoteWrite != nil)
+	hvpaEnabled := gardenletfeatures.FeatureGate.Enabled(features.HVPA)
 	if !hvpaEnabled {
 		if err := common.DeleteHvpa(ctx, seedClient, v1beta1constants.GardenNamespace); client.IgnoreNotFound(err) != nil {
 			return err
@@ -952,7 +949,7 @@ func RunReconcileSeedFlow(
 		return err
 	}
 
-	kubernetesValues := map[string]interface{}{
+	values := kubernetes.Values(map[string]interface{}{
 		"priorityClassName": v1beta1constants.PriorityClassNameShootControlPlane,
 		"global": map[string]interface{}{
 			"ingressClass": ingressClass,
@@ -1014,13 +1011,7 @@ func RunReconcileSeedFlow(
 		"ingress": map[string]interface{}{
 			"basicAuthSecret": monitoringBasicAuth,
 		},
-	}
-	values := kubernetes.Values(kubernetesValues)
-
-	if *conf.Monitoring.Shoot.AgentMode.Enabled && conf.Monitoring.Shoot.RemoteWrite != nil {
-		delete(kubernetesValues, "prometheus")
-		delete(kubernetesValues, "aggregatePrometheus")
-	}
+	})
 
 	if err := chartApplier.Apply(ctx, filepath.Join(charts.Path, seedBoostrapChartName), v1beta1constants.GardenNamespace, seedBoostrapChartName, values, applierOptions); err != nil {
 		return err
