@@ -279,9 +279,9 @@ func (b *Botanist) DeploySeedMonitoring(ctx context.Context) error {
 	}
 
 	// Add agentMode to prometheus config when enabled
-	if b.HasPrometheusAgentModeSetting(ctx) {
+	if b.IsPrometheusAgentModeEnabled(ctx) {
 		prometheusConfig["agentMode"] = map[string]interface{}{
-			"enabled": *b.Config.Monitoring.Shoot.AgentMode.Enabled,
+			"enabled": true,
 		}
 	}
 
@@ -380,7 +380,7 @@ func (b *Botanist) DeploySeedMonitoring(ctx context.Context) error {
 	// depending on the agentmode setting, prometheus is
 	// either deployed as a StatefulSet or as a Deployment.
 	// The respective other type needs to be removed, if existent
-	if b.HasPrometheusAgentModeSetting(ctx) && *b.Config.Monitoring.Shoot.AgentMode.Enabled {
+	if b.IsPrometheusAgentModeEnabled(ctx) {
 		if err := kutil.DeleteObjects(ctx, b.K8sSeedClient.Client(), &appsv1.StatefulSet{
 			ObjectMeta: metav1.ObjectMeta{
 				Namespace: b.Shoot.SeedNamespace,
@@ -767,7 +767,7 @@ func (b *Botanist) DeleteSeedMonitoring(ctx context.Context) error {
 
 	// depending on the agentmode setting, prometheus is
 	// either deployed as a StatefulSet or as a Deployment
-	if b.HasPrometheusAgentModeSetting(ctx) && *b.Config.Monitoring.Shoot.AgentMode.Enabled {
+	if b.IsPrometheusAgentModeEnabled(ctx) {
 		objects = append(objects, &appsv1.Deployment{
 			ObjectMeta: metav1.ObjectMeta{
 				Namespace: b.Shoot.SeedNamespace,
@@ -788,9 +788,10 @@ func (b *Botanist) DeleteSeedMonitoring(ctx context.Context) error {
 
 // If agentMode is enabled, Prometheus is deployed as a Deployment. Otherwise
 // it's a StatefulSet. This function allows easy switching between the two.
-func (b *Botanist) HasPrometheusAgentModeSetting(ctx context.Context) bool {
+func (b *Botanist) IsPrometheusAgentModeEnabled(ctx context.Context) bool {
 	return b.Config.Monitoring != nil &&
 		b.Config.Monitoring.Shoot != nil &&
 		b.Config.Monitoring.Shoot.AgentMode != nil &&
-		b.Config.Monitoring.Shoot.AgentMode.Enabled != nil
+		b.Config.Monitoring.Shoot.AgentMode.Enabled != nil &&
+		*b.Config.Monitoring.Shoot.AgentMode.Enabled
 }
