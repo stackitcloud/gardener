@@ -541,6 +541,8 @@ type ShootMonitoringConfig struct {
 	AdditionalAllowedMetrics map[string][]string
 	// NodeExporter is optional and sets additional settings for the node exporter.
 	NodeExporter *NodeExporterConfig
+	// AgentMode is optional and contains settings for the prometheus agent mode.
+	AgentMode *AgentModeMonitoringConfig
 }
 
 // NodeExporterConfig contains settings for the shoot monitoring stack.
@@ -565,4 +567,10 @@ type RemoteWriteMonitoringConfig struct {
 	Keep []string
 	// QueueConfig contains the queue_config for prometheus remote write.
 	QueueConfig *string
+}
+
+// AgentModeMonitoringConfig contains settings for the prometheus agent mode for monitoring stack.
+type AgentModeMonitoringConfig struct {
+	// Enabled is used to enable or disable the agent mode feature of prometheus.
+	Enabled *bool
 }

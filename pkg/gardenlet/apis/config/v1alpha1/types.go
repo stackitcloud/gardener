@@ -657,6 +657,9 @@ type ShootMonitoringConfig struct {
 	// NodeExporter is optional and sets additional settings for the node exporter.
 	// +optional
 	NodeExporter *NodeExporterConfig `json:"nodeExporter,omitempty"`
+	// AgentMode is optional and contains settings for the prometheus agent mode.
+	// +optional
+	AgentMode *AgentModeMonitoringConfig `json:"agentMode,omitempty"`
 }
 
 // NodeExporterConfig contains settings for the shoot monitoring stack.
@@ -684,6 +687,14 @@ type ExternalBlackboxExporterConfig struct {
 	URL string `json:"url"`
 	// Module defines the module used in target blackbox exporter
 	Module string `json:"module"`
+}
+
+// AgentModeMonitoringConfig contains settings for the prometheus agent mode for
+// monitoring stack.
+type AgentModeMonitoringConfig struct {
+	// Enabled is used to enable or disable the agent mode feature of prometheus.
+	// +optional
+	Enabled *bool `json:"enabled"`
 }
 
 const (

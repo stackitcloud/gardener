@@ -277,6 +277,14 @@ func (b *Botanist) DeploySeedMonitoring(ctx context.Context) error {
 
 		prometheusConfig["externalBlackboxExporter"] = externalBlackboxExporterConfig
 	}
+
+	// Add agentMode to prometheus config when enabled
+	if b.IsPrometheusAgentModeEnabled(ctx) {
+		prometheusConfig["agentMode"] = map[string]interface{}{
+			"enabled": true,
+		}
+	}
+
 	// Add remotewrite to prometheus when enabled
 	if b.Config.Monitoring != nil &&
 		b.Config.Monitoring.Shoot != nil &&
@@ -367,6 +375,29 @@ func (b *Botanist) DeploySeedMonitoring(ctx context.Context) error {
 
 	if err := b.K8sSeedClient.ChartApplier().Apply(ctx, filepath.Join(charts.Path, "seed-monitoring", "charts", "core"), b.Shoot.SeedNamespace, fmt.Sprintf("%s-monitoring", b.Shoot.SeedNamespace), kubernetes.Values(coreValues)); err != nil {
 		return err
+	}
+
+	// depending on the agentmode setting, prometheus is
+	// either deployed as a StatefulSet or as a Deployment.
+	// The respective other type needs to be removed, if existent
+	if b.IsPrometheusAgentModeEnabled(ctx) {
+		if err := kutil.DeleteObjects(ctx, b.K8sSeedClient.Client(), &appsv1.StatefulSet{
+			ObjectMeta: metav1.ObjectMeta{
+				Namespace: b.Shoot.SeedNamespace,
+				Name:      "prometheus",
+			},
+		}); err != nil {
+			return err
+		}
+	} else {
+		if err := kutil.DeleteObjects(ctx, b.K8sSeedClient.Client(), &appsv1.Deployment{
+			ObjectMeta: metav1.ObjectMeta{
+				Namespace: b.Shoot.SeedNamespace,
+				Name:      "prometheus",
+			},
+		}); err != nil {
+			return err
+		}
 	}
 
 	// Check if we want to deploy an alertmanager into the shoot namespace.
@@ -720,12 +751,6 @@ func (b *Botanist) DeleteSeedMonitoring(ctx context.Context) error {
 				Name:      "prometheus-web",
 			},
 		},
-		&appsv1.StatefulSet{
-			ObjectMeta: metav1.ObjectMeta{
-				Namespace: b.Shoot.SeedNamespace,
-				Name:      "prometheus",
-			},
-		},
 		&rbacv1.ClusterRoleBinding{
 			ObjectMeta: metav1.ObjectMeta{
 				Namespace: b.Shoot.SeedNamespace,
@@ -740,5 +765,33 @@ func (b *Botanist) DeleteSeedMonitoring(ctx context.Context) error {
 		},
 	}
 
+	// depending on the agentmode setting, prometheus is
+	// either deployed as a StatefulSet or as a Deployment
+	if b.IsPrometheusAgentModeEnabled(ctx) {
+		objects = append(objects, &appsv1.Deployment{
+			ObjectMeta: metav1.ObjectMeta{
+				Namespace: b.Shoot.SeedNamespace,
+				Name:      "prometheus",
+			},
+		})
+	} else {
+		objects = append(objects, &appsv1.StatefulSet{
+			ObjectMeta: metav1.ObjectMeta{
+				Namespace: b.Shoot.SeedNamespace,
+				Name:      "prometheus",
+			},
+		})
+	}
+
 	return kutil.DeleteObjects(ctx, b.K8sSeedClient.Client(), objects...)
+}
+
+// If agentMode is enabled, Prometheus is deployed as a Deployment. Otherwise
+// it's a StatefulSet. This function allows easy switching between the two.
+func (b *Botanist) IsPrometheusAgentModeEnabled(ctx context.Context) bool {
+	return b.Config.Monitoring != nil &&
+		b.Config.Monitoring.Shoot != nil &&
+		b.Config.Monitoring.Shoot.AgentMode != nil &&
+		b.Config.Monitoring.Shoot.AgentMode.Enabled != nil &&
+		*b.Config.Monitoring.Shoot.AgentMode.Enabled
 }
