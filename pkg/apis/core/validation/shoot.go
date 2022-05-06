@@ -419,9 +419,9 @@ func ValidateTotalNodeCountWithPodCIDR(shoot *core.Shoot) field.ErrorList {
 	allErrs := field.ErrorList{}
 
 	var (
-		totalNodes       int32
-		nodeCIDRMaskSize int32 = 24
-		podNetworkCIDR         = core.DefaultPodNetworkCIDR
+		nodeCIDRMaskSize   int32 = 24
+		nodeCIDRMaskSizeV6 int32 = 120
+		podNetworkCIDR           = core.DefaultPodNetworkCIDR
 	)
 
 	if shoot.Spec.Networking.Pods != nil {
@@ -432,10 +432,16 @@ func ValidateTotalNodeCountWithPodCIDR(shoot *core.Shoot) field.ErrorList {
 	}
 
 	for _, podCidr := range strings.Split(podNetworkCIDR, ",") {
+		var totalNodes int32
 		_, podNetwork, err := net.ParseCIDR(podCidr)
 		if err != nil {
 			allErrs = append(allErrs, field.Invalid(field.NewPath("spec").Child("networking").Child("pods"), podNetworkCIDR, fmt.Sprintf("cannot parse shoot's pod network cidr : %s", podNetworkCIDR)))
 			return allErrs
+		}
+
+		nodeCidr := nodeCIDRMaskSizeV6
+		if podNetwork.IP.To4() != nil {
+			nodeCidr = nodeCIDRMaskSize
 		}
 
 		cidrMask, _ := podNetwork.Mask.Size()
@@ -444,14 +450,14 @@ func ValidateTotalNodeCountWithPodCIDR(shoot *core.Shoot) field.ErrorList {
 			return allErrs
 		}
 
-		maxNodeCount := uint32(math.Pow(2, float64(nodeCIDRMaskSize-int32(cidrMask))))
+		maxNodeCount := math.Pow(2, float64(nodeCidr-int32(cidrMask)))
 
 		for _, worker := range shoot.Spec.Provider.Workers {
 			totalNodes += worker.Maximum
 		}
 
-		if uint32(totalNodes) > maxNodeCount {
-			allErrs = append(allErrs, field.Invalid(field.NewPath("spec").Child("provider").Child("workers"), totalNodes, fmt.Sprintf("worker configuration incorrect. The podCIDRs in `spec.networking.pod` can only support a maximum of %d nodes. The total number of worker pool nodes should be less than %d ", maxNodeCount, maxNodeCount)))
+		if float64(totalNodes) > maxNodeCount {
+			allErrs = append(allErrs, field.Invalid(field.NewPath("spec").Child("provider").Child("workers"), totalNodes, fmt.Sprintf("worker configuration incorrect. The podCIDRs in `spec.networking.pod` can only support a maximum of %v nodes. The total number of worker pool nodes should be less than %v ", maxNodeCount, maxNodeCount)))
 		}
 	}
 	return allErrs
