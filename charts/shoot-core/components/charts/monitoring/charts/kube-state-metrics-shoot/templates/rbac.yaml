@@ -15,6 +15,7 @@ rules:
   - replicationcontrollers
   - limitranges
   - persistentvolumeclaims
+  - persistentvolumes
   - namespaces
   verbs:
   - list
@@ -38,6 +39,14 @@ rules:
   verbs:
   - list
   - watch
+- apiGroups:
+    - storage.k8s.io
+  resources:
+    - volumeattachments
+  verbs:
+    - get
+    - list
+    - watch
 - apiGroups:
   - "autoscaling.k8s.io"
   resources:
