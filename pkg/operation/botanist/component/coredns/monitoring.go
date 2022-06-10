@@ -40,6 +40,33 @@ const (
 	monitoringMetricProcessMaxFds                                 = "process_max_fds"
 	monitoringMetricProcessOpenFds                                = "process_open_fds"
 
+	monitoringMetricCacheRequestTotal                   = "coredns_cache_requests_total"
+	monitoringMetricDnsRequestSizeBytesBucket           = "coredns_dns_request_size_bytes_bucket"
+	monitoringMetricDnsRequestSizeBytesCount            = "coredns_dns_request_size_bytes_count"
+	monitoringMetricDnsRequestSizeBytesSum              = "coredns_dns_request_size_bytes_sum"
+	monitoringMetricDnsRequestDurationSecondsSum        = "coredns_dns_request_duration_seconds_sum"
+	monitoringMetricDnsRequestsTotal                    = "coredns_dns_requests_total"
+	monitoringMetricDnsResponseSizeBytesBucket          = "coredns_dns_response_size_bytes_bucket"
+	monitoringMetricDnsResponseSizeBytesCount           = "coredns_dns_response_size_bytes_count"
+	monitoringMetricDnsResponseSizeBytesSum             = "coredns_dns_response_size_bytes_sum"
+	monitoringMetricForwardConnCacheHitsTotal           = "coredns_forward_conn_cache_hits_total"
+	monitoringMetricForwardConnCacheMissesTotal         = "coredns_forward_conn_cache_misses_total"
+	monitoringMetricForwardHealthcheckBrokenTotal       = "coredns_forward_healthcheck_broken_total"
+	monitoringMetricForwardHealthcheckFailuresTotal     = "coredns_forward_healthcheck_failures_total"
+	monitoringMetricForwardMaxConcurrentRejectsTotal    = "coredns_forward_max_concurrent_rejects_total"
+	monitoringMetricForwardRequestDurationSecondsBucket = "coredns_forward_request_duration_seconds_bucket"
+	monitoringMetricForwardRequestDurationSecondsCount  = "coredns_forward_request_duration_seconds_count"
+	monitoringMetricForwardRequestDurationSecondsSum    = "coredns_forward_request_duration_seconds_sum"
+	monitoringMetricHealthRequestDurationSecondsBucket  = "coredns_health_request_duration_seconds_bucket"
+	monitoringMetricHealthRequestDurationSecondsCount   = "coredns_health_request_duration_seconds_count"
+	monitoringMetricHealthRequestDurationSecondsSum     = "coredns_health_request_duration_seconds_sum"
+	monitoringMetricHealthRequestFailuresTotal          = "coredns_health_request_failures_total"
+	monitoringMetricHostsReloadTimestampSeconds         = "coredns_hosts_reload_timestamp_seconds"
+	monitoringMetricLocalLocalhostRequestsTotal         = "coredns_local_localhost_requests_total"
+	monitoringMetricPanicsTotal                         = "coredns_panics_total"
+	monitoringMetricPluginEnabled                       = "coredns_plugin_enabled"
+	monitoringMetricReloadFailedTotal                   = "coredns_reload_failed_total"
+
 	monitoringAlertingRules = `groups:
 - name: coredns.rules
   rules:
@@ -73,6 +100,32 @@ var (
 		monitoringMetricKubernetesDnsProgrammingDurationSecondsSum,
 		monitoringMetricProcessMaxFds,
 		monitoringMetricProcessOpenFds,
+		monitoringMetricCacheRequestTotal,
+		monitoringMetricDnsRequestSizeBytesBucket,
+		monitoringMetricDnsRequestSizeBytesCount,
+		monitoringMetricDnsRequestSizeBytesSum,
+		monitoringMetricDnsRequestDurationSecondsSum,
+		monitoringMetricDnsRequestsTotal,
+		monitoringMetricDnsResponseSizeBytesBucket,
+		monitoringMetricDnsResponseSizeBytesCount,
+		monitoringMetricDnsResponseSizeBytesSum,
+		monitoringMetricForwardConnCacheHitsTotal,
+		monitoringMetricForwardConnCacheMissesTotal,
+		monitoringMetricForwardHealthcheckBrokenTotal,
+		monitoringMetricForwardHealthcheckFailuresTotal,
+		monitoringMetricForwardMaxConcurrentRejectsTotal,
+		monitoringMetricForwardRequestDurationSecondsBucket,
+		monitoringMetricForwardRequestDurationSecondsCount,
+		monitoringMetricForwardRequestDurationSecondsSum,
+		monitoringMetricHealthRequestDurationSecondsBucket,
+		monitoringMetricHealthRequestDurationSecondsCount,
+		monitoringMetricHealthRequestDurationSecondsSum,
+		monitoringMetricHealthRequestFailuresTotal,
+		monitoringMetricHostsReloadTimestampSeconds,
+		monitoringMetricLocalLocalhostRequestsTotal,
+		monitoringMetricPanicsTotal,
+		monitoringMetricPluginEnabled,
+		monitoringMetricReloadFailedTotal,
 	}
 
 	// TODO: Replace below hard-coded paths to Prometheus certificates once its deployment has been refactored.
