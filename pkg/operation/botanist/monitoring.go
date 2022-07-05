@@ -50,6 +50,11 @@ import (
 // DeploySeedMonitoring installs the Helm release "seed-monitoring" in the Seed clusters. It comprises components
 // to monitor the Shoot cluster whose control plane runs in the Seed cluster.
 func (b *Botanist) DeploySeedMonitoring(ctx context.Context) error {
+	// disable monitoring set if disabled in gardenletConfig
+	if b.Config.Monitoring.Shoot.Enabled != nil && !*b.Config.Monitoring.Shoot.Enabled {
+		return b.DeleteSeedMonitoring(ctx)
+	}
+
 	if b.Shoot.Purpose == gardencorev1beta1.ShootPurposeTesting {
 		return b.DeleteSeedMonitoring(ctx)
 	}
