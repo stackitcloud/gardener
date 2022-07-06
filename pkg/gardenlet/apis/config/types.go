@@ -531,6 +531,8 @@ type MonitoringConfig struct {
 
 // ShootMonitoringConfig contains settings for the shoot monitoring stack.
 type ShootMonitoringConfig struct {
+	// Enabled is used to enable or disable the shoot monitoring stack. If not set the monitoring stack is enabled.
+	Enabled *bool
 	// RemoteWrite is optional and contains remote write setting.
 	RemoteWrite *RemoteWriteMonitoringConfig
 	// ExternalBlackboxExporter is optional and contains settings for the external blackbox exporter.
