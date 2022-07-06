@@ -51,7 +51,7 @@ import (
 // to monitor the Shoot cluster whose control plane runs in the Seed cluster.
 func (b *Botanist) DeploySeedMonitoring(ctx context.Context) error {
 	// disable monitoring set if disabled in gardenletConfig
-	if b.Config.Monitoring.Shoot.Enabled != nil && !*b.Config.Monitoring.Shoot.Enabled {
+	if !gardenlethelper.IsMonitoringEnabled(b.Config) {
 		return b.DeleteSeedMonitoring(ctx)
 	}
 
@@ -477,6 +477,11 @@ func (b *Botanist) DeploySeedMonitoring(ctx context.Context) error {
 
 // DeploySeedGrafana deploys the grafana charts to the Seed cluster.
 func (b *Botanist) DeploySeedGrafana(ctx context.Context) error {
+	// disable monitoring set if disabled in gardenletConfig
+	if !gardenlethelper.IsMonitoringEnabled(b.Config) {
+		return b.DeleteGrafana(ctx)
+	}
+
 	if b.Shoot.Purpose == gardencorev1beta1.ShootPurposeTesting {
 		return b.DeleteGrafana(ctx)
 	}

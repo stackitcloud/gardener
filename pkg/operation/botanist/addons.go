@@ -17,6 +17,7 @@ package botanist
 import (
 	"context"
 	"fmt"
+	"github.com/gardener/gardener/pkg/gardenlet/apis/config/helper"
 	"path/filepath"
 	"strings"
 
@@ -405,6 +406,11 @@ func (b *Botanist) generateCoreAddonsChart(ctx context.Context) (*chartrenderer.
 		shootInfo["nodeNetwork"] = *nodeNetwork
 	}
 
+	monitoringEnabled := helper.IsMonitoringEnabled(b.Config)
+	if b.Shoot.Purpose == gardencorev1beta1.ShootPurposeTesting {
+		monitoringEnabled = false
+	}
+
 	values := map[string]interface{}{
 		"global":                 global,
 		"coredns":                common.GenerateAddonConfig(nil, true),
@@ -416,7 +422,7 @@ func (b *Botanist) generateCoreAddonsChart(ctx context.Context) (*chartrenderer.
 		"monitoring": common.GenerateAddonConfig(map[string]interface{}{
 			"node-exporter":     nodeExporter,
 			"blackbox-exporter": blackboxExporter,
-		}, b.Shoot.Purpose != gardencorev1beta1.ShootPurposeTesting),
+		}, monitoringEnabled),
 		"network-policies":        networkPolicyConfig,
 		"node-problem-detector":   common.GenerateAddonConfig(nil, true),
 		"podsecuritypolicies":     common.GenerateAddonConfig(podSecurityPolicies, true),
