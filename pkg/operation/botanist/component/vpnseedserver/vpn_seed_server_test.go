@@ -24,12 +24,18 @@ import (
 	. "github.com/gardener/gardener/pkg/operation/botanist/component/vpnseedserver"
 	kutil "github.com/gardener/gardener/pkg/utils/kubernetes"
 	. "github.com/gardener/gardener/pkg/utils/test/matchers"
+	"github.com/google/go-cmp/cmp"
 
 	"github.com/gardener/gardener/pkg/resourcemanager/controller/garbagecollector/references"
 	protobuftypes "github.com/gogo/protobuf/types"
 	"github.com/golang/mock/gomock"
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
+<<<<<<< HEAD
+=======
+	"google.golang.org/protobuf/testing/protocmp"
+	"google.golang.org/protobuf/types/known/durationpb"
+>>>>>>> Fixing istio related unit tests not being able to show diffs.
 	istionetworkingv1beta1 "istio.io/api/networking/v1beta1"
 	networkingv1alpha3 "istio.io/client-go/pkg/apis/networking/v1alpha3"
 	networkingv1beta1 "istio.io/client-go/pkg/apis/networking/v1beta1"
@@ -841,7 +847,11 @@ admin:
 					c.EXPECT().Get(ctx, kutil.Key(namespace, DeploymentName), gomock.AssignableToTypeOf(&networkingv1beta1.DestinationRule{})),
 					c.EXPECT().Patch(ctx, gomock.AssignableToTypeOf(&networkingv1beta1.DestinationRule{}), gomock.Any()).
 						Do(func(ctx context.Context, obj client.Object, _ client.Patch, _ ...client.PatchOption) {
+<<<<<<< HEAD
 							Expect(obj).To(DeepEqual(destinationRule))
+=======
+							Expect(cmp.Diff(destinationRule, obj, protocmp.Transform())).To(BeEmpty())
+>>>>>>> Fixing istio related unit tests not being able to show diffs.
 						}),
 					c.EXPECT().Get(ctx, kutil.Key(namespace, ServiceName), gomock.AssignableToTypeOf(&corev1.Service{})),
 					c.EXPECT().Patch(ctx, gomock.AssignableToTypeOf(&corev1.Service{}), gomock.Any()).
@@ -899,7 +909,11 @@ admin:
 					c.EXPECT().Get(ctx, kutil.Key(namespace, DeploymentName), gomock.AssignableToTypeOf(&networkingv1beta1.DestinationRule{})),
 					c.EXPECT().Patch(ctx, gomock.AssignableToTypeOf(&networkingv1beta1.DestinationRule{}), gomock.Any()).
 						Do(func(ctx context.Context, obj client.Object, _ client.Patch, _ ...client.PatchOption) {
+<<<<<<< HEAD
 							Expect(obj).To(DeepEqual(destinationRule))
+=======
+							Expect(cmp.Diff(destinationRule, obj, protocmp.Transform())).To(BeEmpty())
+>>>>>>> Fixing istio related unit tests not being able to show diffs.
 						}),
 					c.EXPECT().Get(ctx, kutil.Key(namespace, ServiceName), gomock.AssignableToTypeOf(&corev1.Service{})),
 					c.EXPECT().Patch(ctx, gomock.AssignableToTypeOf(&corev1.Service{}), gomock.Any()).
