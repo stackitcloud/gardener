@@ -832,6 +832,7 @@ istio.io/api/mesh/v1alpha1
 istio.io/api/meta/v1alpha1
 istio.io/api/networking/v1alpha3
 istio.io/api/networking/v1beta1
+<<<<<<< HEAD
 # istio.io/client-go v1.12.0
 ## explicit; go 1.16
 istio.io/client-go/pkg/apis/networking/v1alpha3
@@ -840,6 +841,16 @@ istio.io/client-go/pkg/apis/networking/v1beta1
 ## explicit; go 1.15
 istio.io/gogo-genproto/googleapis/google/api
 # k8s.io/api v0.23.3 => k8s.io/api v0.23.3
+=======
+istio.io/api/security/v1beta1
+istio.io/api/type/v1beta1
+# istio.io/client-go v1.14.0
+## explicit; go 1.17
+istio.io/client-go/pkg/apis/networking/v1alpha3
+istio.io/client-go/pkg/apis/networking/v1beta1
+istio.io/client-go/pkg/apis/security/v1beta1
+# k8s.io/api v0.24.3 => k8s.io/api v0.24.3
+>>>>>>> #5630 Adding AccessControl feature
 ## explicit; go 1.16
 k8s.io/api/admission/v1
 k8s.io/api/admission/v1beta1
