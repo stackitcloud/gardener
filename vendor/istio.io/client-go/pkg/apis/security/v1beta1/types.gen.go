@@ -27,6 +27,32 @@ import (
 
 // AuthorizationPolicy enables access control on workloads.
 //
+// For example, the following authorization policy allows nothing and effectively denies all requests to workloads
+// in namespace foo.
+//
+// ```yaml
+// apiVersion: security.istio.io/v1beta1
+// kind: AuthorizationPolicy
+// metadata:
+//  name: allow-nothing
+//  namespace: foo
+// spec:
+//   {}
+// ```
+//
+// The following authorization policy allows all requests to workloads in namespace foo.
+//
+// ```yaml
+// apiVersion: security.istio.io/v1beta1
+// kind: AuthorizationPolicy
+// metadata:
+//  name: allow-all
+//  namespace: foo
+// spec:
+//  rules:
+//  - {}
+// ```
+//
 // <!-- crd generation tags
 // +cue-gen:AuthorizationPolicy:groupName:security.istio.io
 // +cue-gen:AuthorizationPolicy:version:v1beta1
@@ -64,7 +90,7 @@ type AuthorizationPolicyList struct {
 	v1.TypeMeta `json:",inline"`
 	// +optional
 	v1.ListMeta `json:"metadata,omitempty" protobuf:"bytes,1,opt,name=metadata"`
-	Items       []*AuthorizationPolicy `json:"items" protobuf:"bytes,2,rep,name=items"`
+	Items       []AuthorizationPolicy `json:"items" protobuf:"bytes,2,rep,name=items"`
 }
 
 //
@@ -190,10 +216,10 @@ type PeerAuthenticationList struct {
 	v1.TypeMeta `json:",inline"`
 	// +optional
 	v1.ListMeta `json:"metadata,omitempty" protobuf:"bytes,1,opt,name=metadata"`
-	Items       []*PeerAuthentication `json:"items" protobuf:"bytes,2,rep,name=items"`
+	Items       []PeerAuthentication `json:"items" protobuf:"bytes,2,rep,name=items"`
 }
 
-//
+// please upgrade the proto package
 // +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
 
 // RequestAuthentication defines what request authentication methods are supported by a workload.
@@ -430,5 +456,5 @@ type RequestAuthenticationList struct {
 	v1.TypeMeta `json:",inline"`
 	// +optional
 	v1.ListMeta `json:"metadata,omitempty" protobuf:"bytes,1,opt,name=metadata"`
-	Items       []*RequestAuthentication `json:"items" protobuf:"bytes,2,rep,name=items"`
+	Items       []RequestAuthentication `json:"items" protobuf:"bytes,2,rep,name=items"`
 }

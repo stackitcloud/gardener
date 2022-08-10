@@ -58,13 +58,9 @@ func (in *AuthorizationPolicyList) DeepCopyInto(out *AuthorizationPolicyList) {
 	in.ListMeta.DeepCopyInto(&out.ListMeta)
 	if in.Items != nil {
 		in, out := &in.Items, &out.Items
-		*out = make([]*AuthorizationPolicy, len(*in))
+		*out = make([]AuthorizationPolicy, len(*in))
 		for i := range *in {
-			if (*in)[i] != nil {
-				in, out := &(*in)[i], &(*out)[i]
-				*out = new(AuthorizationPolicy)
-				(*in).DeepCopyInto(*out)
-			}
+			(*in)[i].DeepCopyInto(&(*out)[i])
 		}
 	}
 	return
@@ -123,13 +119,9 @@ func (in *PeerAuthenticationList) DeepCopyInto(out *PeerAuthenticationList) {
 	in.ListMeta.DeepCopyInto(&out.ListMeta)
 	if in.Items != nil {
 		in, out := &in.Items, &out.Items
-		*out = make([]*PeerAuthentication, len(*in))
+		*out = make([]PeerAuthentication, len(*in))
 		for i := range *in {
-			if (*in)[i] != nil {
-				in, out := &(*in)[i], &(*out)[i]
-				*out = new(PeerAuthentication)
-				(*in).DeepCopyInto(*out)
-			}
+			(*in)[i].DeepCopyInto(&(*out)[i])
 		}
 	}
 	return
@@ -188,13 +180,9 @@ func (in *RequestAuthenticationList) DeepCopyInto(out *RequestAuthenticationList
 	in.ListMeta.DeepCopyInto(&out.ListMeta)
 	if in.Items != nil {
 		in, out := &in.Items, &out.Items
-		*out = make([]*RequestAuthentication, len(*in))
+		*out = make([]RequestAuthentication, len(*in))
 		for i := range *in {
-			if (*in)[i] != nil {
-				in, out := &(*in)[i], &(*out)[i]
-				*out = new(RequestAuthentication)
-				(*in).DeepCopyInto(*out)
-			}
+			(*in)[i].DeepCopyInto(&(*out)[i])
 		}
 	}
 	return

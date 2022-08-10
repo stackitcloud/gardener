@@ -27,11 +27,8 @@ import (
 	protobuftypes "github.com/gogo/protobuf/types"
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
-<<<<<<< HEAD
-=======
 	"google.golang.org/protobuf/testing/protocmp"
 	"google.golang.org/protobuf/types/known/durationpb"
->>>>>>> Fixing istio related unit tests not being able to show diffs.
 	istioapinetworkingv1beta1 "istio.io/api/networking/v1beta1"
 	istionetworkingv1alpha3 "istio.io/client-go/pkg/apis/networking/v1alpha3"
 	istionetworkingv1beta1 "istio.io/client-go/pkg/apis/networking/v1beta1"
@@ -343,11 +340,7 @@ var _ = Describe("ExtAuthzServer", func() {
 
 			actualDestinationRule := &istionetworkingv1beta1.DestinationRule{}
 			Expect(c.Get(ctx, kutil.Key(expectedDestinationRule.Namespace, expectedDestinationRule.Name), actualDestinationRule)).To(Succeed())
-<<<<<<< HEAD
-			Expect(actualDestinationRule).To(DeepEqual(expectedDestinationRule))
-=======
 			Expect(cmp.Diff(expectedDestinationRule, actualDestinationRule, protocmp.Transform())).To(BeEmpty())
->>>>>>> Fixing istio related unit tests not being able to show diffs.
 
 			actualService := &corev1.Service{}
 			Expect(c.Get(ctx, kutil.Key(expectedService.Namespace, expectedService.Name), actualService)).To(Succeed())
@@ -355,11 +348,7 @@ var _ = Describe("ExtAuthzServer", func() {
 
 			actualVirtualService := &istionetworkingv1beta1.VirtualService{}
 			Expect(c.Get(ctx, kutil.Key(expectedVirtualService.Namespace, expectedVirtualService.Name), actualVirtualService)).To(Succeed())
-<<<<<<< HEAD
-			Expect(actualVirtualService).To(DeepEqual(expectedVirtualService))
-=======
 			Expect(cmp.Diff(expectedVirtualService, actualVirtualService, protocmp.Transform())).To(BeEmpty())
->>>>>>> Fixing istio related unit tests not being able to show diffs.
 
 			actualVpa := &autoscalingv1beta2.VerticalPodAutoscaler{}
 			Expect(c.Get(ctx, kutil.Key(expectedVpa.Namespace, expectedVpa.Name), actualVpa)).To(Succeed())
