@@ -91,9 +91,7 @@ func (b *Botanist) DefaultVPNSeedServer() (vpnseedserver.Interface, error) {
 
 	var netNodes []string
 	var nodeNetworks = b.Shoot.GetInfo().Spec.Networking.Nodes
-	for _, IPNetNode := range strings.Split(*nodeNetworks, ",") {
-		netNodes = append(netNodes, IPNetNode)
-	}
+	netNodes = append(netNodes, strings.Split(*nodeNetworks, ",")...)
 
 	return vpnseedserver.New(
 		b.K8sSeedClient.Client(),
