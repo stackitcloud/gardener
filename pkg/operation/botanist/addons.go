@@ -189,11 +189,6 @@ func (b *Botanist) generateCoreAddonsChart(ctx context.Context) (*chartrenderer.
 	for _, pod := range b.Shoot.Networks.Pods {
 		podCidrs = append(podCidrs, pod.String())
 	}
-
-	var svcCidrs []string
-	for _, svc := range b.Shoot.Networks.Services {
-		svcCidrs = append(svcCidrs, svc.String())
-	}
 	var (
 		kasFQDN = b.outOfClusterAPIServerFQDN()
 		global  = map[string]interface{}{
