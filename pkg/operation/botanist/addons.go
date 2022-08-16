@@ -17,6 +17,7 @@ package botanist
 import (
 	"context"
 	"fmt"
+	"github.com/gardener/gardener/pkg/gardenlet/apis/config/helper"
 	"path/filepath"
 	"strings"
 
@@ -276,11 +277,20 @@ func (b *Botanist) DeployManagedResourceForAddons(ctx context.Context) error {
 // generateCoreAddonsChart renders the gardener-resource-manager configuration for the core addons. After that it
 // creates a ManagedResource CRD that references the rendered manifests and creates it.
 func (b *Botanist) generateCoreAddonsChart(ctx context.Context) (*chartrenderer.RenderedChart, error) {
+	var podCidrs []string
+	for _, pod := range b.Shoot.Networks.Pods {
+		podCidrs = append(podCidrs, pod.String())
+	}
+
+	var svcCidrs []string
+	for _, svc := range b.Shoot.Networks.Services {
+		svcCidrs = append(svcCidrs, svc.String())
+	}
 	var (
 		kasFQDN = b.outOfClusterAPIServerFQDN()
 		global  = map[string]interface{}{
 			"kubernetesVersion": b.Shoot.GetInfo().Spec.Kubernetes.Version,
-			"podNetwork":        b.Shoot.Networks.Pods.String(),
+			"podNetwork":        strings.Join(podCidrs, ","),
 			"vpaEnabled":        b.Shoot.WantsVerticalPodAutoscaler,
 		}
 
@@ -306,8 +316,8 @@ func (b *Botanist) generateCoreAddonsChart(ctx context.Context) (*chartrenderer.
 			"provider":          b.Shoot.GetInfo().Spec.Provider.Type,
 			"region":            b.Shoot.GetInfo().Spec.Region,
 			"kubernetesVersion": b.Shoot.GetInfo().Spec.Kubernetes.Version,
-			"podNetwork":        b.Shoot.Networks.Pods.String(),
-			"serviceNetwork":    b.Shoot.Networks.Services.String(),
+			"podNetwork":        strings.Join(podCidrs, ","),
+			"serviceNetwork":    strings.Join(svcCidrs, ","),
 			"maintenanceBegin":  b.Shoot.GetInfo().Spec.Maintenance.TimeWindow.Begin,
 			"maintenanceEnd":    b.Shoot.GetInfo().Spec.Maintenance.TimeWindow.End,
 		}
@@ -361,6 +371,15 @@ func (b *Botanist) generateCoreAddonsChart(ctx context.Context) (*chartrenderer.
 	if err != nil {
 		return nil, err
 	}
+
+	// set additionalArgs for node-exporter
+	if b.Config.Monitoring != nil &&
+		b.Config.Monitoring.Shoot != nil &&
+		b.Config.Monitoring.Shoot.NodeExporter != nil &&
+		len(b.Config.Monitoring.Shoot.NodeExporter.AdditionalArgs) != 0 {
+		nodeExporter["additionalArgs"] = b.Config.Monitoring.Shoot.NodeExporter.AdditionalArgs
+	}
+
 	blackboxExporter, err := b.InjectShootShootImages(blackboxExporterConfig, images.ImageNameBlackboxExporter)
 	if err != nil {
 		return nil, err
@@ -387,6 +406,11 @@ func (b *Botanist) generateCoreAddonsChart(ctx context.Context) (*chartrenderer.
 		shootInfo["nodeNetwork"] = *nodeNetwork
 	}
 
+	monitoringEnabled := helper.IsMonitoringEnabled(b.Config)
+	if b.Shoot.Purpose == gardencorev1beta1.ShootPurposeTesting {
+		monitoringEnabled = false
+	}
+
 	values := map[string]interface{}{
 		"global":                 global,
 		"coredns":                common.GenerateAddonConfig(nil, true),
@@ -398,7 +422,7 @@ func (b *Botanist) generateCoreAddonsChart(ctx context.Context) (*chartrenderer.
 		"monitoring": common.GenerateAddonConfig(map[string]interface{}{
 			"node-exporter":     nodeExporter,
 			"blackbox-exporter": blackboxExporter,
-		}, b.Shoot.Purpose != gardencorev1beta1.ShootPurposeTesting),
+		}, monitoringEnabled),
 		"network-policies":        networkPolicyConfig,
 		"node-problem-detector":   common.GenerateAddonConfig(nil, true),
 		"podsecuritypolicies":     common.GenerateAddonConfig(podSecurityPolicies, true),

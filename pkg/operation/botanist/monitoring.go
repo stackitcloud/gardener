@@ -50,6 +50,11 @@ import (
 // DeploySeedMonitoring installs the Helm release "seed-monitoring" in the Seed clusters. It comprises components
 // to monitor the Shoot cluster whose control plane runs in the Seed cluster.
 func (b *Botanist) DeploySeedMonitoring(ctx context.Context) error {
+	// disable monitoring set if disabled in gardenletConfig
+	if !gardenlethelper.IsMonitoringEnabled(b.Config) {
+		return b.DeleteSeedMonitoring(ctx)
+	}
+
 	if b.Shoot.Purpose == gardencorev1beta1.ShootPurposeTesting {
 		return b.DeleteSeedMonitoring(ctx)
 	}
@@ -145,6 +150,16 @@ func (b *Botanist) DeploySeedMonitoring(ctx context.Context) error {
 		},
 	}
 
+	var podCidrs []string
+	for _, pod := range b.Shoot.Networks.Pods {
+		podCidrs = append(podCidrs, pod.String())
+	}
+
+	var svcCidrs []string
+	for _, svc := range b.Shoot.Networks.Services {
+		svcCidrs = append(svcCidrs, svc.String())
+	}
+
 	ingressClass, err := seed.ComputeNginxIngressClass(b.Seed, b.Seed.GetInfo().Status.KubernetesVersion)
 	if err != nil {
 		return err
@@ -157,8 +172,8 @@ func (b *Botanist) DeploySeedMonitoring(ctx context.Context) error {
 
 	var (
 		networks = map[string]interface{}{
-			"pods":     b.Shoot.Networks.Pods.String(),
-			"services": b.Shoot.Networks.Services.String(),
+			"pods":     strings.Join(podCidrs, ","),
+			"services": strings.Join(svcCidrs, ","),
 		}
 		prometheusConfig = map[string]interface{}{
 			"kubernetesVersion": b.Shoot.GetInfo().Spec.Kubernetes.Version,
@@ -236,6 +251,45 @@ func (b *Botanist) DeploySeedMonitoring(ctx context.Context) error {
 
 	prometheusConfig["podAnnotations"] = podAnnotations
 
+	// Add external blackbox exporter when enabled
+	if b.Config.Monitoring != nil &&
+		b.Config.Monitoring.Shoot != nil &&
+		b.Config.Monitoring.Shoot.ExternalBlackboxExporter != nil &&
+		b.Config.Monitoring.Shoot.ExternalBlackboxExporter.URL != "" {
+
+		externalBlackboxExporterConfig := map[string]interface{}{
+			"url":    b.Config.Monitoring.Shoot.ExternalBlackboxExporter.URL,
+			"module": b.Config.Monitoring.Shoot.ExternalBlackboxExporter.Module,
+		}
+
+		for _, advertisedAddress := range b.Shoot.GetInfo().Status.AdvertisedAddresses {
+			if advertisedAddress.Name == "external" {
+				externalBlackboxExporterConfig["externalApiUrl"] = advertisedAddress.URL
+			}
+		}
+
+		externalBlackboxExporterAuth := b.LoadSecret(v1beta1constants.GardenRoleGlobalShootExternalBlackboxExporterMonitoring)
+		if externalBlackboxExporterAuth != nil {
+			externalBlackboxExporterUsername := string(externalBlackboxExporterAuth.Data["username"])
+			externalBlackboxExporterPassword := string(externalBlackboxExporterAuth.Data["password"])
+			if externalBlackboxExporterUsername != "" {
+				externalBlackboxExporterConfig["basic_auth"] = map[string]interface{}{
+					"username": externalBlackboxExporterUsername,
+					"password": externalBlackboxExporterPassword,
+				}
+			}
+		}
+
+		prometheusConfig["externalBlackboxExporter"] = externalBlackboxExporterConfig
+	}
+
+	// Add agentMode to prometheus config when enabled
+	if b.IsPrometheusAgentModeEnabled(ctx) {
+		prometheusConfig["agentMode"] = map[string]interface{}{
+			"enabled": true,
+		}
+	}
+
 	// Add remotewrite to prometheus when enabled
 	if b.Config.Monitoring != nil &&
 		b.Config.Monitoring.Shoot != nil &&
@@ -277,6 +331,34 @@ func (b *Botanist) DeploySeedMonitoring(ctx context.Context) error {
 		prometheusConfig["externalLabels"] = b.Config.Monitoring.Shoot.ExternalLabels
 	}
 
+	// set additionalAllowedMetrics
+	if b.Config.Monitoring != nil &&
+		b.Config.Monitoring.Shoot != nil &&
+		len(b.Config.Monitoring.Shoot.AdditionalAllowedMetrics) != 0 {
+		prometheusConfig["additionalAllowedMetrics"] = b.Config.Monitoring.Shoot.AdditionalAllowedMetrics
+	}
+
+	if b.Shoot.CloudProfile.Spec.Monitoring.ExternalBlackboxExporterURL != "" &&
+		b.Shoot.CloudProfile.Spec.Monitoring.ExternalBlackboxExporterModule != "" {
+		externalBlackboxExporter := map[string]interface{}{
+			"url":    b.Shoot.CloudProfile.Spec.Monitoring.ExternalBlackboxExporterURL,
+			"module": b.Shoot.CloudProfile.Spec.Monitoring.ExternalBlackboxExporterModule,
+		}
+		if b.Shoot.CloudProfile.Spec.Monitoring.ExternalBlackboxExporterUsername != "" &&
+			b.Shoot.CloudProfile.Spec.Monitoring.ExternalBlackboxExporterPassword != "" {
+			externalBlackboxExporter["basic_auth"] = map[string]interface{}{
+				"username": b.Shoot.CloudProfile.Spec.Monitoring.ExternalBlackboxExporterUsername,
+				"password": b.Shoot.CloudProfile.Spec.Monitoring.ExternalBlackboxExporterPassword,
+			}
+		}
+		for _, advertisedAddresse := range b.Shoot.GetInfo().Status.AdvertisedAddresses {
+			if advertisedAddresse.Name == "external" {
+				externalBlackboxExporter["externalApiUrl"] = advertisedAddresse.URL
+			}
+		}
+		prometheusConfig["externalBlackboxExporter"] = externalBlackboxExporter
+	}
+
 	prometheus, err := b.InjectSeedShootImages(prometheusConfig, prometheusImages...)
 	if err != nil {
 		return err
@@ -298,6 +380,29 @@ func (b *Botanist) DeploySeedMonitoring(ctx context.Context) error {
 
 	if err := b.K8sSeedClient.ChartApplier().Apply(ctx, filepath.Join(charts.Path, "seed-monitoring", "charts", "core"), b.Shoot.SeedNamespace, fmt.Sprintf("%s-monitoring", b.Shoot.SeedNamespace), kubernetes.Values(coreValues)); err != nil {
 		return err
+	}
+
+	// depending on the agentmode setting, prometheus is
+	// either deployed as a StatefulSet or as a Deployment.
+	// The respective other type needs to be removed, if existent
+	if b.IsPrometheusAgentModeEnabled(ctx) {
+		if err := kutil.DeleteObjects(ctx, b.K8sSeedClient.Client(), &appsv1.StatefulSet{
+			ObjectMeta: metav1.ObjectMeta{
+				Namespace: b.Shoot.SeedNamespace,
+				Name:      "prometheus",
+			},
+		}); err != nil {
+			return err
+		}
+	} else {
+		if err := kutil.DeleteObjects(ctx, b.K8sSeedClient.Client(), &appsv1.Deployment{
+			ObjectMeta: metav1.ObjectMeta{
+				Namespace: b.Shoot.SeedNamespace,
+				Name:      "prometheus",
+			},
+		}); err != nil {
+			return err
+		}
 	}
 
 	// Check if we want to deploy an alertmanager into the shoot namespace.
@@ -372,6 +477,11 @@ func (b *Botanist) DeploySeedMonitoring(ctx context.Context) error {
 
 // DeploySeedGrafana deploys the grafana charts to the Seed cluster.
 func (b *Botanist) DeploySeedGrafana(ctx context.Context) error {
+	// disable monitoring set if disabled in gardenletConfig
+	if !gardenlethelper.IsMonitoringEnabled(b.Config) {
+		return b.DeleteGrafana(ctx)
+	}
+
 	if b.Shoot.Purpose == gardencorev1beta1.ShootPurposeTesting {
 		return b.DeleteGrafana(ctx)
 	}
@@ -651,12 +761,6 @@ func (b *Botanist) DeleteSeedMonitoring(ctx context.Context) error {
 				Name:      "prometheus-web",
 			},
 		},
-		&appsv1.StatefulSet{
-			ObjectMeta: metav1.ObjectMeta{
-				Namespace: b.Shoot.SeedNamespace,
-				Name:      "prometheus",
-			},
-		},
 		&rbacv1.ClusterRoleBinding{
 			ObjectMeta: metav1.ObjectMeta{
 				Namespace: b.Shoot.SeedNamespace,
@@ -671,5 +775,33 @@ func (b *Botanist) DeleteSeedMonitoring(ctx context.Context) error {
 		},
 	}
 
+	// depending on the agentmode setting, prometheus is
+	// either deployed as a StatefulSet or as a Deployment
+	if b.IsPrometheusAgentModeEnabled(ctx) {
+		objects = append(objects, &appsv1.Deployment{
+			ObjectMeta: metav1.ObjectMeta{
+				Namespace: b.Shoot.SeedNamespace,
+				Name:      "prometheus",
+			},
+		})
+	} else {
+		objects = append(objects, &appsv1.StatefulSet{
+			ObjectMeta: metav1.ObjectMeta{
+				Namespace: b.Shoot.SeedNamespace,
+				Name:      "prometheus",
+			},
+		})
+	}
+
 	return kutil.DeleteObjects(ctx, b.K8sSeedClient.Client(), objects...)
+}
+
+// If agentMode is enabled, Prometheus is deployed as a Deployment. Otherwise
+// it's a StatefulSet. This function allows easy switching between the two.
+func (b *Botanist) IsPrometheusAgentModeEnabled(ctx context.Context) bool {
+	return b.Config.Monitoring != nil &&
+		b.Config.Monitoring.Shoot != nil &&
+		b.Config.Monitoring.Shoot.AgentMode != nil &&
+		b.Config.Monitoring.Shoot.AgentMode.Enabled != nil &&
+		*b.Config.Monitoring.Shoot.AgentMode.Enabled
 }

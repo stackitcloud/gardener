@@ -16,6 +16,7 @@ package validation
 
 import (
 	"fmt"
+	k8snet "k8s.io/utils/net"
 	"math"
 	"net"
 	"net/url"
@@ -418,9 +419,9 @@ func ValidateTotalNodeCountWithPodCIDR(shoot *core.Shoot) field.ErrorList {
 	allErrs := field.ErrorList{}
 
 	var (
-		totalNodes       int32
-		nodeCIDRMaskSize int32 = 24
-		podNetworkCIDR         = core.DefaultPodNetworkCIDR
+		nodeCIDRMaskSize   int32 = 24
+		nodeCIDRMaskSizeV6 int32 = 120
+		podNetworkCIDR           = core.DefaultPodNetworkCIDR
 	)
 
 	if shoot.Spec.Networking.Pods != nil {
@@ -430,26 +431,34 @@ func ValidateTotalNodeCountWithPodCIDR(shoot *core.Shoot) field.ErrorList {
 		nodeCIDRMaskSize = *shoot.Spec.Kubernetes.KubeControllerManager.NodeCIDRMaskSize
 	}
 
-	_, podNetwork, err := net.ParseCIDR(podNetworkCIDR)
-	if err != nil {
-		allErrs = append(allErrs, field.Invalid(field.NewPath("spec").Child("networking").Child("pods"), podNetworkCIDR, fmt.Sprintf("cannot parse shoot's pod network cidr : %s", podNetworkCIDR)))
-		return allErrs
-	}
+	for _, podCidr := range strings.Split(podNetworkCIDR, ",") {
+		var totalNodes int32
+		_, podNetwork, err := net.ParseCIDR(podCidr)
+		if err != nil {
+			allErrs = append(allErrs, field.Invalid(field.NewPath("spec").Child("networking").Child("pods"), podNetworkCIDR, fmt.Sprintf("cannot parse shoot's pod network cidr : %s", podNetworkCIDR)))
+			return allErrs
+		}
 
-	cidrMask, _ := podNetwork.Mask.Size()
-	if cidrMask == 0 {
-		allErrs = append(allErrs, field.Invalid(field.NewPath("spec").Child("networking").Child("pods"), podNetwork.String(), fmt.Sprintf("incorrect pod network mask : %s. Please ensure the mask is in proper form", podNetwork.String())))
-		return allErrs
-	}
+		nodeCidr := nodeCIDRMaskSizeV6
+		if podNetwork.IP.To4() != nil {
+			nodeCidr = nodeCIDRMaskSize
+		}
 
-	maxNodeCount := uint32(math.Pow(2, float64(nodeCIDRMaskSize-int32(cidrMask))))
+		cidrMask, _ := podNetwork.Mask.Size()
+		if cidrMask == 0 {
+			allErrs = append(allErrs, field.Invalid(field.NewPath("spec").Child("networking").Child("pods"), podNetwork.String(), fmt.Sprintf("incorrect pod network mask : %s. Please ensure the mask is in proper form", podNetwork.String())))
+			return allErrs
+		}
 
-	for _, worker := range shoot.Spec.Provider.Workers {
-		totalNodes += worker.Maximum
-	}
+		maxNodeCount := math.Pow(2, float64(nodeCidr-int32(cidrMask)))
 
-	if uint32(totalNodes) > maxNodeCount {
-		allErrs = append(allErrs, field.Invalid(field.NewPath("spec").Child("provider").Child("workers"), totalNodes, fmt.Sprintf("worker configuration incorrect. The podCIDRs in `spec.networking.pod` can only support a maximum of %d nodes. The total number of worker pool nodes should be less than %d ", maxNodeCount, maxNodeCount)))
+		for _, worker := range shoot.Spec.Provider.Workers {
+			totalNodes += worker.Maximum
+		}
+
+		if float64(totalNodes) > maxNodeCount {
+			allErrs = append(allErrs, field.Invalid(field.NewPath("spec").Child("provider").Child("workers"), totalNodes, fmt.Sprintf("worker configuration incorrect. The podCIDRs in `spec.networking.pod` can only support a maximum of %v nodes. The total number of worker pool nodes should be less than %v ", maxNodeCount, maxNodeCount)))
+		}
 	}
 	return allErrs
 }
@@ -860,29 +869,63 @@ func validateNetworking(networking core.Networking, fldPath *field.Path) field.E
 		allErrs = append(allErrs, field.Required(fldPath.Child("type"), "networking type must be provided"))
 	}
 
+	dualstack := false
+	if networking.Nodes != nil {
+		var err error
+		dualstack, err = k8snet.IsDualStackCIDRStrings(strings.Split(*networking.Nodes, ","))
+		if err != nil {
+			allErrs = append(allErrs, field.Invalid(fldPath.Child("nodes"), networking.Nodes, "dualStack check error"))
+		}
+	}
+
 	if networking.Nodes != nil {
 		path := fldPath.Child("nodes")
-		cidr := cidrvalidation.NewCIDR(*networking.Nodes, path)
 
-		allErrs = append(allErrs, cidr.ValidateParse()...)
-		allErrs = append(allErrs, cidrvalidation.ValidateCIDRIsCanonical(path, cidr.GetCIDR())...)
+		// validate for dual-stack
+		if dualstack {
+			res, err := k8snet.IsDualStackCIDRStrings(strings.Split(*networking.Nodes, ","))
+			if err != nil || !res {
+				allErrs = append(allErrs, field.Invalid(path, networking.Nodes, "when IPv6DualStack enabled, you have to define ipv4 and ipv6"))
+			}
+		} else { // validate for ipv4 single stack
+			cidr := cidrvalidation.NewCIDR(*networking.Nodes, path)
+			allErrs = append(allErrs, cidr.ValidateParse()...)
+			allErrs = append(allErrs, cidrvalidation.ValidateCIDRIsCanonical(path, cidr.GetCIDR())...)
+		}
 	}
 
 	if networking.Pods != nil {
 		path := fldPath.Child("pods")
-		cidr := cidrvalidation.NewCIDR(*networking.Pods, path)
+		// validate for dual-stack
+		if dualstack {
+			res, err := k8snet.IsDualStackCIDRStrings(strings.Split(*networking.Pods, ","))
+			if err != nil || !res {
+				allErrs = append(allErrs, field.Invalid(path, networking.Pods, "when IPv6DualStack enabled, you have to define ipv4 and ipv6"))
+			}
 
-		allErrs = append(allErrs, cidr.ValidateParse()...)
-		allErrs = append(allErrs, cidrvalidation.ValidateCIDRIsCanonical(path, cidr.GetCIDR())...)
+		} else { // validate for ipv4 single stack
+			cidr := cidrvalidation.NewCIDR(*networking.Pods, path)
+			allErrs = append(allErrs, cidr.ValidateParse()...)
+			allErrs = append(allErrs, cidrvalidation.ValidateCIDRIsCanonical(path, cidr.GetCIDR())...)
+		}
 	}
 
 	if networking.Services != nil {
 		path := fldPath.Child("services")
-		cidr := cidrvalidation.NewCIDR(*networking.Services, path)
-
-		allErrs = append(allErrs, cidr.ValidateParse()...)
-		allErrs = append(allErrs, cidrvalidation.ValidateCIDRIsCanonical(path, cidr.GetCIDR())...)
+		// validate for dual-stack
+		if dualstack {
+			res, err := k8snet.IsDualStackCIDRStrings(strings.Split(*networking.Services, ","))
+			if err != nil || !res {
+				allErrs = append(allErrs, field.Invalid(path, networking.Services, "when IPv6DualStack enabled, you have to define ipv4 and ipv6"))
+			}
+		} else { // validate for ipv4 single stack
+			cidr := cidrvalidation.NewCIDR(*networking.Services, path)
+			allErrs = append(allErrs, cidr.ValidateParse()...)
+			allErrs = append(allErrs, cidrvalidation.ValidateCIDRIsCanonical(path, cidr.GetCIDR())...)
+		}
 	}
+
+	// todo for networking.proxyConfig
 
 	return allErrs
 }

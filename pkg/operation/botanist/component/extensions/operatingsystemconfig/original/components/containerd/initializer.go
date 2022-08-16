@@ -64,9 +64,15 @@ func (initializer) Config(ctx components.Context) ([]extensionsv1alpha1.Unit, []
 		unitNameInitializer = "containerd-initializer.service"
 	)
 
+	var cGroupDriver = "cgroupfs"
+	if ctx.CGroupDriver != nil {
+		cGroupDriver = *ctx.CGroupDriver
+	}
+
 	var script bytes.Buffer
 	if err := tplInitializer.Execute(&script, map[string]interface{}{
 		"binaryPath":          extensionsv1alpha1.ContainerDRuntimeContainersBinFolder,
+		"cGroupDriver":        cGroupDriver,
 		"pauseContainerImage": ctx.Images[images.ImageNamePauseContainer],
 	}); err != nil {
 		return nil, nil, err

@@ -17,6 +17,7 @@ package botanist
 import (
 	"context"
 	"fmt"
+	gardencore "github.com/gardener/gardener/pkg/apis/core"
 
 	gardencorev1beta1 "github.com/gardener/gardener/pkg/apis/core/v1beta1"
 	v1beta1constants "github.com/gardener/gardener/pkg/apis/core/v1beta1/constants"
@@ -62,12 +63,26 @@ func (b *Botanist) DefaultOperatingSystemConfig() (operatingsystemconfig.Interfa
 		promtailEnabled, lokiIngressHost = true, b.ComputeLokiHost()
 	}
 
+	var criEndpoints []gardencore.RegistryEndpoint
+	if len(b.Shoot.GetInfo().Spec.Provider.Workers) > 0 &&
+		b.Shoot.GetInfo().Spec.Provider.Workers[0].CRI != nil &&
+		b.Shoot.GetInfo().Spec.Provider.Workers[0].CRI.Endpoints != nil {
+		for _, endpoint := range b.Shoot.GetInfo().Spec.Provider.Workers[0].CRI.Endpoints {
+			criEndpoints = append(criEndpoints, gardencore.RegistryEndpoint{
+				Name:               endpoint.Name,
+				Endpoint:           endpoint.Endpoint,
+				InsecureSkipVerify: endpoint.InsecureSkipVerify,
+			})
+		}
+	}
+
 	return operatingsystemconfig.New(
 		b.Logger,
 		b.K8sSeedClient.Client(),
 		&operatingsystemconfig.Values{
 			Namespace:         b.Shoot.SeedNamespace,
 			KubernetesVersion: b.Shoot.KubernetesVersion,
+			MachineImages:     b.Shoot.CloudProfile.Spec.MachineImages,
 			Workers:           b.Shoot.GetInfo().Spec.Provider.Workers,
 			OriginalValues: operatingsystemconfig.OriginalValues{
 				ClusterDNSAddress:   clusterDNSAddress,
@@ -78,6 +93,7 @@ func (b *Botanist) DefaultOperatingSystemConfig() (operatingsystemconfig.Interfa
 				PromtailEnabled:     promtailEnabled,
 				LokiIngressHostName: lokiIngressHost,
 			},
+			CriEndpoints: criEndpoints,
 		},
 		operatingsystemconfig.DefaultInterval,
 		operatingsystemconfig.DefaultSevereThreshold,

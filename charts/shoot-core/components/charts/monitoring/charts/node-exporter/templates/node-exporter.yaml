@@ -17,6 +17,7 @@ metadata:
 spec:
   type: ClusterIP
   clusterIP: None
+  ipFamily: IPv4
   ports:
   - name: metrics
     port: {{ .Values.ports.metrics }}
@@ -77,17 +78,9 @@ spec:
         - --path.sysfs=/host/sys
         - --path.rootfs=/host
         - --log.level=error
-        - --collector.disable-defaults
-        - --collector.conntrack
-        - --collector.cpu
-        - --collector.filefd
-        - --collector.filesystem
-        - --collector.filesystem.ignored-mount-points=^/.+$
-        - --collector.loadavg
-        - --collector.meminfo
-        - --collector.uname
-        - --collector.stat
-        - --collector.pressure
+{{- range (concat .Values.collectorArgs .Values.additionalArgs | uniq ) }}
+        - {{ . }}
+{{- end }}
         ports:
         - containerPort: {{ .Values.ports.metrics }}
           protocol: TCP

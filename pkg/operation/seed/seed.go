@@ -16,7 +16,6 @@ package seed
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
 	"path/filepath"
 	"regexp"
@@ -730,11 +729,6 @@ func RunReconcileSeedFlow(
 		}
 	}
 
-	jsonString, err := json.Marshal(deployedSecretsMap[common.VPASecretName].Data)
-	if err != nil {
-		return err
-	}
-
 	// AlertManager configuration
 	alertManagerConfig := map[string]interface{}{
 		"storage": seed.GetValidVolumeSize("1Gi"),
@@ -993,13 +987,6 @@ func RunReconcileSeedFlow(
 		"alertmanager": alertManagerConfig,
 		"vpa": map[string]interface{}{
 			"enabled": vpaEnabled,
-			"runtime": map[string]interface{}{
-				"admissionController": map[string]interface{}{
-					"podAnnotations": map[string]interface{}{
-						"checksum/secret-vpa-tls-certs": utils.ComputeSHA256Hex(jsonString),
-					},
-				},
-			},
 			"application": map[string]interface{}{
 				"admissionController": map[string]interface{}{
 					"controlNamespace": v1beta1constants.GardenNamespace,
@@ -1012,6 +999,14 @@ func RunReconcileSeedFlow(
 		},
 		"istio": map[string]interface{}{
 			"enabled": gardenletfeatures.FeatureGate.Enabled(features.ManagedIstio),
+		},
+		"global-network-policies": map[string]interface{}{
+			"denyAll":    false,
+			"sniEnabled": gardenletfeatures.FeatureGate.Enabled(features.APIServerSNI),
+		},
+		"gardenerResourceManager": map[string]interface{}{
+			"resourceClass": v1beta1constants.SeedResourceManagerClass,
+			"sniEnabled":    gardenletfeatures.FeatureGate.Enabled(features.APIServerSNI) || anySNI,
 		},
 		"ingress": map[string]interface{}{
 			"basicAuthSecret": monitoringBasicAuth,

@@ -39,7 +39,7 @@ spec:
         - --telemetry-port=8081
         - --kubeconfig=/var/run/secrets/gardener.cloud/shoot/generic-kubeconfig/kubeconfig
         - --namespace=kube-system
-        - --collectors=daemonsets,deployments,nodes,pods,statefulsets,verticalpodautoscalers,replicasets
+        - --collectors=daemonsets,deployments,nodes,pods,statefulsets,verticalpodautoscalers,replicasets,persistentvolumes,volumeattachments
         volumeMounts:
         - name: kubeconfig
           mountPath: /var/run/secrets/gardener.cloud/shoot/generic-kubeconfig

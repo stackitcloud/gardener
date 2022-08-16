@@ -23,6 +23,7 @@ import (
 	"github.com/gardener/gardener/pkg/utils"
 	"github.com/gardener/gardener/pkg/utils/images"
 	"github.com/gardener/gardener/pkg/utils/imagevector"
+	"strings"
 
 	"k8s.io/utils/pointer"
 )
@@ -64,15 +65,31 @@ func (b *Botanist) DefaultVPNSeedServer() (vpnseedserver.Interface, error) {
 		kubeAPIServerHost = pointer.String(b.outOfClusterAPIServerFQDN())
 	}
 
+	var netPods []string
+	for _, IPNetPod := range b.Shoot.Networks.Pods {
+		netPods = append(netPods, IPNetPod.String())
+	}
+
+	var netServices []string
+	for _, IPNetService := range b.Shoot.Networks.Services {
+		netServices = append(netServices, IPNetService.String())
+	}
+
+	var netNodes []string
+	var nodeNetworks = b.Shoot.GetInfo().Spec.Networking.Nodes
+	for _, IPNetNode := range strings.Split(*nodeNetworks, ",") {
+		netNodes = append(netNodes, IPNetNode)
+	}
+
 	return vpnseedserver.New(
 		b.K8sSeedClient.Client(),
 		b.Shoot.SeedNamespace,
 		imageAPIServerProxy.String(),
 		imageVPNSeedServer.String(),
 		kubeAPIServerHost,
-		b.Shoot.Networks.Services.String(),
-		b.Shoot.Networks.Pods.String(),
-		b.Shoot.GetInfo().Spec.Networking.Nodes,
+		netServices,
+		netPods,
+		netNodes,
 		b.Shoot.GetReplicas(1),
 		vpnseedserver.IstioIngressGateway{
 			Namespace: *b.Config.SNI.Ingress.Namespace,

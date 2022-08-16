@@ -131,6 +131,9 @@ const (
 	// StatefulSetNamePrometheus is a constant for the name of a Kubernetes stateful set object that contains
 	// the prometheus pod.
 	StatefulSetNamePrometheus = "prometheus"
+	// DeploymentNamePrometheus is a constant for the name of a Kubernetesdeployment object that contains
+	// the prometheus pod when prometheus is configured to run in agent mode.
+	DeploymentNamePrometheus = "prometheus"
 
 	// GardenerPurpose is a constant for the key in a label describing the purpose of the respective object.
 	GardenerPurpose = "gardener.cloud/purpose"
@@ -205,6 +208,8 @@ const (
 	GardenRoleGlobalMonitoring = "global-monitoring"
 	// GardenRoleGlobalShootRemoteWriteMonitoring is the value of the GardenRole key indicating type 'global-shoot-remote-write-monitoring'
 	GardenRoleGlobalShootRemoteWriteMonitoring = "global-shoot-remote-write-monitoring"
+	// GardenRoleGlobalShootExternalBlackboxExporterMonitoring is the value of the GardenRole key indicating type 'global-shoot-external-blackbox-exporter-monitoring'
+	GardenRoleGlobalShootExternalBlackboxExporterMonitoring = "global-shoot-external-blackbox-exporter-monitoring"
 	// GardenRoleAlerting is the value of GardenRole key indicating type 'alerting'.
 	GardenRoleAlerting = "alerting"
 	// GardenRoleHvpa is the value of GardenRole key indicating type 'hvpa'.

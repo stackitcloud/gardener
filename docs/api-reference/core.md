@@ -448,6 +448,20 @@ string
 <p>VolumeTypes contains constraints regarding allowed values for volume types in the &lsquo;workers&rsquo; block in the Shoot specification.</p>
 </td>
 </tr>
+<tr>
+<td>
+<code>monitoring</code></br>
+<em>
+<a href="#core.gardener.cloud/v1beta1.MonitoringConfig">
+MonitoringConfig
+</a>
+</em>
+</td>
+<td>
+<em>(Optional)</em>
+<p>MonitoringConfig contains settings for the monitoring stack</p>
+</td>
+</tr>
 </table>
 </td>
 </tr>
@@ -2411,6 +2425,32 @@ CRIName
 <p>ContainerRuntimes is the list of the required container runtimes supported for a worker pool.</p>
 </td>
 </tr>
+<tr>
+<td>
+<code>endpoints</code></br>
+<em>
+<a href="#core.gardener.cloud/v1beta1.RegistryEndpoint">
+[]RegistryEndpoint
+</a>
+</em>
+</td>
+<td>
+<em>(Optional)</em>
+<p>RegistryEndpoint defines a list of registry overrides</p>
+</td>
+</tr>
+<tr>
+<td>
+<code>downloadHttpProxy</code></br>
+<em>
+string
+</em>
+</td>
+<td>
+<em>(Optional)</em>
+<p>DownloadHttpProxy defines a proxy that is used for downloading the kubelet and kubectl (only containerd)</p>
+</td>
+</tr>
 </tbody>
 </table>
 <h3 id="core.gardener.cloud/v1beta1.CRIName">CRIName
@@ -2600,6 +2640,20 @@ string
 <td>
 <em>(Optional)</em>
 <p>VolumeTypes contains constraints regarding allowed values for volume types in the &lsquo;workers&rsquo; block in the Shoot specification.</p>
+</td>
+</tr>
+<tr>
+<td>
+<code>monitoring</code></br>
+<em>
+<a href="#core.gardener.cloud/v1beta1.MonitoringConfig">
+MonitoringConfig
+</a>
+</em>
+</td>
+<td>
+<em>(Optional)</em>
+<p>MonitoringConfig contains settings for the monitoring stack</p>
 </td>
 </tr>
 </tbody>
@@ -5127,6 +5181,37 @@ Kubernetes meta/v1.Duration
 </tr>
 </tbody>
 </table>
+<h3 id="core.gardener.cloud/v1beta1.KubeletConfigOverwrites">KubeletConfigOverwrites
+</h3>
+<p>
+(<em>Appears on:</em>
+<a href="#core.gardener.cloud/v1beta1.MachineImageVersion">MachineImageVersion</a>)
+</p>
+<p>
+<p>KubeletConfigOverwrites contains overwrites for the kubelet configuration.</p>
+</p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<code>cGroupDriver</code></br>
+<em>
+string
+</em>
+</td>
+<td>
+<em>(Optional)</em>
+<p>CGroupDriver defines the kubelet setting for cgroupdriver</p>
+</td>
+</tr>
+</tbody>
+</table>
 <h3 id="core.gardener.cloud/v1beta1.KubeletConfigReserved">KubeletConfigReserved
 </h3>
 <p>
@@ -5878,6 +5963,20 @@ ExpirableVersion
 <p>CRI list of supported container runtime and interfaces supported by this version</p>
 </td>
 </tr>
+<tr>
+<td>
+<code>kubeletConfigOverwrites</code></br>
+<em>
+<a href="#core.gardener.cloud/v1beta1.KubeletConfigOverwrites">
+KubeletConfigOverwrites
+</a>
+</em>
+</td>
+<td>
+<em>(Optional)</em>
+<p>KubeletConfigOverwrites defines overwrites for the kubelet configuration</p>
+</td>
+</tr>
 </tbody>
 </table>
 <h3 id="core.gardener.cloud/v1beta1.MachineType">MachineType
@@ -6220,6 +6319,133 @@ Alerting
 <td>
 <em>(Optional)</em>
 <p>Alerting contains information about the alerting configuration for the shoot cluster.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3 id="core.gardener.cloud/v1beta1.MonitoringConfig">MonitoringConfig
+</h3>
+<p>
+(<em>Appears on:</em>
+<a href="#core.gardener.cloud/v1beta1.CloudProfileSpec">CloudProfileSpec</a>)
+</p>
+<p>
+<p>MonitoringConfig contains settings for the monitoring stack</p>
+</p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<code>remoteWriteURL</code></br>
+<em>
+string
+</em>
+</td>
+<td>
+<em>(Optional)</em>
+<p>RemoteWriteURL contains a Url for remote write</p>
+</td>
+</tr>
+<tr>
+<td>
+<code>remoteWriteUsername</code></br>
+<em>
+string
+</em>
+</td>
+<td>
+<em>(Optional)</em>
+<p>RemoteWriteURL contains a username for remote write</p>
+</td>
+</tr>
+<tr>
+<td>
+<code>remoteWritePassword</code></br>
+<em>
+string
+</em>
+</td>
+<td>
+<em>(Optional)</em>
+<p>RemoteWriteUsername contains a password for remote write</p>
+</td>
+</tr>
+<tr>
+<td>
+<code>remoteWriteName</code></br>
+<em>
+string
+</em>
+</td>
+<td>
+<em>(Optional)</em>
+<p>RemoteWriteName contains a name for the external write. This name will be appended as label</p>
+</td>
+</tr>
+<tr>
+<td>
+<code>remoteWriteKeep</code></br>
+<em>
+[]string
+</em>
+</td>
+<td>
+<em>(Optional)</em>
+<p>RemoteWriteKeep contains a list of metrics that will be remote written</p>
+</td>
+</tr>
+<tr>
+<td>
+<code>externalBlackboxExporterURL</code></br>
+<em>
+string
+</em>
+</td>
+<td>
+<em>(Optional)</em>
+<p>ExternalBlackboxExporterURL url of external blackbox exporter</p>
+</td>
+</tr>
+<tr>
+<td>
+<code>externalBlackboxExporterModule</code></br>
+<em>
+string
+</em>
+</td>
+<td>
+<em>(Optional)</em>
+<p>ExternalBlackboxExporterModule define the module used in target blackbox exporter</p>
+</td>
+</tr>
+<tr>
+<td>
+<code>externalBlackboxExporterUsername</code></br>
+<em>
+string
+</em>
+</td>
+<td>
+<em>(Optional)</em>
+<p>ExternalBlackboxExporterUsername define a user for basic auth</p>
+</td>
+</tr>
+<tr>
+<td>
+<code>externalBlackboxExporterPassword</code></br>
+<em>
+string
+</em>
+</td>
+<td>
+<em>(Optional)</em>
+<p>ExternalBlackboxExporterPassword define a password for basic auth</p>
 </td>
 </tr>
 </tbody>
@@ -7111,6 +7337,20 @@ definition in the documentation of your provider extension.</p>
 <p>Workers is a list of worker groups.</p>
 </td>
 </tr>
+<tr>
+<td>
+<code>componentResources</code></br>
+<em>
+<a href="https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.19/#resourcerequirements-v1-core">
+map[string]k8s.io/api/core/v1.ResourceRequirements
+</a>
+</em>
+</td>
+<td>
+<em>(Optional)</em>
+<p>ComponentResources</p>
+</td>
+</tr>
 </tbody>
 </table>
 <h3 id="core.gardener.cloud/v1beta1.ProxyMode">ProxyMode
@@ -7238,6 +7478,59 @@ map[string]string
 <p>Labels is an optional set of key-value pairs that contain certain administrator-controlled labels for this region.
 It can be used by Gardener administrators/operators to provide additional information about a region, e.g. wrt
 quality, reliability, access restrictions, etc.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3 id="core.gardener.cloud/v1beta1.RegistryEndpoint">RegistryEndpoint
+</h3>
+<p>
+(<em>Appears on:</em>
+<a href="#core.gardener.cloud/v1beta1.CRI">CRI</a>)
+</p>
+<p>
+<p>RegistryEndpoint defines a list of registry overrides</p>
+</p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<code>name</code></br>
+<em>
+string
+</em>
+</td>
+<td>
+<p>Name defines the original registry url name</p>
+</td>
+</tr>
+<tr>
+<td>
+<code>endpoint</code></br>
+<em>
+string
+</em>
+</td>
+<td>
+<p>Endpoint defines the endpoint where the image shall be pulled from</p>
+</td>
+</tr>
+<tr>
+<td>
+<code>insecureSkipVerify</code></br>
+<em>
+bool
+</em>
+</td>
+<td>
+<em>(Optional)</em>
+<p>InsecureSkipVerify defines if tls certs shall be verified</p>
 </td>
 </tr>
 </tbody>
@@ -7998,6 +8291,186 @@ bool
 <p>Enabled controls whether the VPA components shall be deployed into the garden namespace in the seed cluster. It
 is enabled by default because Gardener heavily relies on a VPA being deployed. You should only disable this if
 your seed cluster already has another, manually/custom managed VPA deployment.</p>
+</td>
+</tr>
+<tr>
+<td>
+<code>updaterInterval</code></br>
+<em>
+string
+</em>
+</td>
+<td>
+<em>(Optional)</em>
+<p>UpdaterInterval set the Interval</p>
+</td>
+</tr>
+<tr>
+<td>
+<code>updaterEvictAfterOOMThreshold</code></br>
+<em>
+string
+</em>
+</td>
+<td>
+<em>(Optional)</em>
+<p>UpdaterEvictAfterOOMThreshold set the Interval</p>
+</td>
+</tr>
+<tr>
+<td>
+<code>gardenletMinAllowed</code></br>
+<em>
+<a href="#core.gardener.cloud/v1beta1.SeedSettingVerticalPodAutoscalerMinAllowed">
+SeedSettingVerticalPodAutoscalerMinAllowed
+</a>
+</em>
+</td>
+<td>
+<em>(Optional)</em>
+<p>GardenletMinAllowed set the VPA minAllowed settings for the gardenlet</p>
+</td>
+</tr>
+<tr>
+<td>
+<code>gardenerResourceManagerMinAllowed</code></br>
+<em>
+<a href="#core.gardener.cloud/v1beta1.SeedSettingVerticalPodAutoscalerMinAllowed">
+SeedSettingVerticalPodAutoscalerMinAllowed
+</a>
+</em>
+</td>
+<td>
+<em>(Optional)</em>
+<p>GardenerResourceManagerMinAllowed set the VPA minAllowed settings for the GardenerResourceManager</p>
+</td>
+</tr>
+<tr>
+<td>
+<code>gardenerSeedAdmissionControllerMinAllowed</code></br>
+<em>
+<a href="#core.gardener.cloud/v1beta1.SeedSettingVerticalPodAutoscalerMinAllowed">
+SeedSettingVerticalPodAutoscalerMinAllowed
+</a>
+</em>
+</td>
+<td>
+<em>(Optional)</em>
+<p>GardenerSeedAdmissionControllerMinAllowed set the VPA minAllowed settings for the SeedAdmissionController</p>
+</td>
+</tr>
+<tr>
+<td>
+<code>aggregatePrometheusMinAllowed</code></br>
+<em>
+<a href="#core.gardener.cloud/v1beta1.SeedSettingVerticalPodAutoscalerMinAllowed">
+SeedSettingVerticalPodAutoscalerMinAllowed
+</a>
+</em>
+</td>
+<td>
+<em>(Optional)</em>
+<p>AggregatePrometheusMinAllowed set the VPA minAllowed settings for the AggregatePrometheus</p>
+</td>
+</tr>
+<tr>
+<td>
+<code>vpaUpdaterMinAllowed</code></br>
+<em>
+<a href="#core.gardener.cloud/v1beta1.SeedSettingVerticalPodAutoscalerMinAllowed">
+SeedSettingVerticalPodAutoscalerMinAllowed
+</a>
+</em>
+</td>
+<td>
+<em>(Optional)</em>
+<p>VpaUpdaterMinAllowed set the VPA minAllowed settings for the VpaUpdater</p>
+</td>
+</tr>
+<tr>
+<td>
+<code>vpaRecommenderMinAllowed</code></br>
+<em>
+<a href="#core.gardener.cloud/v1beta1.SeedSettingVerticalPodAutoscalerMinAllowed">
+SeedSettingVerticalPodAutoscalerMinAllowed
+</a>
+</em>
+</td>
+<td>
+<em>(Optional)</em>
+<p>VpaRecommenderMinAllowed set the VPA minAllowed settings for the VpaRecommender</p>
+</td>
+</tr>
+<tr>
+<td>
+<code>vpaExporterMinAllowed</code></br>
+<em>
+<a href="#core.gardener.cloud/v1beta1.SeedSettingVerticalPodAutoscalerMinAllowed">
+SeedSettingVerticalPodAutoscalerMinAllowed
+</a>
+</em>
+</td>
+<td>
+<em>(Optional)</em>
+<p>VpaExporterMinAllowed set the VPA minAllowed settings for the VpaExporter</p>
+</td>
+</tr>
+<tr>
+<td>
+<code>vpaAdmissionControllerMinAllowed</code></br>
+<em>
+<a href="#core.gardener.cloud/v1beta1.SeedSettingVerticalPodAutoscalerMinAllowed">
+SeedSettingVerticalPodAutoscalerMinAllowed
+</a>
+</em>
+</td>
+<td>
+<em>(Optional)</em>
+<p>VpaAdmissionControllerMinAllowed set the VPA minAllowed settings for the VpaAdmissionController</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3 id="core.gardener.cloud/v1beta1.SeedSettingVerticalPodAutoscalerMinAllowed">SeedSettingVerticalPodAutoscalerMinAllowed
+</h3>
+<p>
+(<em>Appears on:</em>
+<a href="#core.gardener.cloud/v1beta1.SeedSettingVerticalPodAutoscaler">SeedSettingVerticalPodAutoscaler</a>)
+</p>
+<p>
+<p>SeedSettingVerticalPodAutoscalerMinAllowed controls certain settings for the vertical pod autoscaler minAllowed values
+seed.</p>
+</p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<code>memory</code></br>
+<em>
+string
+</em>
+</td>
+<td>
+<em>(Optional)</em>
+<p>Memory Set the minAllowed memory for a component</p>
+</td>
+</tr>
+<tr>
+<td>
+<code>cpu</code></br>
+<em>
+string
+</em>
+</td>
+<td>
+<em>(Optional)</em>
+<p>Cpu Set the minAllowed cpu for a component</p>
 </td>
 </tr>
 </tbody>
