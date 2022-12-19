@@ -151,6 +151,8 @@ func (s *service) Deploy(ctx context.Context) error {
 			obj.Spec.IPFamilies = s.ipFamilies
 		}
 
+		pol := corev1.IPFamilyPolicyPreferDualStack
+		obj.Spec.IPFamilyPolicy = &pol
 		obj.Spec.Type = s.values.serviceType
 		obj.Spec.Selector = getLabels()
 		obj.Spec.Ports = kutil.ReconcileServicePorts(obj.Spec.Ports, []corev1.ServicePort{
