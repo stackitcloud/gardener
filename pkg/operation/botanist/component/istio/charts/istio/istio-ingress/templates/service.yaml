@@ -14,6 +14,7 @@ metadata:
 {{ .Values.labels | toYaml | indent 4 }}
 spec:
   type: {{ .Values.serviceType }}
+  ipFamilyPolicy: PreferDualStack
   selector:
 {{ .Values.labels  | toYaml | indent 4 }}
   ports:
