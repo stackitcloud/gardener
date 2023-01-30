@@ -968,8 +968,8 @@ github.com/spf13/viper v1.7.0/go.mod h1:8WkrPz2fc9jxqZNCJI/76HCieCp4Q8HaLFoCha5q
 github.com/spf13/viper v1.8.1/go.mod h1:o0Pch8wJ9BVSWGQMbra6iw0oQ5oktSIBaujf1rJH9Ns=
 github.com/spf13/viper v1.11.0 h1:7OX/1FS6n7jHD1zGrZTM7WtY13ZELRyosK4k93oPr44=
 github.com/spf13/viper v1.11.0/go.mod h1:djo0X/bA5+tYVoCn+C7cAYJGcVn/qYLFTG8gdUsX7Zk=
-github.com/stackitcloud/etcd-druid v0.11.1-0.20230105092625-ee4684c0a234 h1:HTPnDO6A0uL47pakC0+c6ZSON9Bk3u1iWWYuu5a1AS4=
-github.com/stackitcloud/etcd-druid v0.11.1-0.20230105092625-ee4684c0a234/go.mod h1:hZOYd9ur3D/3h8UJ/XTdmGDkke9+NyXVgqk1TTpCJNA=
+github.com/stackitcloud/etcd-druid v0.15.0-ske-1 h1:t8EUId9XOHMGQH2NtywQNJuOCyKXPn4SbpM8tE6pIWc=
+github.com/stackitcloud/etcd-druid v0.15.0-ske-1/go.mod h1:hZOYd9ur3D/3h8UJ/XTdmGDkke9+NyXVgqk1TTpCJNA=
 github.com/stoewer/go-strcase v1.2.0/go.mod h1:IBiWB2sKIp3wVVQ3Y035++gc+knqhUQag1KpM8ahLw8=
 github.com/streadway/amqp v0.0.0-20190404075320-75d898a42a94/go.mod h1:AZpEONHx3DKn8O/DFsRAY58/XVQiIPMTMB1SddzLXVw=
 github.com/streadway/amqp v0.0.0-20190827072141-edfb9018d271/go.mod h1:AZpEONHx3DKn8O/DFsRAY58/XVQiIPMTMB1SddzLXVw=
