@@ -234,6 +234,10 @@ func SetDefaults_Shoot(obj *Shoot) {
 			}
 		}
 
+		if len(obj.Spec.Kubernetes.Kubelet.EnforceNodeAllocatable) == 0 {
+			obj.Spec.Kubernetes.Kubelet.EnforceNodeAllocatable = []string{"pods"}
+		}
+
 		if obj.Spec.Maintenance.AutoUpdate.MachineImageVersion == nil {
 			obj.Spec.Maintenance.AutoUpdate.MachineImageVersion = pointer.Bool(true)
 		}
