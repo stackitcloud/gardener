@@ -16,19 +16,23 @@ package app
 
 import (
 	"context"
+	"flag"
 	"fmt"
 	"os"
 	goruntime "runtime"
+	"strconv"
 	"time"
 
 	"github.com/go-logr/logr"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
+	"go.uber.org/zap/zapcore"
 	"golang.org/x/time/rate"
 	corev1 "k8s.io/api/core/v1"
 	eventsv1 "k8s.io/api/events/v1"
 	eventsv1beta1 "k8s.io/api/events/v1beta1"
 	"k8s.io/apimachinery/pkg/api/meta"
+	utilruntime "k8s.io/apimachinery/pkg/util/runtime"
 	kubernetesclientset "k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/rest"
 	"k8s.io/component-base/version"
@@ -41,6 +45,7 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/cluster"
 	"sigs.k8s.io/controller-runtime/pkg/healthz"
 	logf "sigs.k8s.io/controller-runtime/pkg/log"
+	"sigs.k8s.io/controller-runtime/pkg/log/zap"
 	"sigs.k8s.io/controller-runtime/pkg/manager"
 
 	"github.com/gardener/gardener/cmd/gardener-resource-manager/app/bootstrappers"
@@ -76,7 +81,13 @@ func NewCommand() *cobra.Command {
 				return err
 			}
 
-			log, err := logger.NewZapLogger(opts.config.LogLevel, opts.config.LogFormat)
+			var additionalZapOpts []zap.Opts
+			if opts.config.LogLevel == logger.DebugLevel {
+				utilruntime.Must(setKlogLevel(5))
+				additionalZapOpts = append(additionalZapOpts, zap.Level(zapcore.Level(-5)))
+			}
+
+			log, err := logger.NewZapLogger(opts.config.LogLevel, opts.config.LogFormat, additionalZapOpts...)
 			if err != nil {
 				return fmt.Errorf("error instantiating zap logger: %w", err)
 			}
@@ -103,6 +114,12 @@ func NewCommand() *cobra.Command {
 	opts.addFlags(flags)
 
 	return cmd
+}
+
+func setKlogLevel(level int64) error {
+	fs := flag.NewFlagSet("klog", flag.ContinueOnError)
+	klog.InitFlags(fs)
+	return fs.Lookup("v").Value.Set(strconv.FormatInt(level, 10))
 }
 
 func run(ctx context.Context, log logr.Logger, cfg *config.ResourceManagerConfiguration) error {
