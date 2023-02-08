@@ -550,6 +550,8 @@ func (r *resourceManager) ensureConfigMap(ctx context.Context, configMap *corev1
 			DisableCachedClient: r.values.TargetDisableCache,
 		}
 	} else {
+		config.SourceClientConnection.ClientConnectionConfiguration.QPS = 300
+		config.SourceClientConnection.ClientConnectionConfiguration.Burst = 500
 		config.Webhooks.CRDDeletionProtection.Enabled = true
 		config.Webhooks.ExtensionValidation.Enabled = true
 	}
