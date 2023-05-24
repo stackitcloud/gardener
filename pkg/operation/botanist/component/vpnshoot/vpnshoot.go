@@ -770,6 +770,12 @@ func (v *vpnShoot) getEnvVars(index *int) []corev1.EnvVar {
 			},
 		)
 	} else {
+		nodeCidr := v.values.Network.NodeCIDR
+		nodeCidrs := strings.Split(nodeCidr, ",")
+		if len(nodeCidrs) > 1 {
+			nodeCidr = nodeCidrs[0]
+		}
+
 		envVariables = append(envVariables, []corev1.EnvVar{
 			{
 				Name:  "SERVICE_NETWORK",
@@ -781,7 +787,7 @@ func (v *vpnShoot) getEnvVars(index *int) []corev1.EnvVar {
 			},
 			{
 				Name:  "NODE_NETWORK",
-				Value: v.values.Network.NodeCIDR,
+				Value: nodeCidr,
 			},
 		}...)
 	}

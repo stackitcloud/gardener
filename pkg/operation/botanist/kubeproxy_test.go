@@ -146,7 +146,7 @@ var _ = Describe("KubeProxy", func() {
 	Describe("#DefaultKubeProxy", func() {
 		BeforeEach(func() {
 			botanist.Shoot.Networks = &shootpkg.Networks{
-				Pods: &net.IPNet{IP: net.ParseIP("22.23.24.25")},
+				Pods: []net.IPNet{{IP: net.ParseIP("22.23.24.25")}},
 			}
 		})
 

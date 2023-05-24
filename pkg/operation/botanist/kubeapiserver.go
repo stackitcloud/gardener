@@ -18,6 +18,7 @@ import (
 	"context"
 	"fmt"
 	"net"
+	"strings"
 
 	gardencorev1alpha1 "github.com/gardener/gardener/pkg/apis/core/v1alpha1"
 	gardencorev1alpha1helper "github.com/gardener/gardener/pkg/apis/core/v1alpha1/helper"
@@ -89,6 +90,16 @@ func (b *Botanist) DefaultKubeAPIServer(ctx context.Context) (kubeapiserver.Inte
 		return nil, err
 	}
 
+	var podCidrs []string
+	for _, pod := range b.Shoot.Networks.Pods {
+		podCidrs = append(podCidrs, pod.String())
+	}
+
+	var svcCidrs []string
+	for _, svc := range b.Shoot.Networks.Services {
+		svcCidrs = append(svcCidrs, svc.String())
+	}
+
 	var (
 		apiServerConfig = b.Shoot.GetInfo().Spec.Kubernetes.KubeAPIServer
 
@@ -136,6 +147,11 @@ func (b *Botanist) DefaultKubeAPIServer(ctx context.Context) (kubeapiserver.Inte
 		logging = apiServerConfig.Logging
 	}
 
+	nodes := b.Shoot.GetInfo().Spec.Networking.Nodes
+	if nodes != nil {
+		nodes = &strings.Split(*nodes, ",")[0]
+	}
+
 	return kubeapiserver.New(
 		b.SeedClientSet,
 		b.Shoot.SeedNamespace,
@@ -157,9 +173,9 @@ func (b *Botanist) DefaultKubeAPIServer(ctx context.Context) (kubeapiserver.Inte
 			Version:                        b.Shoot.KubernetesVersion,
 			VPN: kubeapiserver.VPNConfig{
 				ReversedVPNEnabled:                   b.Shoot.ReversedVPNEnabled,
-				PodNetworkCIDR:                       b.Shoot.Networks.Pods.String(),
-				ServiceNetworkCIDR:                   b.Shoot.Networks.Services.String(),
-				NodeNetworkCIDR:                      b.Shoot.GetInfo().Spec.Networking.Nodes,
+				PodNetworkCIDR:                       strings.Join(podCidrs, ","),
+				ServiceNetworkCIDR:                   strings.Join(svcCidrs, ","),
+				NodeNetworkCIDR:                      nodes,
 				HighAvailabilityEnabled:              b.Shoot.VPNHighAvailabilityEnabled,
 				HighAvailabilityNumberOfSeedServers:  b.Shoot.VPNHighAvailabilityNumberOfSeedServers,
 				HighAvailabilityNumberOfShootClients: b.Shoot.VPNHighAvailabilityNumberOfShootClients,

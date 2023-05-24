@@ -18,6 +18,7 @@ import (
 	"context"
 	"regexp"
 	"strconv"
+	"strings"
 	"time"
 
 	gardencorev1beta1 "github.com/gardener/gardener/pkg/apis/core/v1beta1"
@@ -346,7 +347,6 @@ import custom/*.server
 					},
 					From: []networkingv1.NetworkPolicyPeer{
 						{NamespaceSelector: &metav1.LabelSelector{}, PodSelector: &metav1.LabelSelector{}},
-						{IPBlock: &networkingv1.IPBlock{CIDR: c.values.PodNetworkCIDR}},
 					},
 				}},
 				PolicyTypes: []networkingv1.PolicyType{networkingv1.PolicyTypeIngress, networkingv1.PolicyTypeEgress},
@@ -748,6 +748,15 @@ import custom/*.server
 		deployment,
 		podDisruptionBudget,
 	}
+	podNetworkCIDRs := strings.Split(c.values.PodNetworkCIDR, ",")
+	for _, cidr := range podNetworkCIDRs {
+		networkPolicy.Spec.Ingress[0].From = append(
+			networkPolicy.Spec.Ingress[0].From,
+			networkingv1.NetworkPolicyPeer{
+				IPBlock: &networkingv1.IPBlock{CIDR: cidr},
+			},
+		)
+	}
 
 	if c.values.APIServerHost != nil {
 		deployment.Spec.Template.Spec.Containers[0].Env = append(deployment.Spec.Template.Spec.Containers[0].Env, corev1.EnvVar{
@@ -757,9 +766,15 @@ import custom/*.server
 	}
 
 	if c.values.NodeNetworkCIDR != nil {
-		networkPolicy.Spec.Ingress[0].From = append(networkPolicy.Spec.Ingress[0].From, networkingv1.NetworkPolicyPeer{
-			IPBlock: &networkingv1.IPBlock{CIDR: *c.values.NodeNetworkCIDR},
-		})
+		nodeNetworkCIDR := strings.Split(*c.values.NodeNetworkCIDR, ",")
+		for _, cidr := range nodeNetworkCIDR {
+			networkPolicy.Spec.Ingress[0].From = append(
+				networkPolicy.Spec.Ingress[0].From,
+				networkingv1.NetworkPolicyPeer{
+					IPBlock: &networkingv1.IPBlock{CIDR: cidr},
+				},
+			)
+		}
 	}
 
 	if c.values.AutoscalingMode == gardencorev1beta1.CoreDNSAutoscalingModeClusterProportional {

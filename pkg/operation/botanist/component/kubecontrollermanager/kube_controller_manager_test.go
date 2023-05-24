@@ -140,8 +140,8 @@ var _ = Describe("KubeControllerManager", func() {
 					semverVersion,
 					image,
 					&kcmConfig,
-					podCIDR,
-					serviceCIDR,
+					[]net.IPNet{*podCIDR},
+					[]net.IPNet{*serviceCIDR},
 					hvpaConfigDisabled,
 					runtimeKubernetesVersion,
 				)
@@ -677,8 +677,8 @@ subjects:
 						semverVersion,
 						image,
 						config,
-						podCIDR,
-						serviceCIDR,
+						[]net.IPNet{*podCIDR},
+						[]net.IPNet{*serviceCIDR},
 						hvpaConfig,
 						runtimeKubernetesVersion,
 					)

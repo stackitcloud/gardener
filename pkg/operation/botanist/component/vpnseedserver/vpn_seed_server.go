@@ -124,11 +124,11 @@ type IstioIngressGateway struct {
 // NetworkValues contains the configuration values for the network.
 type NetworkValues struct {
 	// PodCIDR is the CIDR of the pod network.
-	PodCIDR string
+	PodCIDR []string
 	// ServiceCIDR is the CIDR of the service network.
-	ServiceCIDR string
+	ServiceCIDR []string
 	// NodeCIDR is the CIDR of the node network.
-	NodeCIDR string
+	NodeCIDR []string
 }
 
 // Values is a set of configuration values for the VPNSeedServer component.
@@ -340,15 +340,15 @@ func (v *vpnSeedServer) podTemplate(configMap *corev1.ConfigMap, dhSecret, secre
 					Env: []corev1.EnvVar{
 						{
 							Name:  "SERVICE_NETWORK",
-							Value: v.values.Network.ServiceCIDR,
+							Value: v.values.Network.ServiceCIDR[0],
 						},
 						{
 							Name:  "POD_NETWORK",
-							Value: v.values.Network.PodCIDR,
+							Value: v.values.Network.PodCIDR[0],
 						},
 						{
 							Name:  "NODE_NETWORK",
-							Value: v.values.Network.NodeCIDR,
+							Value: v.values.Network.NodeCIDR[0],
 						},
 						{
 							Name: "LOCAL_NODE_IP",
