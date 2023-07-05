@@ -40,6 +40,7 @@ const (
 	openstack = "openstack"
 	dell      = "dell"
 	openshift = "openshift"
+	stackit   = "stackit"
 )
 
 const (
@@ -64,7 +65,7 @@ const (
 // GetHostMountPathFromSecretRef returns the hostPath configured for the given store.
 func GetHostMountPathFromSecretRef(ctx context.Context, client client.Client, logger logr.Logger, store *druidv1alpha1.StoreSpec, namespace string) (string, error) {
 	if store.SecretRef == nil {
-		logger.Info("secretRef is not defined for store, using default hostPath", "namespace", namespace)
+		logger.Info("secretRef is not defined for store, using default hostPath")
 		return LocalProviderDefaultMountPath, nil
 	}
 
@@ -100,7 +101,7 @@ func StorageProviderFromInfraProvider(infra *druidv1alpha1.StorageProvider) (str
 		return GCS, nil
 	case dell, ECS:
 		return ECS, nil
-	case openshift, OCS:
+	case openshift, OCS, stackit:
 		return OCS, nil
 	case Local, druidv1alpha1.StorageProvider(strings.ToLower(Local)):
 		return Local, nil
