@@ -47,7 +47,7 @@ require (
 	k8s.io/apimachinery v0.26.4
 	k8s.io/apiserver v0.26.4
 	k8s.io/autoscaler/vertical-pod-autoscaler v0.14.0
-	k8s.io/client-go v0.26.4
+	k8s.io/client-go v11.0.1-0.20190409021438-1a26190bd76a+incompatible
 	k8s.io/cluster-bootstrap v0.26.4
 	k8s.io/code-generator v0.26.4
 	k8s.io/component-base v0.26.4
@@ -178,4 +178,9 @@ require (
 	sigs.k8s.io/apiserver-network-proxy/konnectivity-client v0.0.36 // indirect
 	sigs.k8s.io/json v0.0.0-20220713155537-f223a00ba0e2 // indirect
 	sigs.k8s.io/structured-merge-diff/v4 v4.2.3 // indirect
+)
+
+replace (
+	github.com/gardener/etcd-druid => github.com/stackitcloud/etcd-druid v0.11.1-0.20230705133739-c5a4013a3414 // https://github.com/stackitcloud/etcd-druid/tree/ske-v0.18
+	k8s.io/client-go => k8s.io/client-go v0.26.4 // required due to etcd-druid replacement
 )
