@@ -181,3 +181,5 @@ require (
 )
 
 replace k8s.io/client-go => k8s.io/client-go v0.26.3
+
+replace github.com/gardener/etcd-druid => github.com/stackitcloud/etcd-druid v0.11.1-0.20230705133739-c5a4013a3414 // https://github.com/stackitcloud/etcd-druid/tree/ske-v0.18
