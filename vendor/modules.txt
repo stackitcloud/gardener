@@ -96,7 +96,7 @@ github.com/fsnotify/fsnotify
 ## explicit; go 1.19
 github.com/gardener/dependency-watchdog/api/prober
 github.com/gardener/dependency-watchdog/api/weeder
-# github.com/gardener/etcd-druid v0.18.1
+# github.com/gardener/etcd-druid v0.18.1 => github.com/stackitcloud/etcd-druid v0.11.1-0.20230705133739-c5a4013a3414
 ## explicit; go 1.20
 github.com/gardener/etcd-druid/api/v1alpha1
 github.com/gardener/etcd-druid/api/validation
@@ -1728,3 +1728,4 @@ sigs.k8s.io/structured-merge-diff/v4/value
 ## explicit; go 1.12
 sigs.k8s.io/yaml
 # k8s.io/client-go => k8s.io/client-go v0.26.3
+# github.com/gardener/etcd-druid => github.com/stackitcloud/etcd-druid v0.11.1-0.20230705133739-c5a4013a3414
