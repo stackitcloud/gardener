@@ -21,6 +21,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/gardener/gardener/extensions/pkg/util"
 	machinev1alpha1 "github.com/gardener/machine-controller-manager/pkg/apis/machine/v1alpha1"
 	"github.com/go-logr/logr"
 	corev1 "k8s.io/api/core/v1"
@@ -159,9 +160,14 @@ func (a *genericActuator) Reconcile(ctx context.Context, log logr.Logger, worker
 				}
 			}
 			log.Info("Successfully deleted stuck machine-controller-manager pod", "reason", msg)
+
 		}
 
-		return fmt.Errorf("Failed while waiting for all machine deployments to be ready: %w", err)
+		//TODO(nschad): The following 2 lines become obsolete and wrong after Gardener v1.76+ and openstack-extension v1.37+
+		// SEE: https://dev.azure.com/schwarzit/schwarzit.ske/_workitems/edit/536673
+		newError := fmt.Errorf("Failed while waiting for all machine deployments to be ready: %w", err)
+		newError = util.DetermineError(newError, extensionsworkerhelper.KnownCodes)
+		return newError
 	}
 
 	// Delete all old machine deployments (i.e. those which were not previously computed but exist in the cluster).
