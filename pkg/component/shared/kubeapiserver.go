@@ -209,6 +209,7 @@ func DeployKubeAPIServer(
 	sniConfig kubeapiserver.SNIConfig,
 	externalHostname string,
 	externalServer string,
+	nodeNetworkCIDR *string,
 	etcdEncryptionKeyRotationPhase gardencorev1beta1.CredentialsRotationPhase,
 	serviceAccountKeyRotationPhase gardencorev1beta1.CredentialsRotationPhase,
 	wantScaleDown bool,
@@ -243,6 +244,7 @@ func DeployKubeAPIServer(
 	kubeAPIServer.SetSNIConfig(sniConfig)
 	kubeAPIServer.SetExternalHostname(externalHostname)
 	kubeAPIServer.SetExternalServer(externalServer)
+	kubeAPIServer.SetNodeNetworkCIDR(nodeNetworkCIDR)
 
 	etcdEncryptionConfig, err := computeKubeAPIServerETCDEncryptionConfig(ctx, runtimeClient, runtimeNamespace, deploymentName, etcdEncryptionKeyRotationPhase, []string{"secrets"})
 	if err != nil {
