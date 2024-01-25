@@ -74,6 +74,7 @@ type Interface interface {
 	component.DeployWaiter
 	component.MonitoringComponent
 	SetPodAnnotations(map[string]string)
+	SetNodeNetworkCIDR(*string)
 }
 
 // Values is a set of configuration values for the coredns component.
@@ -721,6 +722,10 @@ import custom/*.server
 
 func (c *coreDNS) SetPodAnnotations(v map[string]string) {
 	c.values.PodAnnotations = v
+}
+
+func (c *coreDNS) SetNodeNetworkCIDR(nodes *string) {
+	c.values.NodeNetworkCIDR = nodes
 }
 
 func getLabels() map[string]string {
