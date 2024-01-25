@@ -959,6 +959,7 @@ exemptions:
 			sniConfig                      kubeapiserver.SNIConfig
 			externalHostname               string
 			externalServer                 string
+			nodeNetworkCIDR                string
 			etcdEncryptionKeyRotationPhase gardencorev1beta1.CredentialsRotationPhase
 			serviceAccountKeyRotationPhase gardencorev1beta1.CredentialsRotationPhase
 			wantScaleDown                  bool
@@ -976,6 +977,7 @@ exemptions:
 			externalServer = "external-server"
 			etcdEncryptionKeyRotationPhase = ""
 			serviceAccountKeyRotationPhase = ""
+			nodeNetworkCIDR = "10.250.0.0/24"
 			wantScaleDown = false
 		})
 
@@ -1005,11 +1007,12 @@ exemptions:
 				kubeAPIServer.EXPECT().SetETCDEncryptionConfig(gomock.Any())
 				kubeAPIServer.EXPECT().SetExternalHostname(gomock.Any())
 				kubeAPIServer.EXPECT().SetExternalServer(gomock.Any())
+				kubeAPIServer.EXPECT().SetNodeNetworkCIDR(gomock.Any())
 				kubeAPIServer.EXPECT().SetServerCertificateConfig(gomock.Any())
 				kubeAPIServer.EXPECT().SetServiceAccountConfig(gomock.Any())
 				kubeAPIServer.EXPECT().Deploy(ctx)
 
-				Expect(DeployKubeAPIServer(ctx, runtimeClient, namespace, kubeAPIServer, apiServerConfig, serverCertificateConfig, sniConfig, externalHostname, externalServer, etcdEncryptionKeyRotationPhase, serviceAccountKeyRotationPhase, wantScaleDown)).To(Succeed())
+				Expect(DeployKubeAPIServer(ctx, runtimeClient, namespace, kubeAPIServer, apiServerConfig, serverCertificateConfig, sniConfig, externalHostname, externalServer, &nodeNetworkCIDR, etcdEncryptionKeyRotationPhase, serviceAccountKeyRotationPhase, wantScaleDown)).To(Succeed())
 			},
 
 			Entry("nothing is set because deployment is not found",
@@ -1079,11 +1082,12 @@ exemptions:
 				kubeAPIServer.EXPECT().SetETCDEncryptionConfig(gomock.Any())
 				kubeAPIServer.EXPECT().SetExternalHostname(gomock.Any())
 				kubeAPIServer.EXPECT().SetExternalServer(gomock.Any())
+				kubeAPIServer.EXPECT().SetNodeNetworkCIDR(gomock.Any())
 				kubeAPIServer.EXPECT().SetServerCertificateConfig(gomock.Any())
 				kubeAPIServer.EXPECT().SetServiceAccountConfig(gomock.Any())
 				kubeAPIServer.EXPECT().Deploy(ctx)
 
-				Expect(DeployKubeAPIServer(ctx, runtimeClient, namespace, kubeAPIServer, apiServerConfig, serverCertificateConfig, sniConfig, externalHostname, externalServer, etcdEncryptionKeyRotationPhase, serviceAccountKeyRotationPhase, wantScaleDown)).To(Succeed())
+				Expect(DeployKubeAPIServer(ctx, runtimeClient, namespace, kubeAPIServer, apiServerConfig, serverCertificateConfig, sniConfig, externalHostname, externalServer, &nodeNetworkCIDR, etcdEncryptionKeyRotationPhase, serviceAccountKeyRotationPhase, wantScaleDown)).To(Succeed())
 			},
 
 			Entry("no change due to already set",
@@ -1152,11 +1156,12 @@ exemptions:
 				kubeAPIServer.EXPECT().SetETCDEncryptionConfig(expectedETCDEncryptionConfig)
 				kubeAPIServer.EXPECT().SetExternalHostname(gomock.Any())
 				kubeAPIServer.EXPECT().SetExternalServer(gomock.Any())
+				kubeAPIServer.EXPECT().SetNodeNetworkCIDR(gomock.Any())
 				kubeAPIServer.EXPECT().SetServerCertificateConfig(gomock.Any())
 				kubeAPIServer.EXPECT().SetServiceAccountConfig(gomock.Any())
 				kubeAPIServer.EXPECT().Deploy(ctx)
 
-				Expect(DeployKubeAPIServer(ctx, runtimeClient, namespace, kubeAPIServer, apiServerConfig, serverCertificateConfig, sniConfig, externalHostname, externalServer, etcdEncryptionKeyRotationPhase, serviceAccountKeyRotationPhase, wantScaleDown)).To(Succeed())
+				Expect(DeployKubeAPIServer(ctx, runtimeClient, namespace, kubeAPIServer, apiServerConfig, serverCertificateConfig, sniConfig, externalHostname, externalServer, &nodeNetworkCIDR, etcdEncryptionKeyRotationPhase, serviceAccountKeyRotationPhase, wantScaleDown)).To(Succeed())
 
 				if finalizeTest != nil {
 					finalizeTest()
@@ -1249,11 +1254,12 @@ exemptions:
 				kubeAPIServer.EXPECT().SetETCDEncryptionConfig(gomock.Any())
 				kubeAPIServer.EXPECT().SetExternalHostname(externalHostname)
 				kubeAPIServer.EXPECT().SetExternalServer(externalServer)
+				kubeAPIServer.EXPECT().SetNodeNetworkCIDR(gomock.Any())
 				kubeAPIServer.EXPECT().SetServerCertificateConfig(gomock.Any())
 				kubeAPIServer.EXPECT().SetServiceAccountConfig(gomock.Any())
 				kubeAPIServer.EXPECT().Deploy(ctx)
 
-				Expect(DeployKubeAPIServer(ctx, runtimeClient, namespace, kubeAPIServer, apiServerConfig, serverCertificateConfig, sniConfig, externalHostname, externalServer, etcdEncryptionKeyRotationPhase, serviceAccountKeyRotationPhase, wantScaleDown)).To(Succeed())
+				Expect(DeployKubeAPIServer(ctx, runtimeClient, namespace, kubeAPIServer, apiServerConfig, serverCertificateConfig, sniConfig, externalHostname, externalServer, &nodeNetworkCIDR, etcdEncryptionKeyRotationPhase, serviceAccountKeyRotationPhase, wantScaleDown)).To(Succeed())
 			})
 		})
 
@@ -1265,11 +1271,12 @@ exemptions:
 				kubeAPIServer.EXPECT().SetETCDEncryptionConfig(gomock.Any())
 				kubeAPIServer.EXPECT().SetExternalHostname(gomock.Any())
 				kubeAPIServer.EXPECT().SetExternalServer(gomock.Any())
+				kubeAPIServer.EXPECT().SetNodeNetworkCIDR(gomock.Any())
 				kubeAPIServer.EXPECT().SetServerCertificateConfig(serverCertificateConfig)
 				kubeAPIServer.EXPECT().SetServiceAccountConfig(gomock.Any())
 				kubeAPIServer.EXPECT().Deploy(ctx)
 
-				Expect(DeployKubeAPIServer(ctx, runtimeClient, namespace, kubeAPIServer, apiServerConfig, serverCertificateConfig, sniConfig, externalHostname, externalServer, etcdEncryptionKeyRotationPhase, serviceAccountKeyRotationPhase, wantScaleDown)).To(Succeed())
+				Expect(DeployKubeAPIServer(ctx, runtimeClient, namespace, kubeAPIServer, apiServerConfig, serverCertificateConfig, sniConfig, externalHostname, externalServer, &nodeNetworkCIDR, etcdEncryptionKeyRotationPhase, serviceAccountKeyRotationPhase, wantScaleDown)).To(Succeed())
 			})
 		})
 
@@ -1291,6 +1298,7 @@ exemptions:
 					kubeAPIServer.EXPECT().SetSNIConfig(gomock.Any())
 					kubeAPIServer.EXPECT().SetExternalHostname(gomock.Any())
 					kubeAPIServer.EXPECT().SetExternalServer(gomock.Any())
+					kubeAPIServer.EXPECT().SetNodeNetworkCIDR(gomock.Any())
 					kubeAPIServer.EXPECT().SetServerCertificateConfig(gomock.Any())
 					if !expectError {
 						kubeAPIServer.EXPECT().SetServiceAccountConfig(expectedConfig)
@@ -1298,7 +1306,7 @@ exemptions:
 						kubeAPIServer.EXPECT().Deploy(ctx)
 					}
 
-					Expect(DeployKubeAPIServer(ctx, runtimeClient, namespace, kubeAPIServer, apiServerConfig, serverCertificateConfig, sniConfig, externalHostname, externalServer, etcdEncryptionKeyRotationPhase, serviceAccountKeyRotationPhase, wantScaleDown)).To(Succeed())
+					Expect(DeployKubeAPIServer(ctx, runtimeClient, namespace, kubeAPIServer, apiServerConfig, serverCertificateConfig, sniConfig, externalHostname, externalServer, &nodeNetworkCIDR, etcdEncryptionKeyRotationPhase, serviceAccountKeyRotationPhase, wantScaleDown)).To(Succeed())
 				},
 
 				Entry("KubeAPIServerConfig is nil",
@@ -1442,11 +1450,29 @@ exemptions:
 				kubeAPIServer.EXPECT().SetETCDEncryptionConfig(gomock.Any())
 				kubeAPIServer.EXPECT().SetExternalHostname(gomock.Any())
 				kubeAPIServer.EXPECT().SetExternalServer(gomock.Any())
+				kubeAPIServer.EXPECT().SetNodeNetworkCIDR(gomock.Any())
 				kubeAPIServer.EXPECT().SetServerCertificateConfig(gomock.Any())
 				kubeAPIServer.EXPECT().SetServiceAccountConfig(gomock.Any())
 				kubeAPIServer.EXPECT().Deploy(ctx)
 
-				Expect(DeployKubeAPIServer(ctx, runtimeClient, namespace, kubeAPIServer, apiServerConfig, serverCertificateConfig, sniConfig, externalHostname, externalServer, etcdEncryptionKeyRotationPhase, serviceAccountKeyRotationPhase, wantScaleDown)).To(Succeed())
+				Expect(DeployKubeAPIServer(ctx, runtimeClient, namespace, kubeAPIServer, apiServerConfig, serverCertificateConfig, sniConfig, externalHostname, externalServer, &nodeNetworkCIDR, etcdEncryptionKeyRotationPhase, serviceAccountKeyRotationPhase, wantScaleDown)).To(Succeed())
+			})
+		})
+
+		Describe("NodeNetworkCIDR", func() {
+			It("should set the field to the provided config", func() {
+				kubeAPIServer.EXPECT().GetValues()
+				kubeAPIServer.EXPECT().SetAutoscalingReplicas(gomock.Any())
+				kubeAPIServer.EXPECT().SetSNIConfig(sniConfig)
+				kubeAPIServer.EXPECT().SetETCDEncryptionConfig(gomock.Any())
+				kubeAPIServer.EXPECT().SetExternalHostname(gomock.Any())
+				kubeAPIServer.EXPECT().SetExternalServer(gomock.Any())
+				kubeAPIServer.EXPECT().SetNodeNetworkCIDR(&nodeNetworkCIDR)
+				kubeAPIServer.EXPECT().SetServerCertificateConfig(gomock.Any())
+				kubeAPIServer.EXPECT().SetServiceAccountConfig(gomock.Any())
+				kubeAPIServer.EXPECT().Deploy(ctx)
+
+				Expect(DeployKubeAPIServer(ctx, runtimeClient, namespace, kubeAPIServer, apiServerConfig, serverCertificateConfig, sniConfig, externalHostname, externalServer, &nodeNetworkCIDR, etcdEncryptionKeyRotationPhase, serviceAccountKeyRotationPhase, wantScaleDown)).To(Succeed())
 			})
 		})
 	})
