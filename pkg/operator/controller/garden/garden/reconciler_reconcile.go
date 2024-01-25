@@ -390,6 +390,7 @@ func (r *Reconciler) deployKubeAPIServerFunc(ctx context.Context, garden *operat
 			sniConfig,
 			gardenerutils.GetAPIServerDomain(domainNames[0]),
 			gardenerutils.GetAPIServerDomain(domainNames[0]),
+			nil,
 			helper.GetETCDEncryptionKeyRotationPhase(garden.Status.Credentials),
 			helper.GetServiceAccountKeyRotationPhase(garden.Status.Credentials),
 			false,
