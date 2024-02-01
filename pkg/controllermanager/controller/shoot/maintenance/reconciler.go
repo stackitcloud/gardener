@@ -197,7 +197,7 @@ func (r *Reconciler) reconcile(ctx context.Context, log logr.Logger, shoot *gard
 		// First dry run the update call to check if it can be executed successfully.
 		// If not shoot maintenance is marked as failed and is retried only in
 		// next maintenance window.
-		if err := r.Client.Update(ctx, maintainedShoot, &client.UpdateOptions{
+		if err := r.Client.Update(ctx, maintainedShoot.DeepCopy(), &client.UpdateOptions{
 			DryRun: []string{metav1.DryRunAll},
 		}); err != nil {
 			// If shoot maintenance is triggered by `gardener.cloud/operation=maintain` annotation and if it fails in dry run,
