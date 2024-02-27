@@ -255,8 +255,7 @@ data:
 					if role == RoleProber {
 						out += `
     dependentResourceInfos: null
-    externalKubeConfigSecretName: ""
-    internalKubeConfigSecretName: ""
+    kubeConfigSecretName: ""
 `
 					}
 
@@ -511,7 +510,7 @@ status:
 		})
 
 		Describe("RoleProber", func() {
-			testSuite(BootstrapperValues{Role: RoleProber, Image: image}, "bad3c18c")
+			testSuite(BootstrapperValues{Role: RoleProber, Image: image}, "3c10a163")
 		})
 	})
 
