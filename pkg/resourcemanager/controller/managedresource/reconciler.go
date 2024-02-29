@@ -63,6 +63,7 @@ import (
 	resourcemanagerpredicate "github.com/gardener/gardener/pkg/resourcemanager/predicate"
 	errorsutils "github.com/gardener/gardener/pkg/utils/errors"
 	kubernetesutils "github.com/gardener/gardener/pkg/utils/kubernetes"
+	"github.com/gardener/gardener/third_party/controller-runtime/pkg/apiutil"
 )
 
 var (
@@ -566,7 +567,7 @@ func computeAllScaledObjectKeys(ctx context.Context, c client.Client) (horizonta
 
 	// get all HVPAs' targets
 	hvpaList := &hvpav1alpha1.HvpaList{}
-	if err := c.List(ctx, hvpaList); err != nil && !meta.IsNoMatchError(err) {
+	if err := c.List(ctx, hvpaList); err != nil && !apiutil.IsNoMatchError(err) {
 		return horizontallyScaledObjects, verticallyScaledObjects, fmt.Errorf("failed to list all HVPAs: %w", err)
 	}
 

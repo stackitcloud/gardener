@@ -32,7 +32,6 @@ import (
 	autoscalingv2beta1 "k8s.io/api/autoscaling/v2beta1"
 	corev1 "k8s.io/api/core/v1"
 	apierrors "k8s.io/apimachinery/pkg/api/errors"
-	"k8s.io/apimachinery/pkg/api/meta"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/runtime/schema"
@@ -46,6 +45,7 @@ import (
 	"github.com/gardener/gardener/pkg/resourcemanager/apis/config"
 	kubernetesutils "github.com/gardener/gardener/pkg/utils/kubernetes"
 	versionutils "github.com/gardener/gardener/pkg/utils/version"
+	"github.com/gardener/gardener/third_party/controller-runtime/pkg/apiutil"
 )
 
 // Handler handles admission requests and sets the following fields based on the failure tolerance type and the
@@ -381,7 +381,7 @@ func (h *Handler) isHorizontallyScaled(ctx context.Context, namespace, targetAPI
 	}
 
 	hvpaList := &hvpav1alpha1.HvpaList{}
-	if err := h.TargetClient.List(ctx, hvpaList); err != nil && !meta.IsNoMatchError(err) {
+	if err := h.TargetClient.List(ctx, hvpaList); err != nil && !apiutil.IsNoMatchError(err) {
 		return false, 0, fmt.Errorf("failed to list all HVPAs: %w", err)
 	}
 

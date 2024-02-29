@@ -17,6 +17,7 @@ limitations under the License.
 package apiutil
 
 import (
+	"errors"
 	"fmt"
 	"sync"
 
@@ -263,4 +264,13 @@ func (m *lazyRESTMapper) fetchGroupVersionResources(groupName string, versions .
 	}
 
 	return groupVersionResources, nil
+}
+
+func IsNoMatchError(err error) bool {
+	if meta.IsNoMatchError(err) {
+		return true
+	}
+
+	var gd *discovery.ErrGroupDiscoveryFailed
+	return errors.As(err, &gd)
 }
