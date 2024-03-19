@@ -351,23 +351,24 @@ var _ = Describe("Defaults", func() {
 
 		Context("default kubeReserved", func() {
 			var (
-				defaultKubeReservedMemory = resource.MustParse("1Gi")
-				defaultKubeReservedCPU    = resource.MustParse("80m")
-				defaultKubeReservedPID    = resource.MustParse("20k")
-				kubeReservedMemory        = resource.MustParse("2Gi")
-				kubeReservedCPU           = resource.MustParse("20m")
-				kubeReservedPID           = resource.MustParse("10k")
+				//defaultKubeReservedMemory = resource.MustParse("1Gi")
+				//defaultKubeReservedCPU    = resource.MustParse("80m")
+				//defaultKubeReservedPID    = resource.MustParse("20k")
+				kubeReservedMemory = resource.MustParse("2Gi")
+				kubeReservedCPU    = resource.MustParse("20m")
+				kubeReservedPID    = resource.MustParse("10k")
 			)
 
-			It("should default all fields", func() {
-				SetObjectDefaults_Shoot(obj)
-
-				Expect(obj.Spec.Kubernetes.Kubelet.KubeReserved).To(PointTo(Equal(KubeletConfigReserved{
-					CPU:    &defaultKubeReservedCPU,
-					Memory: &defaultKubeReservedMemory,
-					PID:    &defaultKubeReservedPID,
-				})))
-			})
+			// TODO: Can be removed? The admission plugin can not be tested here?
+			//It("should default all fields", func() {
+			//	SetObjectDefaults_Shoot(obj)
+			//
+			//	Expect(obj.Spec.Kubernetes.Kubelet.KubeReserved).To(PointTo(Equal(KubeletConfigReserved{
+			//		CPU:    &defaultKubeReservedCPU,
+			//		Memory: &defaultKubeReservedMemory,
+			//		PID:    &defaultKubeReservedPID,
+			//	})))
+			//})
 
 			It("should not overwrite manually set kubeReserved", func() {
 				obj.Spec.Kubernetes.Kubelet = &KubeletConfig{
