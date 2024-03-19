@@ -25,8 +25,8 @@ import (
 	"k8s.io/apiserver/pkg/authentication/user"
 
 	"github.com/gardener/gardener/pkg/apis/core"
-	gardencorev1beta1 "github.com/gardener/gardener/pkg/apis/core/v1beta1"
-	gardencoreinformers "github.com/gardener/gardener/pkg/client/core/informers/externalversions"
+	gardencore "github.com/gardener/gardener/pkg/apis/core"
+	gardencoreinformers "github.com/gardener/gardener/pkg/client/core/informers/internalversion"
 )
 
 var _ = Describe("resourcereservation", func() {
@@ -63,18 +63,18 @@ var _ = Describe("resourcereservation", func() {
 
 			plugin              *ResourceReservation
 			coreInformerFactory gardencoreinformers.SharedInformerFactory
-			cloudProfile        gardencorev1beta1.CloudProfile
+			cloudProfile        gardencore.CloudProfile
 
 			shoot           *core.Shoot
 			namespace       string = "test"
 			machineTypeName string = "n1-standard-2"
 
-			cloudProfileBase = gardencorev1beta1.CloudProfile{
+			cloudProfileBase = gardencore.CloudProfile{
 				ObjectMeta: metav1.ObjectMeta{
 					Name: "profile",
 				},
-				Spec: gardencorev1beta1.CloudProfileSpec{
-					MachineTypes: []gardencorev1beta1.MachineType{
+				Spec: gardencore.CloudProfileSpec{
+					MachineTypes: []gardencore.MachineType{
 						{
 							Name:   machineTypeName,
 							CPU:    resource.MustParse("2"),
@@ -121,8 +121,8 @@ var _ = Describe("resourcereservation", func() {
 			plugin = New(typeDependentReservations).(*ResourceReservation)
 			plugin.AssignReadyFunc(func() bool { return true })
 			coreInformerFactory = gardencoreinformers.NewSharedInformerFactory(nil, 0)
-			plugin.SetCoreInformerFactory(coreInformerFactory)
-			Expect(coreInformerFactory.Core().V1beta1().CloudProfiles().Informer().GetStore().Add(&cloudProfile)).To(Succeed())
+			plugin.SetInternalCoreInformerFactory(coreInformerFactory)
+			Expect(coreInformerFactory.Core().InternalVersion().CloudProfiles().Informer().GetStore().Add(&cloudProfile)).To(Succeed())
 		}
 
 		Context("with type dependent resource reservations", func() {

@@ -20,16 +20,16 @@ import (
 	"fmt"
 	"io"
 
+	gardencorelisters "github.com/gardener/gardener/pkg/client/core/listers/core/internalversion"
 	apierrors "k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/api/resource"
 	"k8s.io/apimachinery/pkg/util/validation/field"
 	"k8s.io/apiserver/pkg/admission"
 
 	"github.com/gardener/gardener/pkg/apis/core"
-	gardencorev1beta1 "github.com/gardener/gardener/pkg/apis/core/v1beta1"
+	gardencore "github.com/gardener/gardener/pkg/apis/core"
 	admissioninitializer "github.com/gardener/gardener/pkg/apiserver/admission/initializer"
-	gardencoreinformers "github.com/gardener/gardener/pkg/client/core/informers/externalversions"
-	gardencorev1beta1listers "github.com/gardener/gardener/pkg/client/core/listers/core/v1beta1"
+	gardencoreinformers "github.com/gardener/gardener/pkg/client/core/informers/internalversion"
 	plugin "github.com/gardener/gardener/plugin/pkg"
 )
 
@@ -55,14 +55,14 @@ func Register(plugins *admission.Plugins) {
 // ResourceReservation contains required information to process admission requests.
 type ResourceReservation struct {
 	*admission.Handler
-	cloudProfileLister gardencorev1beta1listers.CloudProfileLister
+	cloudProfileLister gardencorelisters.CloudProfileLister
 	readyFunc          admission.ReadyFunc
 
 	typeDependentReservations bool
 }
 
 var (
-	_ = admissioninitializer.WantsCoreInformerFactory(&ResourceReservation{})
+	_ = admissioninitializer.WantsInternalCoreInformerFactory(&ResourceReservation{})
 
 	readyFuncs []admission.ReadyFunc
 )
@@ -81,9 +81,9 @@ func (c *ResourceReservation) AssignReadyFunc(f admission.ReadyFunc) {
 	c.SetReadyFunc(f)
 }
 
-// SetCoreInformerFactory gets Lister from SharedInformerFactory.
-func (c *ResourceReservation) SetCoreInformerFactory(f gardencoreinformers.SharedInformerFactory) {
-	cloudProfileInformer := f.Core().V1beta1().CloudProfiles()
+// SetInternalCoreInformerFactory gets Lister from SharedInformerFactory.
+func (c *ResourceReservation) SetInternalCoreInformerFactory(f gardencoreinformers.SharedInformerFactory) {
+	cloudProfileInformer := f.Core().InternalVersion().CloudProfiles()
 	c.cloudProfileLister = cloudProfileInformer.Lister()
 
 	readyFuncs = append(readyFuncs, cloudProfileInformer.Informer().HasSynced)
@@ -194,7 +194,7 @@ func setStaticResourceReservationDefaults(shoot *core.Shoot) {
 	}
 }
 
-func injectResourceReservations(worker *core.Worker, cloudProfile *gardencorev1beta1.CloudProfile, path field.Path, allErrs field.ErrorList) field.ErrorList {
+func injectResourceReservations(worker *core.Worker, cloudProfile *gardencore.CloudProfile, path field.Path, allErrs field.ErrorList) field.ErrorList {
 	reservation, err := calculateResourceReservationForMachineType(cloudProfile, worker.Machine.Type)
 	if err != nil {
 		allErrs = append(allErrs, field.Invalid(path.Child("machine", "type"), worker.Machine.Type, "worker machine type unknown"))
@@ -224,7 +224,7 @@ func injectResourceReservations(worker *core.Worker, cloudProfile *gardencorev1b
 	return allErrs
 }
 
-func calculateResourceReservationForMachineType(cloudProfile *gardencorev1beta1.CloudProfile,
+func calculateResourceReservationForMachineType(cloudProfile *gardencore.CloudProfile,
 	machineType string) (*core.KubeletConfigReserved, error) {
 
 	kubeReservedPID := resource.MustParse("20k")
@@ -274,15 +274,15 @@ func calculateMemoryReservation(memory int64) int64 {
 	if memory >= 1*GiB {
 		reservation += min(memory, 4*GiB) / 4
 	}
-	// 20% for additonal memory between 4GB and 8GB
+	// 20% for additional memory between 4GB and 8GB
 	if memory >= 4*GiB {
 		reservation += (min(memory, 8*GiB) - 4*GiB) / 5
 	}
-	// 10% for additonal memory between 8GB and 16GB
+	// 10% for additional memory between 8GB and 16GB
 	if memory >= 8*GiB {
 		reservation += (min(memory, 16*GiB) - 8*GiB) / 10
 	}
-	// 6% for additonal memory between 16GB and 128GB
+	// 6% for additional memory between 16GB and 128GB
 	if memory >= 16*GiB {
 		reservation += (min(memory, 128*GiB) - 16*GiB) / 100 * 6
 	}
