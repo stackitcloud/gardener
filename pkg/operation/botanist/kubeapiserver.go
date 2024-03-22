@@ -234,6 +234,11 @@ func (b *Botanist) DeployKubeAPIServer(ctx context.Context) error {
 		nodes = network.Nodes
 	}
 
+	var nodes *string
+	if network := b.Shoot.GetInfo().Spec.Networking; network != nil {
+		nodes = network.Nodes
+	}
+
 	if err := shared.DeployKubeAPIServer(
 		ctx,
 		b.SeedClientSet.Client(),

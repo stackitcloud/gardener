@@ -60,6 +60,9 @@ var _ = Describe("CoreDNS", func() {
 				Networking: &gardencorev1beta1.Networking{
 					Nodes: &nodeNetworkCIDR,
 				},
+				Networking: &gardencorev1beta1.Networking{
+					Nodes: &nodeNetworkCIDR,
+				},
 			},
 		})
 	})
