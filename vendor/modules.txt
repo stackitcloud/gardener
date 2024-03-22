@@ -101,7 +101,7 @@ github.com/fsnotify/fsnotify
 ## explicit; go 1.20
 github.com/gardener/dependency-watchdog/api/prober
 github.com/gardener/dependency-watchdog/api/weeder
-# github.com/gardener/etcd-druid v0.19.2 => github.com/stackitcloud/etcd-druid v0.19.3-ske-1
+# github.com/gardener/etcd-druid v0.19.2 => github.com/stackitcloud/etcd-druid v0.20.3-ske-1
 ## explicit; go 1.20
 github.com/gardener/etcd-druid/api/v1alpha1
 github.com/gardener/etcd-druid/api/validation
@@ -1567,7 +1567,7 @@ k8s.io/gengo/generator
 k8s.io/gengo/namer
 k8s.io/gengo/parser
 k8s.io/gengo/types
-# k8s.io/helm v2.16.1+incompatible
+# k8s.io/helm v2.17.0+incompatible
 ## explicit
 k8s.io/helm/internal/third_party/dep/fs
 k8s.io/helm/pkg/chartutil
@@ -1780,5 +1780,5 @@ sigs.k8s.io/structured-merge-diff/v4/value
 # sigs.k8s.io/yaml v1.3.0
 ## explicit; go 1.12
 sigs.k8s.io/yaml
-# github.com/gardener/etcd-druid => github.com/stackitcloud/etcd-druid v0.19.3-ske-1
+# github.com/gardener/etcd-druid => github.com/stackitcloud/etcd-druid v0.20.3-ske-1
 # k8s.io/client-go => k8s.io/client-go v0.28.3

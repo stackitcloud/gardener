@@ -52,7 +52,7 @@ require (
 	k8s.io/code-generator v0.28.3
 	k8s.io/component-base v0.28.3
 	k8s.io/component-helpers v0.28.3
-	k8s.io/helm v2.16.1+incompatible
+	k8s.io/helm v2.17.0+incompatible
 	k8s.io/klog/v2 v2.100.1
 	k8s.io/kube-aggregator v0.28.3
 	k8s.io/kube-openapi v0.0.0-20230717233707-2695361300d9
@@ -185,6 +185,6 @@ require (
 require github.com/dsnet/compress v0.0.1 // indirect
 
 replace (
-	github.com/gardener/etcd-druid => github.com/stackitcloud/etcd-druid v0.19.3-ske-1
+	github.com/gardener/etcd-druid => github.com/stackitcloud/etcd-druid v0.20.3-ske-1
 	k8s.io/client-go => k8s.io/client-go v0.28.3 // required due to etcd-druid replacement
 )
