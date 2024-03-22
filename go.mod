@@ -183,6 +183,7 @@ require (
 )
 
 require github.com/dsnet/compress v0.0.1 // indirect
+
 replace (
 	github.com/gardener/etcd-druid => github.com/stackitcloud/etcd-druid v0.19.3-ske-1
 	k8s.io/client-go => k8s.io/client-go v0.28.3 // required due to etcd-druid replacement
