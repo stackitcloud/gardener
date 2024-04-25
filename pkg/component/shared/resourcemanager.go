@@ -73,6 +73,7 @@ func NewRuntimeGardenerResourceManager(
 	image.WithOptionalTag(version.Get().GitVersion)
 
 	return resourcemanager.New(c, gardenNamespaceName, secretsManager, resourcemanager.Values{
+		AlwaysUpdate:                              pointer.Bool(true),
 		ConcurrentSyncs:                           pointer.Int(20),
 		DefaultSeccompProfileEnabled:              defaultSeccompProfileEnabled,
 		DefaultNotReadyToleration:                 defaultNotReadyToleration,
