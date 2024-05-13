@@ -40,6 +40,8 @@ import (
 
 	"github.com/gardener/gardener/pkg/api"
 	authenticationv1alpha1 "github.com/gardener/gardener/pkg/apis/authentication/v1alpha1"
+	"github.com/gardener/gardener/pkg/apis/core"
+	gardencorev1 "github.com/gardener/gardener/pkg/apis/core/v1"
 	gardencorev1beta1 "github.com/gardener/gardener/pkg/apis/core/v1beta1"
 	v1beta1constants "github.com/gardener/gardener/pkg/apis/core/v1beta1/constants"
 	"github.com/gardener/gardener/pkg/apis/operations"
@@ -431,6 +433,10 @@ func (o *Options) ApplyTo(config *apiserver.Config, kubeClient kubernetes.Interf
 	}
 
 	resourceEncodingConfig := serverstorage.NewDefaultResourceEncodingConfig(api.Scheme)
+	// By default, we store the v1beta1 representation, as the v1beta1 version has a higher version priority in the scheme
+	// than the v1 version (see pkg/apis/core/install/install.go).
+	// Store core API resources that are already included in the v1 version in the new version.
+	resourceEncodingConfig.SetResourceEncoding(core.Resource("controllerdeployments"), gardencorev1.SchemeGroupVersion, core.SchemeGroupVersion)
 	resourceEncodingConfig.SetResourceEncoding(operations.Resource("bastions"), operationsv1alpha1.SchemeGroupVersion, operations.SchemeGroupVersion)
 
 	storageFactory := &storage.GardenerStorageFactory{
