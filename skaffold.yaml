@@ -46,6 +46,7 @@ build:
             - pkg/apis/core
             - pkg/apis/core/helper
             - pkg/apis/core/install
+            - pkg/apis/core/v1
             - pkg/apis/core/v1beta1
             - pkg/apis/core/v1beta1/constants
             - pkg/apis/core/v1beta1/helper
@@ -134,6 +135,7 @@ build:
             - pkg/client/authentication/listers/authentication/v1alpha1
             - pkg/client/core/clientset/versioned
             - pkg/client/core/clientset/versioned/scheme
+            - pkg/client/core/clientset/versioned/typed/core/v1
             - pkg/client/core/clientset/versioned/typed/core/v1beta1
             - pkg/client/core/informers/externalversions
             - pkg/client/core/informers/externalversions/core
@@ -240,6 +242,7 @@ build:
             - pkg/apis/authentication/v1alpha1
             - pkg/apis/core
             - pkg/apis/core/install
+            - pkg/apis/core/v1
             - pkg/apis/core/v1beta1
             - pkg/apis/core/v1beta1/constants
             - pkg/apis/core/v1beta1/helper
@@ -350,6 +353,7 @@ build:
             - pkg/apis/authentication/v1alpha1
             - pkg/apis/core
             - pkg/apis/core/install
+            - pkg/apis/core/v1
             - pkg/apis/core/v1beta1
             - pkg/apis/core/v1beta1/constants
             - pkg/apis/core/v1beta1/helper
@@ -433,6 +437,7 @@ build:
             - pkg/apis/core
             - pkg/apis/core/helper
             - pkg/apis/core/install
+            - pkg/apis/core/v1
             - pkg/apis/core/v1beta1
             - pkg/apis/core/v1beta1/constants
             - pkg/apis/core/v1beta1/helper
@@ -624,6 +629,7 @@ build:
             - pkg/apis/authentication/v1alpha1
             - pkg/apis/core
             - pkg/apis/core/install
+            - pkg/apis/core/v1
             - pkg/apis/core/v1beta1
             - pkg/apis/core/v1beta1/constants
             - pkg/apis/core/v1beta1/helper
@@ -849,6 +855,7 @@ build:
             - pkg/apis/core
             - pkg/apis/core/helper
             - pkg/apis/core/install
+            - pkg/apis/core/v1
             - pkg/apis/core/v1beta1
             - pkg/apis/core/v1beta1/constants
             - pkg/apis/core/v1beta1/helper
@@ -942,8 +949,8 @@ build:
             - pkg/component/observability/logging
             - pkg/component/observability/logging/eventlogger
             - pkg/component/observability/logging/fluentbit
-            - pkg/component/observability/logging/fluentoperator
             - pkg/component/observability/logging/fluentcustomresources
+            - pkg/component/observability/logging/fluentoperator
             - pkg/component/observability/logging/vali
             - pkg/component/observability/logging/vali/constants
             - pkg/component/observability/monitoring
@@ -1086,6 +1093,7 @@ build:
             - pkg/apis/authentication/v1alpha1
             - pkg/apis/core
             - pkg/apis/core/install
+            - pkg/apis/core/v1
             - pkg/apis/core/v1beta1
             - pkg/apis/core/v1beta1/constants
             - pkg/apis/core/v1beta1/helper
@@ -1189,6 +1197,7 @@ build:
             - pkg/apis/authentication/v1alpha1
             - pkg/apis/core
             - pkg/apis/core/install
+            - pkg/apis/core/v1
             - pkg/apis/core/v1beta1
             - pkg/apis/core/v1beta1/constants
             - pkg/apis/core/v1beta1/helper
