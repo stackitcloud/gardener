@@ -43,4 +43,24 @@ type HelmControllerDeployment struct {
 	// Values are the chart values.
 	// +optional
 	Values *apiextensionsv1.JSON `json:"values,omitempty" protobuf:"bytes,2,opt,name=values"`
+	// OCIRepository defines where to pull the chart.
+	// +optional
+	OCIRepository *OCIRepository `json:"ociRepository,omitempty" protobuf:"bytes,3,opt,name=ociRepository"`
+}
+
+// OCIRepository configures where to pull an OCI Artifact, that could contain for example a Helm Chart.
+type OCIRepository struct {
+	// Ref is the full artifact Ref and takes precedence over all other fields.
+	// +optional
+	Ref string `json:"ref,omitempty" protobuf:"bytes,1,name=ref"`
+	// Repository is a reference to an OCI artifact repository.
+	// +optional
+	Repository string `json:"repository,omitempty" protobuf:"bytes,2,name=repository"`
+	// Tag is the image tag to pull.
+	// +optional
+	Tag string `json:"tag,omitempty" protobuf:"bytes,3,opt,name=tag"`
+	// Digest of the image to pull, takes precedence over tag.
+	// The value should be in the format 'sha256:<HASH>'.
+	// +optional
+	Digest string `json:"digest,omitempty" protobuf:"bytes,4,opt,name=digest"`
 }
