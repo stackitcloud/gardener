@@ -736,11 +736,19 @@ build:
         ldflags:
           - '{{.LD_FLAGS}}'
         main: ./cmd/gardener-extension-provider-local
+    - image: europe-docker.pkg.dev/gardener-project/releases/gardener/extensions/provider-local/charts/extension
+      custom:
+        buildCommand: |
+          ./hack/push-helm.sh
+      requires:
+        - image: europe-docker.pkg.dev/gardener-project/releases/gardener/extensions/provider-local
+          alias: IMG
 resourceSelector:
   allow:
     # instruct skaffold to inject the built image reference into the image field in our ControllerDeployment
     - groupKind: ControllerDeployment.core.gardener.cloud
-      image: [".*"]
+      image:
+        - ".helm.ociRepository.ref"
 manifests:
   rawYaml:
     - example/gardener-local/gardenlet/secret-bootstrap-token.yaml
@@ -1063,6 +1071,7 @@ build:
             - pkg/utils/managedresources
             - pkg/utils/managedresources/builder
             - pkg/utils/net
+            - pkg/utils/oci
             - pkg/utils/retry
             - pkg/utils/secrets
             - pkg/utils/secrets/manager
