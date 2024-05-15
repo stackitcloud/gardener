@@ -35,6 +35,7 @@ import (
 	v1beta1constants "github.com/gardener/gardener/pkg/apis/core/v1beta1/constants"
 	"github.com/gardener/gardener/pkg/client/kubernetes"
 	"github.com/gardener/gardener/pkg/component"
+	"github.com/gardener/gardener/pkg/component/networking/vpn/seedserver"
 	"github.com/gardener/gardener/pkg/resourcemanager/controller/garbagecollector/references"
 	"github.com/gardener/gardener/pkg/utils"
 	kubernetesutils "github.com/gardener/gardener/pkg/utils/kubernetes"
@@ -51,7 +52,8 @@ const (
 	webhookExpressionsKey = "apiserver-proxy.networking.gardener.cloud/inject"
 
 	adminPort           = 16910
-	proxySeedServerPort = 8443
+	proxySeedServerPort = seedserver.GatewayPort
+	portNameMetrics     = "metrics"
 
 	volumeNameConfig   = "proxy-config"
 	volumeNameAdminUDS = "admin-uds"
@@ -157,6 +159,7 @@ func (a *apiserverProxy) computeResourcesData() (map[string][]byte, error) {
 		"adminPort":           adminPort,
 		"proxySeedServerHost": a.values.ProxySeedServerHost,
 		"proxySeedServerPort": proxySeedServerPort,
+		"namespace":           a.namespace,
 	}); err != nil {
 		return nil, err
 	}
