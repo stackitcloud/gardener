@@ -24,6 +24,7 @@ func GetFeatures() []featuregate.Feature {
 		features.VPAForETCD,
 		features.DefaultSeccompProfile,
 		features.ShootManagedIssuer,
+		features.DisableAPIServerProxyPort,
 		features.VPAAndHPAForAPIServer,
 		features.NewWorkerPoolHash,
 		features.NewVPN,
