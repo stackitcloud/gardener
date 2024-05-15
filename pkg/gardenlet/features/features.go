@@ -20,6 +20,7 @@ func RegisterFeatureGates() {
 func GetFeatures() []featuregate.Feature {
 	return []featuregate.Feature{
 		features.DefaultSeccompProfile,
+		features.DisableAPIServerProxyPort,
 		features.NewWorkerPoolHash,
 		features.NewVPN,
 		features.NodeAgentAuthorizer,

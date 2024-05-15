@@ -36,6 +36,18 @@ const (
 	// alpha: v1.92.0
 	UseNamespacedCloudProfile featuregate.Feature = "UseNamespacedCloudProfile"
 
+	// DisableAPIServerProxyPort disables the proxy port (8443) on the istio-ingressgateway Services. It was previously
+	// used by the apiserver-proxy to route client traffic on the kubernetes Service to the corresponding API server using
+	// the TCP proxy protocol.
+	// As soon as a shoot has been reconciled by gardener v1.96+, the apiserver-proxy is reconfigured to use HTTP CONNECT
+	// on the tls-tunnel port (8132) instead, i.e., it reuses the reversed VPN path to connect to the correct API server.
+	// Operators can choose to remove the legacy apiserver-proxy port as soon as all shoots have switched to the new
+	// apiserver-proxy configuration. They might want to do so if they activate the ACL extension, which is vulnerable to
+	// proxy protocol headers of untrusted clients on the apiserver-proxy port.
+	// owner: @timebertt
+	// alpha: v1.96.0
+	DisableAPIServerProxyPort = "DisableAPIServerProxyPort"
+
 	// ShootCredentialsBinding enables the usage of the CredentialsBindingName API in shoot spec.
 	// owner: @vpnachev @dimityrmirchev
 	// alpha: v1.98.0
@@ -91,6 +103,7 @@ var AllFeatureGates = map[featuregate.Feature]featuregate.FeatureSpec{
 	ShootForceDeletion:        {Default: true, PreRelease: featuregate.GA, LockToDefault: true},
 	UseNamespacedCloudProfile: {Default: false, PreRelease: featuregate.Alpha},
 	ShootCredentialsBinding:   {Default: true, PreRelease: featuregate.Beta},
+	DisableAPIServerProxyPort: {Default: false, PreRelease: featuregate.Alpha},
 	NewWorkerPoolHash:         {Default: false, PreRelease: featuregate.Alpha},
 	NewVPN:                    {Default: false, PreRelease: featuregate.Alpha},
 	NodeAgentAuthorizer:       {Default: false, PreRelease: featuregate.Alpha},
