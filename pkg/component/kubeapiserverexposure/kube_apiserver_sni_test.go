@@ -233,11 +233,15 @@ var _ = Describe("#SNI", func() {
 			Expect(c.Get(ctx, kubernetesutils.Key(expectedVirtualService.Namespace, expectedVirtualService.Name), actualVirtualService)).To(Succeed())
 			Expect(actualVirtualService).To(BeComparableTo(expectedVirtualService, comptest.CmpOptsForVirtualService()))
 
+			actualEnvoyFilter := &istionetworkingv1alpha3.EnvoyFilter{
+				ObjectMeta: *expectedEnvoyFilterObjectMeta.DeepCopy(),
+			}
 			if apiServerProxyValues != nil {
-				actualEnvoyFilter := &istionetworkingv1alpha3.EnvoyFilter{}
-				Expect(c.Get(ctx, kubernetesutils.Key(expectedEnvoyFilterObjectMeta.Namespace, expectedEnvoyFilterObjectMeta.Name), actualEnvoyFilter)).To(Succeed())
+				Expect(c.Get(ctx, client.ObjectKeyFromObject(actualEnvoyFilter), actualEnvoyFilter)).To(Succeed())
 				// cannot validate the Spec as there is no meaningful way to unmarshal the data into the Golang structure
 				Expect(actualEnvoyFilter.ObjectMeta).To(DeepEqual(expectedEnvoyFilterObjectMeta))
+			} else {
+				Expect(c.Get(ctx, client.ObjectKeyFromObject(actualEnvoyFilter), actualEnvoyFilter)).To(BeNotFoundError(), "should delete EnvoyFilter for apiserver-proxy")
 			}
 		}
 
@@ -250,6 +254,13 @@ var _ = Describe("#SNI", func() {
 		Context("when APIServer Proxy is not configured", func() {
 			BeforeEach(func() {
 				apiServerProxyValues = nil
+
+				// create EnvoyFilter to ensure that Deploy deletes it
+				envoyFilter := &istionetworkingv1alpha3.EnvoyFilter{
+					ObjectMeta: *expectedEnvoyFilterObjectMeta.DeepCopy(),
+				}
+				envoyFilter.ResourceVersion = ""
+				Expect(c.Create(ctx, envoyFilter)).To(Succeed())
 			})
 
 			It("should succeed deploying", func() {
