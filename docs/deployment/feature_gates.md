@@ -18,25 +18,26 @@ The following tables are a summary of the feature gates that you can set on diff
 
 ## Feature Gates for Alpha or Beta Features
 
-| Feature                             | Default | Stage   | Since  | Until  |
-|-------------------------------------|---------|---------|--------|--------|
-| HVPA                                | `false` | `Alpha` | `0.31` |        |
-| HVPAForShootedSeed                  | `false` | `Alpha` | `0.32` |        |
-| DefaultSeccompProfile               | `false` | `Alpha` | `1.54` |        |
-| CoreDNSQueryRewriting               | `false` | `Alpha` | `1.55` |        |
-| IPv6SingleStack                     | `false` | `Alpha` | `1.63` |        |
-| MutableShootSpecNetworkingNodes     | `false` | `Alpha` | `1.64` |        |
-| WorkerlessShoots                    | `false` | `Alpha` | `1.70` | `1.78` |
-| WorkerlessShoots                    | `false` | `Beta`  | `1.79` | `1.85` |
-| WorkerlessShoots                    | `true`  | `GA`    | `1.86` |        |
-| MachineControllerManagerDeployment  | `false` | `Alpha` | `1.73` |        |
-| MachineControllerManagerDeployment  | `true`  | `Beta`  | `1.81` | `1.81` |
-| MachineControllerManagerDeployment  | `true`  | `GA`    | `1.82` |        |
-| ContainerdRegistryHostsDir          | `false` | `Alpha` | `1.77` | `1.85` |
-| ContainerdRegistryHostsDir          | `false` | `Beta`  | `1.86` |        |
-| ShootForceDeletion                  | `false` | `Alpha` | `1.81` |        |
-| APIServerFastRollout                | `true`  | `Beta`  | `1.82` |        |
-| UseGardenerNodeAgent                | `false` | `Alpha` | `1.82` |        |
+| Feature                            | Default | Stage   | Since  | Until  |
+|------------------------------------|---------|---------|--------|--------|
+| HVPA                               | `false` | `Alpha` | `0.31` |        |
+| HVPAForShootedSeed                 | `false` | `Alpha` | `0.32` |        |
+| DefaultSeccompProfile              | `false` | `Alpha` | `1.54` |        |
+| CoreDNSQueryRewriting              | `false` | `Alpha` | `1.55` |        |
+| IPv6SingleStack                    | `false` | `Alpha` | `1.63` |        |
+| MutableShootSpecNetworkingNodes    | `false` | `Alpha` | `1.64` |        |
+| WorkerlessShoots                   | `false` | `Alpha` | `1.70` | `1.78` |
+| WorkerlessShoots                   | `false` | `Beta`  | `1.79` | `1.85` |
+| WorkerlessShoots                   | `true`  | `GA`    | `1.86` |        |
+| MachineControllerManagerDeployment | `false` | `Alpha` | `1.73` |        |
+| MachineControllerManagerDeployment | `true`  | `Beta`  | `1.81` | `1.81` |
+| MachineControllerManagerDeployment | `true`  | `GA`    | `1.82` |        |
+| ContainerdRegistryHostsDir         | `false` | `Alpha` | `1.77` | `1.85` |
+| ContainerdRegistryHostsDir         | `false` | `Beta`  | `1.86` |        |
+| ShootForceDeletion                 | `false` | `Alpha` | `1.81` |        |
+| APIServerFastRollout               | `true`  | `Beta`  | `1.82` |        |
+| UseGardenerNodeAgent               | `false` | `Alpha` | `1.82` |        |
+| DisableAPIServerProxyPort          | `false` | `Alpha` | `1.96` |        |
 
 ## Feature Gates for Graduated or Deprecated Features
 
@@ -189,5 +190,5 @@ A *General Availability* (GA) feature is also referred to as a *stable* feature.
 | MachineControllerManagerDeployment | `gardenlet`                       | Enables Gardener to take over the deployment of the machine-controller-manager. If enabled, all registered provider extensions must support injecting the provider-specific MCM sidecar container into the deployment via the `controlplane` webhook.                                                                                                                              |
 | ContainerdRegistryHostsDir         | `gardenlet`                       | Enables registry configuration in containerd based on the hosts directory pattern. The hosts directory pattern is the new way of configuring registries/mirrors in containerd. Ref https://github.com/containerd/containerd/blob/main/docs/hosts.md.                                                                                                                               |
 | ShootForceDeletion                 | `gardener-apiserver`              | Allows forceful deletion of Shoots by annotating them with the `confirmation.gardener.cloud/force-deletion` annotation.                                                                                                                                                                                                                                                            |
-| APIServerFastRollout               | `gardenlet`                       | Enables fast rollouts for Shoot kube-apiservers on the given Seed. When enabled, `maxSurge` for Shoot kube-apiserver deployments is set to 100%.                                                                                                                                                                                                                                                                  |
-| UseGardenerNodeAgent               | `gardenlet`                       | Enables the `gardener-node-agent` instead of the `cloud-config-downloader` for shoot worker nodes.                                                                                                                                                                                                                                                                                 |
+| APIServerFastRollout               | `gardenlet`                       | Enables fast rollouts for Shoot kube-apiservers on the given Seed. When enabled, `maxSurge` for Shoot kube-apiserver deployments is set to 100%.                                                                                                                                                                                                                                   |
+| UseGardenerNodeAgent               | `gardenlet`                       | Enables the `gardener-node-agent` instead of the `cloud-config-downloader` for shoot worker nodes.                                                                                                                                                                                                                                                                                 || DisableAPIServerProxyPort       | `gardenlet`                       | Disables the proxy port (8443) on the istio-ingressgateway Services. It was previously used by the apiserver-proxy to route client traffic on the kubernetes Service to the corresponding API server using the TCP proxy protocol. As soon as a shoot has been reconciled by gardener v1.96+, the apiserver-proxy is reconfigured to use HTTP CONNECT on the tls-tunnel port (8132) instead, i.e., it reuses the reversed VPN path to connect to the correct API server. Operators can choose to remove the legacy apiserver-proxy port as soon as all shoots have switched to the new apiserver-proxy configuration. They might want to do so if they activate the ACL extension, which is vulnerable to proxy protocol headers of untrusted clients on the apiserver-proxy port. |
