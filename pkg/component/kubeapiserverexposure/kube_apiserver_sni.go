@@ -147,6 +147,10 @@ func (s *sni) Deploy(ctx context.Context) error {
 		if err := s.applier.ApplyManifest(ctx, kubernetes.NewManifestReader(envoyFilterSpec.Bytes()), kubernetes.DefaultMergeFuncs); err != nil {
 			return err
 		}
+	} else {
+		if err := s.client.Delete(ctx, s.emptyEnvoyFilter()); client.IgnoreNotFound(err) != nil {
+			return err
+		}
 	}
 
 	if _, err := controllerutils.GetAndCreateOrMergePatch(ctx, s.client, destinationRule, func() error {
