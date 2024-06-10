@@ -1,35 +1,23 @@
-# See the OWNERS docs at https://go.k8s.io/owners
-
 aliases:
   gardener-reviewers:
-  - acumino
-  - ary1992
-  - dimitar-kostadinov
-  - ialidzhikov
-  - Kostov6
-  - LucaBernstein
-  - marc1404
-  - oliver-goetz
-  - plkokanov
-  - rfranzke
-  - ScheererJ
-  - shafeeqes
+  - dergeberl
+  - einfachnuralex
+  - JuliusSte
+  - Kumm-Kai
+  - nschad
+  - rgroemmer
+  - robinschneider
+  - maboehm
   - timebertt
-  - timuthy
-  - tobschli
-  - vitanovs
+  - hown3d
+  - xoxys
+  - Duciwuci
+  - lukasjarosch
+  - ftl
+  - crigertg
   gardener-approvers:
-  - acumino
-  - ary1992
-  - ialidzhikov
-  - Kostov6
-  - LucaBernstein
-  - marc1404
-  - oliver-goetz
-  - plkokanov
-  - rfranzke
-  - ScheererJ
-  - shafeeqes
+  - maboehm
   - timebertt
-  - timuthy
-  - tobschli
+  - xoxys
+  - einfachnuralex
+  - hown3d
