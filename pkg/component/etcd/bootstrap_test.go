@@ -362,8 +362,7 @@ spec:
         networking.gardener.cloud/to-runtime-apiserver: allowed
     spec:
       containers:
-      - command:
-        - /etcd-druid
+      - args:
         - --enable-leader-election=true
         - --ignore-operation-annotation=false
         - --disable-etcd-serviceaccount-automount=true
@@ -425,8 +424,7 @@ spec:
         networking.gardener.cloud/to-runtime-apiserver: allowed
     spec:
       containers:
-      - command:
-        - /etcd-druid
+      - args:
         - --enable-leader-election=true
         - --ignore-operation-annotation=false
         - --disable-etcd-serviceaccount-automount=true
