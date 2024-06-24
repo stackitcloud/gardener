@@ -82,11 +82,21 @@ const (
 	APIServerFastRollout featuregate.Feature = "APIServerFastRollout"
 
 	// UseGardenerNodeAgent enables the `gardener-node-agent` instead of the `cloud-config-downloader` for shoot worker
-	// nodes.
-	// owner: @rfranzke @oliver-goetz
 	// alpha: v1.82.0
 	// beta: v1.89.0
 	UseGardenerNodeAgent featuregate.Feature = "UseGardenerNodeAgent"
+
+	// DisableAPIServerProxyPort disables the proxy port (8443) on the istio-ingressgateway Services. It was previously
+	// used by the apiserver-proxy to route client traffic on the kubernetes Service to the corresponding API server using
+	// the TCP proxy protocol.
+	// As soon as a shoot has been reconciled by gardener v1.96+, the apiserver-proxy is reconfigured to use HTTP CONNECT
+	// on the tls-tunnel port (8132) instead, i.e., it reuses the reversed VPN path to connect to the correct API server.
+	// Operators can choose to remove the legacy apiserver-proxy port as soon as all shoots have switched to the new
+	// apiserver-proxy configuration. They might want to do so if they activate the ACL extension, which is vulnerable to
+	// proxy protocol headers of untrusted clients on the apiserver-proxy port.
+	// owner: @timebertt
+	// alpha: v1.96.0
+	DisableAPIServerProxyPort = "DisableAPIServerProxyPort"
 )
 
 // DefaultFeatureGate is the central feature gate map used by all gardener components.
@@ -124,6 +134,7 @@ var AllFeatureGates = map[featuregate.Feature]featuregate.FeatureSpec{
 	MachineControllerManagerDeployment: {Default: true, PreRelease: featuregate.GA, LockToDefault: true},
 	APIServerFastRollout:               {Default: true, PreRelease: featuregate.Beta},
 	UseGardenerNodeAgent:               {Default: true, PreRelease: featuregate.Beta},
+	DisableAPIServerProxyPort:          {Default: false, PreRelease: featuregate.Alpha},
 }
 
 // GetFeatures returns a feature gate map with the respective specifications. Non-existing feature gates are ignored.
