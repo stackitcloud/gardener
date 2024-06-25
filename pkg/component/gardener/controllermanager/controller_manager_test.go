@@ -321,7 +321,7 @@ var _ = Describe("GardenerControllerManager", func() {
 					configMap(namespace, values),
 					serviceRuntime,
 					vpa,
-					deployment(namespace, "gardener-controller-manager-config-cff08f20", values),
+					deployment(namespace, "gardener-controller-manager-config-57d19158", values),
 				}
 
 				Expect(fakeClient.Get(ctx, client.ObjectKeyFromObject(managedResourceVirtual), managedResourceVirtual)).To(Succeed())
@@ -707,8 +707,9 @@ func configMap(namespace string, testValues Values) *corev1.ConfigMap {
 				ConcurrentSyncs: ptr.To(20),
 			},
 			Project: &controllermanagerv1alpha1.ProjectControllerConfiguration{
-				ConcurrentSyncs: ptr.To(20),
-				Quotas:          testValues.Quotas,
+				ConcurrentSyncs:         ptr.To(20),
+				Quotas:                  testValues.Quotas,
+				StaleExpirationTimeDays: ptr.To(6000),
 			},
 			SecretBinding: &controllermanagerv1alpha1.SecretBindingControllerConfiguration{
 				ConcurrentSyncs: ptr.To(20),
