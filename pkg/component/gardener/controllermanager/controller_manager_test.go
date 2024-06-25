@@ -334,10 +334,10 @@ var _ = Describe("GardenerControllerManager", func() {
 
 				Expect(managedResourceSecretRuntime.Type).To(Equal(corev1.SecretTypeOpaque))
 				Expect(managedResourceSecretRuntime.Data).To(HaveLen(5))
-				Expect(string(managedResourceSecretRuntime.Data["configmap__some-namespace__gardener-controller-manager-config-cff08f20.yaml"])).To(Equal(configMap(namespace, values)))
+				Expect(string(managedResourceSecretRuntime.Data["configmap__some-namespace__gardener-controller-manager-config-57d19158.yaml"])).To(Equal(configMap(namespace, values)))
 				Expect(string(managedResourceSecretRuntime.Data["service__some-namespace__gardener-controller-manager.yaml"])).To(Equal(componenttest.Serialize(serviceRuntime)))
 				Expect(string(managedResourceSecretRuntime.Data["verticalpodautoscaler__some-namespace__gardener-controller-manager-vpa.yaml"])).To(Equal(componenttest.Serialize(vpa)))
-				Expect(string(managedResourceSecretRuntime.Data["deployment__some-namespace__gardener-controller-manager.yaml"])).To(Equal(deployment(namespace, "gardener-controller-manager-config-cff08f20", values)))
+				Expect(string(managedResourceSecretRuntime.Data["deployment__some-namespace__gardener-controller-manager.yaml"])).To(Equal(deployment(namespace, "gardener-controller-manager-config-57d19158", values)))
 				Expect(managedResourceSecretRuntime.Immutable).To(Equal(ptr.To(true)))
 				Expect(managedResourceSecretRuntime.Labels["resources.gardener.cloud/garbage-collectable-reference"]).To(Equal("true"))
 
@@ -696,8 +696,9 @@ func configMap(namespace string, testValues Values) string {
 				ConcurrentSyncs: ptr.To(20),
 			},
 			Project: &controllermanagerv1alpha1.ProjectControllerConfiguration{
-				ConcurrentSyncs: ptr.To(20),
-				Quotas:          testValues.Quotas,
+				ConcurrentSyncs:         ptr.To(20),
+				Quotas:                  testValues.Quotas,
+				StaleExpirationTimeDays: ptr.To(6000),
 			},
 			SecretBinding: &controllermanagerv1alpha1.SecretBindingControllerConfiguration{
 				ConcurrentSyncs: ptr.To(20),
