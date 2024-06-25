@@ -100,6 +100,8 @@ func (g *gardenerAPIServer) deployment(
 							"--log-level=" + g.values.LogLevel,
 							"--log-format=" + g.values.LogFormat,
 							fmt.Sprintf("--secure-port=%d", port),
+							// TODO: replace this hardcoded configuration with proper fields in the Garden API
+							"--shoot-admin-kubeconfig-max-expiration=4320h", // 6 months
 						},
 						Ports: []corev1.ContainerPort{{
 							Name:          "https",
