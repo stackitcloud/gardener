@@ -581,6 +581,7 @@ var _ = Describe("GardenerAPIServer", func() {
 								"--log-format=" + logFormat,
 								"--secure-port=8443",
 								"--workload-identity-token-issuer=" + workloadIdentityIssuer,
+								"--shoot-admin-kubeconfig-max-expiration=4320h",
 								"--http2-max-streams-per-connection=1000",
 								"--etcd-cafile=/srv/kubernetes/etcd/ca/bundle.crt",
 								"--etcd-certfile=/srv/kubernetes/etcd/client/tls.crt",
