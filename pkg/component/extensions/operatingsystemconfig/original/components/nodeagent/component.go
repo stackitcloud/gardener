@@ -79,7 +79,7 @@ func (component) Config(ctx components.Context) ([]extensionsv1alpha1.Unit, []ex
 		Content: extensionsv1alpha1.FileContent{
 			ImageRef: &extensionsv1alpha1.FileContentImageRef{
 				Image:           ctx.Images[imagevector.ImageNameGardenerNodeAgent].String(),
-				FilePathInImage: "/gardener-node-agent",
+				FilePathInImage: "/ko-app/gardener-node-agent",
 			},
 		},
 	})
