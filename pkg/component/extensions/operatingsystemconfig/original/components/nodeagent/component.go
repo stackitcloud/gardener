@@ -79,7 +79,10 @@ func (component) Config(ctx components.Context) ([]extensionsv1alpha1.Unit, []ex
 		Path:        PathBinary,
 		Permissions: ptr.To[uint32](0755),
 		Content: extensionsv1alpha1.FileContent{
-			ImageRef: fileContentImageRef(ctx.Images[imagevector.ContainerImageNameGardenerNodeAgent].String()),
+			ImageRef: &extensionsv1alpha1.FileContentImageRef{
+				Image:           ctx.Images[imagevector.ContainerImageNameGardenerNodeAgent].String(),
+				FilePathInImage: "/ko-app/gardener-node-agent",
+			},
 		},
 	})
 
@@ -159,13 +162,6 @@ func Files(config *nodeagentconfigv1alpha1.NodeAgentConfiguration) ([]extensions
 		Permissions: ptr.To[uint32](0600),
 		Content:     extensionsv1alpha1.FileContent{Inline: &extensionsv1alpha1.FileContentInline{Encoding: "b64", Data: utils.EncodeBase64(configRaw)}},
 	}}, nil
-}
-
-func fileContentImageRef(image string) *extensionsv1alpha1.FileContentImageRef {
-	return &extensionsv1alpha1.FileContentImageRef{
-		Image:           image,
-		FilePathInImage: FilePathInImage(image),
-	}
 }
 
 // FilePathInImage returns the path of the gardener-node-agent binary file in its container image.
