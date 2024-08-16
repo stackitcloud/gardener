@@ -21,8 +21,8 @@ type gardenCollector struct {
 	runtimeClient client.Reader
 	log           logr.Logger
 
-	gardenCondition *prometheus.Desc
-	gardenOperation *prometheus.Desc
+	condition          *prometheus.Desc
+	operationSucceeded *prometheus.Desc
 }
 
 func newGardenCollector(k8sClient client.Reader, log logr.Logger) *gardenCollector {
@@ -35,7 +35,7 @@ func newGardenCollector(k8sClient client.Reader, log logr.Logger) *gardenCollect
 }
 
 func (c *gardenCollector) setMetricDefinitions() {
-	c.gardenCondition = prometheus.NewDesc(
+	c.condition = prometheus.NewDesc(
 		prometheus.BuildFQName(metricPrefix, gardenSubsystem, "condition"),
 		"Condition state of the Garden.",
 		[]string{
@@ -45,20 +45,19 @@ func (c *gardenCollector) setMetricDefinitions() {
 		},
 		nil,
 	)
-	c.gardenOperation = prometheus.NewDesc(
-		prometheus.BuildFQName(metricPrefix, gardenSubsystem, "operation"),
-		"LastOperation of the operator.",
+	c.operationSucceeded = prometheus.NewDesc(
+		prometheus.BuildFQName(metricPrefix, gardenSubsystem, "operation_succeeded"),
+		"Returns 1 if the last operation state is Succeeded.",
 		[]string{
 			"name",
-			"operation",
 		},
 		nil,
 	)
 }
 
 func (c *gardenCollector) Describe(ch chan<- *prometheus.Desc) {
-	ch <- c.gardenCondition
-	ch <- c.gardenOperation
+	ch <- c.condition
+	ch <- c.operationSucceeded
 }
 
 func (c *gardenCollector) Collect(ch chan<- prometheus.Metric) {
@@ -92,7 +91,7 @@ func (c gardenCollector) collectConditionMetric(ch chan<- prometheus.Metric, gar
 				val = 1
 			}
 			ch <- prometheus.MustNewConstMetric(
-				c.gardenCondition,
+				c.condition,
 				prometheus.GaugeValue,
 				val,
 				[]string{
@@ -109,23 +108,16 @@ func (c *gardenCollector) collectOperationMetric(ch chan<- prometheus.Metric, ga
 	if garden.Status.LastOperation == nil {
 		return
 	}
-	for _, typ := range []gardencorev1beta1.LastOperationType{
-		gardencorev1beta1.LastOperationTypeCreate,
-		gardencorev1beta1.LastOperationTypeReconcile,
-		gardencorev1beta1.LastOperationTypeDelete,
-	} {
-		val := float64(0)
-		if garden.Status.LastOperation.Type == typ {
-			val = 1
-		}
-		ch <- prometheus.MustNewConstMetric(
-			c.gardenOperation,
-			prometheus.GaugeValue,
-			val,
-			[]string{
-				garden.Name,
-				string(typ),
-			}...,
-		)
+	val := float64(0)
+	if garden.Status.LastOperation.State == gardencorev1beta1.LastOperationStateSucceeded {
+		val = 1
 	}
+	ch <- prometheus.MustNewConstMetric(
+		c.operationSucceeded,
+		prometheus.GaugeValue,
+		val,
+		[]string{
+			garden.Name,
+		}...,
+	)
 }

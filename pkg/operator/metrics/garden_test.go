@@ -50,7 +50,7 @@ var _ = Describe("Garden metrics", func() {
 
 		garden.Status = operatorv1alpha1.GardenStatus{
 			LastOperation: &gardencorev1beta1.LastOperation{
-				Type: gardencorev1beta1.LastOperationTypeReconcile,
+				State: gardencorev1beta1.LastOperationStateSucceeded,
 			},
 			Conditions: []gardencorev1beta1.Condition{
 				{Type: operatorv1alpha1.RuntimeComponentsHealthy, Status: gardencorev1beta1.ConditionTrue},
@@ -79,18 +79,14 @@ gardener_operator_garden_condition{condition="VirtualComponentsHealthy",name="fo
 		).To(Succeed())
 	})
 
-	It("should collect operation metrics", func() {
-		expected := strings.NewReader(`# HELP gardener_operator_garden_operation Condition state of the Garden.
-# TYPE gardener_operator_garden_operation gauge
-gardener_operator_garden_operation{name="foo",operation="Create"} 0
-gardener_operator_garden_operation{name="foo",operation="Delete"} 0
-gardener_operator_garden_operation{name="foo",operation="Migrate"} 0
-gardener_operator_garden_operation{name="foo",operation="Reconcile"} 1
-gardener_operator_garden_operation{name="foo",operation="Restore"} 0
+	It("should collect operation succeeded metrics", func() {
+		expected := strings.NewReader(`# HELP gardener_operator_garden_operation_succeeded Returns 1 if the last operation state is Succeeded.
+# TYPE gardener_operator_garden_operation_succeeded gauge
+gardener_operator_garden_operation_succeeded{name="foo"} 1
 `)
 
 		Expect(
-			testutil.CollectAndCompare(c, expected, "gardener_operator_garden_operation"),
+			testutil.CollectAndCompare(c, expected, "gardener_operator_garden_operation_succeeded"),
 		).To(Succeed())
 	})
 })
