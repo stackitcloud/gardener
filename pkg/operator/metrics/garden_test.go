@@ -89,4 +89,18 @@ gardener_operator_garden_operation_succeeded{name="foo"} 1
 			testutil.CollectAndCompare(c, expected, "gardener_operator_garden_operation_succeeded"),
 		).To(Succeed())
 	})
+
+	It("should collect the metric for not succeeded gardens", func() {
+		garden.Status.LastOperation.State = gardencorev1beta1.LastOperationStateError
+		Expect(k8sClient.Status().Update(ctx, garden)).To(Succeed())
+
+		expected := strings.NewReader(`# HELP gardener_operator_garden_operation_succeeded Returns 1 if the last operation state is Succeeded.
+# TYPE gardener_operator_garden_operation_succeeded gauge
+gardener_operator_garden_operation_succeeded{name="foo"} 0
+`)
+
+		Expect(
+			testutil.CollectAndCompare(c, expected, "gardener_operator_garden_operation_succeeded"),
+		).To(Succeed())
+	})
 })
