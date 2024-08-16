@@ -47,7 +47,7 @@ func (c *gardenCollector) setMetricDefinitions() {
 	)
 	c.gardenOperation = prometheus.NewDesc(
 		prometheus.BuildFQName(metricPrefix, gardenSubsystem, "operation"),
-		"Condition state of the Garden.",
+		"LastOperation of the operator.",
 		[]string{
 			"name",
 			"operation",
@@ -113,8 +113,6 @@ func (c *gardenCollector) collectOperationMetric(ch chan<- prometheus.Metric, ga
 		gardencorev1beta1.LastOperationTypeCreate,
 		gardencorev1beta1.LastOperationTypeReconcile,
 		gardencorev1beta1.LastOperationTypeDelete,
-		gardencorev1beta1.LastOperationTypeMigrate,
-		gardencorev1beta1.LastOperationTypeRestore,
 	} {
 		val := float64(0)
 		if garden.Status.LastOperation.Type == typ {
