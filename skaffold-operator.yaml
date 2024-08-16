@@ -263,6 +263,7 @@ build:
             - pkg/operator/controller/gardenlet
             - pkg/operator/features
             - pkg/operator/predicate
+            - pkg/operator/metrics
             - pkg/operator/webhook
             - pkg/operator/webhook/defaulting
             - pkg/operator/webhook/validation
