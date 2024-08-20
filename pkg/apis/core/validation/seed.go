@@ -54,7 +54,7 @@ func ValidateSeedUpdate(newSeed, oldSeed *core.Seed) field.ErrorList {
 
 	allErrs = append(allErrs, apivalidation.ValidateObjectMetaUpdate(&newSeed.ObjectMeta, &oldSeed.ObjectMeta, field.NewPath("metadata"))...)
 	allErrs = append(allErrs, validateSeedOperationUpdate(newSeed.Annotations[v1beta1constants.GardenerOperation], oldSeed.Annotations[v1beta1constants.GardenerOperation], field.NewPath("metadata", "annotations").Key(v1beta1constants.GardenerOperation))...)
-	allErrs = append(allErrs, ValidateSeedSpecUpdate(&newSeed.Spec, &oldSeed.Spec, newSeed.Name, field.NewPath("spec"))...)
+	allErrs = append(allErrs, ValidateSeedSpecUpdate(&newSeed.Spec, &oldSeed.Spec, field.NewPath("spec"))...)
 	allErrs = append(allErrs, ValidateSeed(newSeed)...)
 
 	return allErrs
@@ -75,7 +75,7 @@ func ValidateSeedTemplate(seedTemplate *core.SeedTemplate, fldPath *field.Path) 
 func ValidateSeedTemplateUpdate(newSeedTemplate, oldSeedTemplate *core.SeedTemplate, fldPath *field.Path) field.ErrorList {
 	allErrs := field.ErrorList{}
 
-	allErrs = append(allErrs, ValidateSeedSpecUpdate(&newSeedTemplate.Spec, &oldSeedTemplate.Spec, newSeedTemplate.Name, fldPath.Child("spec"))...)
+	allErrs = append(allErrs, ValidateSeedSpecUpdate(&newSeedTemplate.Spec, &oldSeedTemplate.Spec, fldPath.Child("spec"))...)
 
 	return allErrs
 }
@@ -285,10 +285,10 @@ func validateSeedNetworks(seedNetworks core.SeedNetworks, fldPath *field.Path, i
 }
 
 // ValidateSeedSpecUpdate validates the specification updates of a Seed object.
-func ValidateSeedSpecUpdate(newSeedSpec, oldSeedSpec *core.SeedSpec, seedName string, fldPath *field.Path) field.ErrorList {
+func ValidateSeedSpecUpdate(newSeedSpec, oldSeedSpec *core.SeedSpec, fldPath *field.Path) field.ErrorList {
 	allErrs := field.ErrorList{}
 
-	allErrs = append(allErrs, validateSeedNetworksUpdate(newSeedSpec.Networks, oldSeedSpec.Networks, seedName, fldPath.Child("networks"))...)
+	allErrs = append(allErrs, validateSeedNetworksUpdate(newSeedSpec.Networks, oldSeedSpec.Networks, fldPath.Child("networks"))...)
 
 	if oldSeedSpec.Ingress != nil && newSeedSpec.Ingress != nil {
 		allErrs = append(allErrs, apivalidation.ValidateImmutableField(newSeedSpec.Ingress.Domain, oldSeedSpec.Ingress.Domain, fldPath.Child("ingress", "domain"))...)
@@ -307,15 +307,10 @@ func ValidateSeedSpecUpdate(newSeedSpec, oldSeedSpec *core.SeedSpec, seedName st
 	return allErrs
 }
 
-func validateSeedNetworksUpdate(newSeedNetworks, oldSeedNetworks core.SeedNetworks, seedName string, fldPath *field.Path) field.ErrorList {
+func validateSeedNetworksUpdate(newSeedNetworks, oldSeedNetworks core.SeedNetworks, fldPath *field.Path) field.ErrorList {
 	allErrs := field.ErrorList{}
 
 	allErrs = append(allErrs, apivalidation.ValidateImmutableField(newSeedNetworks.IPFamilies, oldSeedNetworks.IPFamilies, fldPath.Child("ipFamilies"))...)
-
-	// TODO(migration-cleanup): Remove this exception after operator migration (and "seedName string" from all function signatures)
-	if seedName == "stackit" {
-		return allErrs
-	}
 
 	allErrs = append(allErrs, apivalidation.ValidateImmutableField(newSeedNetworks.Pods, oldSeedNetworks.Pods, fldPath.Child("pods"))...)
 	allErrs = append(allErrs, apivalidation.ValidateImmutableField(newSeedNetworks.Services, oldSeedNetworks.Services, fldPath.Child("services"))...)
