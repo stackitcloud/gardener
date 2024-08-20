@@ -44,11 +44,7 @@ func ValidateProjectUpdate(newProject, oldProject *core.Project) field.ErrorList
 	allErrs = append(allErrs, ValidateProject(newProject)...)
 
 	if oldProject.Spec.CreatedBy != nil {
-		// allow mutating the creator of the garden project only for the gardener-operator migration
-		// TODO: drop this change after the migration from yake to gardener-operator
-		if oldProject.Name != "garden" {
-			allErrs = append(allErrs, apivalidation.ValidateImmutableField(newProject.Spec.CreatedBy, oldProject.Spec.CreatedBy, field.NewPath("spec", "createdBy"))...)
-		}
+		allErrs = append(allErrs, apivalidation.ValidateImmutableField(newProject.Spec.CreatedBy, oldProject.Spec.CreatedBy, field.NewPath("spec", "createdBy"))...)
 	}
 	if oldProject.Spec.Namespace != nil {
 		allErrs = append(allErrs, apivalidation.ValidateImmutableField(newProject.Spec.Namespace, oldProject.Spec.Namespace, field.NewPath("spec", "namespace"))...)
