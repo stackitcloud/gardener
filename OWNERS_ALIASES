@@ -2,30 +2,28 @@
 
 aliases:
   gardener-reviewers:
-  - acumino
-  - ary1992
-  - ialidzhikov
-  - LucaBernstein
-  - oliver-goetz
-  - plkokanov
-  - rfranzke
-  - ScheererJ
-  - shafeeqes
+  - dergeberl
+  - einfachnuralex
+  - JuliusSte
+  - Kumm-Kai
+  - nschad
+  - rgroemmer
+  - robinschneider
+  - maboehm
   - timebertt
   - hown3d
   - Duciwuci
   - lukasjarosch
   - ftl
-  gardener-approvers:
-  - acumino
-  - ary1992
-  - ialidzhikov
-  - LucaBernstein
-  - oliver-goetz
-  - plkokanov
-  - rfranzke
-  - ScheererJ
-  - shafeeqes
+gardener-approvers:
+  - dergeberl
+  - einfachnuralex
+  - JuliusSte
+  - Kumm-Kai
+  - nschad
+  - rgroemmer
+  - robinschneider
+  - maboehm
   - timebertt
   - hown3d
   - Duciwuci
