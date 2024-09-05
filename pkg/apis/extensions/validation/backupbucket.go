@@ -65,7 +65,9 @@ func ValidateBackupBucketSpecUpdate(new, old *extensionsv1alpha1.BackupBucketSpe
 		return apivalidation.ValidateImmutableField(new, old, fldPath)
 	}
 
-	allErrs = append(allErrs, apivalidation.ValidateImmutableField(new.Type, old.Type, fldPath.Child("type"))...)
+	if !(old.Type == "stackit" && new.Type == "S3") {
+		allErrs = append(allErrs, apivalidation.ValidateImmutableField(new.Type, old.Type, fldPath.Child("type"))...)
+	}
 	allErrs = append(allErrs, apivalidation.ValidateImmutableField(new.Region, old.Region, fldPath.Child("region"))...)
 
 	return allErrs
