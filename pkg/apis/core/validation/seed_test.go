@@ -1067,15 +1067,18 @@ var _ = Describe("Seed Validation Tests", func() {
 				"Type":   Equal(field.ErrorTypeInvalid),
 				"Field":  Equal("spec.networks.nodes"),
 				"Detail": Equal(`field is immutable`),
-			}, Fields{
-				"Type":   Equal(field.ErrorTypeInvalid),
-				"Field":  Equal("spec.backup.region"),
-				"Detail": Equal(`field is immutable`),
-			}, Fields{
-				"Type":   Equal(field.ErrorTypeInvalid),
-				"Field":  Equal("spec.backup.provider"),
-				"Detail": Equal(`field is immutable`),
-			}))
+			},
+				// TODO: Remove after STACKIT:X PreProd region migration
+				//Fields{
+				//	"Type":   Equal(field.ErrorTypeInvalid),
+				//	"Field":  Equal("spec.backup.region"),
+				//	"Detail": Equal(`field is immutable`),
+				//},
+				Fields{
+					"Type":   Equal(field.ErrorTypeInvalid),
+					"Field":  Equal("spec.backup.provider"),
+					"Detail": Equal(`field is immutable`),
+				}))
 		})
 
 		Context("#validateSeedBackupUpdate", func() {
