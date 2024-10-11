@@ -57,7 +57,8 @@ func ValidateBackupBucketSpecUpdate(newSpec, oldSpec *core.BackupBucketSpec, fld
 	allErrs := field.ErrorList{}
 
 	// TODO remove after we migrated the backup provider
-	if !(oldSpec.Provider.Type == "stackit" && newSpec.Provider.Type == "S3" && oldSpec.Provider.Region == newSpec.Provider.Region) {
+	// skip check if changing providers, or if the region changes
+	if !(oldSpec.Provider.Type == "stackit" && newSpec.Provider.Type == "S3") && (oldSpec.Provider.Region == newSpec.Provider.Region) {
 		allErrs = append(allErrs, apivalidation.ValidateImmutableField(newSpec.Provider, oldSpec.Provider, fldPath.Child("provider"))...)
 	}
 	allErrs = append(allErrs, apivalidation.ValidateImmutableField(newSpec.SeedName, oldSpec.SeedName, fldPath.Child("seedName"))...)
