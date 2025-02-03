@@ -13,17 +13,14 @@ import (
 	utilruntime "k8s.io/apimachinery/pkg/util/runtime"
 	"k8s.io/utils/ptr"
 
-	v1beta1constants "github.com/gardener/gardener/pkg/apis/core/v1beta1/constants"
 	extensionsv1alpha1 "github.com/gardener/gardener/pkg/apis/extensions/v1alpha1"
 	extensionsv1alpha1helper "github.com/gardener/gardener/pkg/apis/extensions/v1alpha1/helper"
 	"github.com/gardener/gardener/pkg/component/extensions/operatingsystemconfig/original/components"
+	"github.com/gardener/gardener/pkg/component/extensions/operatingsystemconfig/original/components/kubelet"
 	"github.com/gardener/gardener/pkg/utils"
 )
 
 const (
-	// PathLocalSSLRootCerts is the path to the Gardener CAs. It can be used as trigger for other components to reload the CAs.
-	PathLocalSSLRootCerts = pathLocalSSLCerts + "/ROOTcerts.crt"
-
 	pathLocalSSLCerts             = "/var/lib/ca-certificates-local"
 	pathUpdateLocalCaCertificates = "/var/lib/ssl/update-local-ca-certificates.sh"
 )
@@ -72,7 +69,7 @@ func (component) Config(ctx components.Context) ([]extensionsv1alpha1.Unit, []ex
 		updateLocalCaCertificatesScriptFile,
 		// This file contains Gardener CAs for Debian based OS
 		{
-			Path:        PathLocalSSLRootCerts,
+			Path:        pathLocalSSLCerts + "/ROOTcerts.crt",
 			Permissions: ptr.To[uint32](0644),
 			Content: extensionsv1alpha1.FileContent{
 				Inline: &extensionsv1alpha1.FileContentInline{
@@ -103,9 +100,10 @@ Description=Update local certificate authorities
 DefaultDependencies=no
 Wants=systemd-tmpfiles-setup.service clean-ca-certificates.service
 After=systemd-tmpfiles-setup.service clean-ca-certificates.service
-Before=sysinit.target ` + v1beta1constants.OperatingSystemConfigUnitNameKubeletService + `
+Before=sysinit.target ` + kubelet.UnitName + `
 ConditionPathIsReadWrite=` + pathEtcSSLCerts + `
 ConditionPathIsReadWrite=` + pathLocalSSLCerts + `
+ConditionPathExists=!` + kubelet.PathKubeconfigReal + `
 [Service]
 Type=oneshot
 ExecStart=` + pathUpdateLocalCaCertificates + `
