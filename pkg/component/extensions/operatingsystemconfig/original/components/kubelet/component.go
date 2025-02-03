@@ -20,7 +20,6 @@ import (
 	extensionsv1alpha1helper "github.com/gardener/gardener/pkg/apis/extensions/v1alpha1/helper"
 	"github.com/gardener/gardener/pkg/component/extensions/operatingsystemconfig/original/components"
 	"github.com/gardener/gardener/pkg/component/extensions/operatingsystemconfig/original/components/containerd"
-	"github.com/gardener/gardener/pkg/component/extensions/operatingsystemconfig/original/components/rootcertificates"
 	oscutils "github.com/gardener/gardener/pkg/component/extensions/operatingsystemconfig/utils"
 	"github.com/gardener/gardener/pkg/utils"
 )
@@ -113,7 +112,7 @@ EnvironmentFile=/etc/environment
 EnvironmentFile=-/var/lib/kubelet/extra_args
 ExecStart=` + v1beta1constants.OperatingSystemConfigFilePathBinaries + `/kubelet \
     ` + utils.Indent(strings.Join(cliFlags, " \\\n"), 4) + ` $KUBELET_EXTRA_ARGS`),
-		FilePaths: append(extensionsv1alpha1helper.FilePathsFrom(kubeletFiles), rootcertificates.PathLocalSSLRootCerts),
+		FilePaths: extensionsv1alpha1helper.FilePathsFrom(kubeletFiles),
 	}
 
 	return []extensionsv1alpha1.Unit{kubeletUnit}, kubeletFiles, nil
