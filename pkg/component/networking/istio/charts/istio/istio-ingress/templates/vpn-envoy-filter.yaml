@@ -32,7 +32,7 @@ spec:
                     - name: Reversed-VPN
                       string_match:
                         safe_regex:
-                          # this regex needs to be diffrent from upstream for now bcs. otherwise our forked apiserver-proxy would break
+                          # this regex needs to be different from upstream for now bcs. otherwise our forked apiserver-proxy would break
                           # only a temporary fix until https://github.com/gardener/gardener/issues/11214 is fully implemented and released
                           # until then, this will lead to cherry-pick / merge conflicts!
                           regex: '^outbound\|(1194|443)\|\|(vpn-seed-server(-[0-4])?|kube-apiserver)\..*\.svc\.cluster\.local$'
