@@ -60,7 +60,7 @@ type Interface interface {
 	SetNamespaceUID(types.UID)
 	// SetMachineDeployments sets the machine deployments.
 	SetMachineDeployments([]extensionsv1alpha1.MachineDeployment)
-	// SetMaxNodesTotal sets the maximum number of nodes that can be created in the cluster.
+	// SetMaxNodesTotal sets the maximum number of nodes that can be created in the cluster. 0 means unlimited.
 	SetMaxNodesTotal(int64)
 }
 
@@ -72,8 +72,6 @@ func New(
 	image string,
 	replicas int32,
 	config *gardencorev1beta1.ClusterAutoscaler,
-	workerConfig []gardencorev1beta1.Worker,
-	maxNodesTotal int64,
 	runtimeVersion *semver.Version,
 ) Interface {
 	return &clusterAutoscaler{
@@ -83,8 +81,6 @@ func New(
 		image:          image,
 		replicas:       replicas,
 		config:         config,
-		workerConfig:   workerConfig,
-		maxNodesTotal:  maxNodesTotal,
 		runtimeVersion: runtimeVersion,
 	}
 }

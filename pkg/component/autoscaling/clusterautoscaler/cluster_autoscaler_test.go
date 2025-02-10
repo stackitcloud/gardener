@@ -74,49 +74,15 @@ var _ = Describe("ClusterAutoscaler", func() {
 		machineDeployment4Name           = "pool4"
 		machineDeployment4Min      int32 = 3
 		machineDeployment4Max      int32 = 5
-		workerPool4Priority              = ptr.To(int32(50))
 		machineDeployment5Name           = "irregular-machine-deployment-name"
 		machineDeployment5Min      int32 = 3
 		machineDeployment5Max      int32 = 5
-		workerPool5Priority              = ptr.To(int32(60))
 		machineDeployments               = []extensionsv1alpha1.MachineDeployment{
 			{Name: machineDeployment1Name, Minimum: machineDeployment1Min, Maximum: machineDeployment1Max, Priority: machineDeployment1Priority},
 			{Name: machineDeployment2Name, Minimum: machineDeployment2Min, Maximum: machineDeployment2Max, Priority: machineDeployment2Priority},
 			{Name: machineDeployment3Name, Minimum: machineDeployment3Min, Maximum: machineDeployment3Max},
 			{Name: machineDeployment4Name, Minimum: machineDeployment4Min, Maximum: machineDeployment4Max},
 			{Name: machineDeployment5Name, Minimum: machineDeployment5Min, Maximum: machineDeployment5Max},
-		}
-
-		workerConfig = []gardencorev1beta1.Worker{
-			{
-				Name:     machineDeployment1Name,
-				Minimum:  machineDeployment1Min,
-				Maximum:  machineDeployment1Max,
-				Priority: machineDeployment1Priority,
-			},
-			{
-				Name:     machineDeployment2Name,
-				Minimum:  machineDeployment2Min,
-				Maximum:  machineDeployment2Max,
-				Priority: machineDeployment2Priority,
-			},
-			{
-				Name:    machineDeployment3Name,
-				Minimum: machineDeployment3Min,
-				Maximum: machineDeployment3Max,
-			},
-			{
-				Name:     machineDeployment4Name,
-				Minimum:  machineDeployment4Min,
-				Maximum:  machineDeployment4Max,
-				Priority: workerPool4Priority,
-			},
-			{
-				Name:     "pool-5-that-has-no-matching-machine-deployment-name",
-				Minimum:  machineDeployment5Min,
-				Maximum:  machineDeployment5Max,
-				Priority: workerPool5Priority,
-			},
 		}
 
 		configExpander                            = gardencorev1beta1.ClusterAutoscalerExpanderRandom
@@ -646,7 +612,7 @@ var _ = Describe("ClusterAutoscaler", func() {
 		By("Create secrets managed outside of this package for whose secretsmanager.Get() will be called")
 		Expect(fakeClient.Create(ctx, &corev1.Secret{ObjectMeta: metav1.ObjectMeta{Name: "generic-token-kubeconfig", Namespace: namespace}})).To(Succeed())
 
-		clusterAutoscaler = New(c, namespace, sm, image, replicas, nil, workerConfig, 1337, nil)
+		clusterAutoscaler = New(c, namespace, sm, image, replicas, nil, nil)
 		clusterAutoscaler.SetNamespaceUID(namespaceUID)
 		clusterAutoscaler.SetMachineDeployments(machineDeployments)
 	})
@@ -659,7 +625,6 @@ var _ = Describe("ClusterAutoscaler", func() {
 		Context("should successfully deploy all the resources", func() {
 			test := func(withConfig bool, withWorkerConfig bool, runtimeVersionGreaterEquals126 bool, withPriorityExpander bool) {
 				var config *gardencorev1beta1.ClusterAutoscaler
-				var shootWorkerConfig []gardencorev1beta1.Worker
 				if withConfig {
 					// Copy `configFull` so that te test doesn't overwrite it.
 					config = configFull.DeepCopy()
@@ -668,14 +633,10 @@ var _ = Describe("ClusterAutoscaler", func() {
 					}
 				}
 
-				if withWorkerConfig {
-					shootWorkerConfig = workerConfig
-				}
-
 				if runtimeVersionGreaterEquals126 {
-					clusterAutoscaler = New(fakeClient, namespace, sm, image, replicas, config, shootWorkerConfig, 0, semver.MustParse("1.26.1"))
+					clusterAutoscaler = New(fakeClient, namespace, sm, image, replicas, config, semver.MustParse("1.26.1"))
 				} else {
-					clusterAutoscaler = New(fakeClient, namespace, sm, image, replicas, config, shootWorkerConfig, 0, semver.MustParse("1.25.0"))
+					clusterAutoscaler = New(fakeClient, namespace, sm, image, replicas, config, semver.MustParse("1.25.0"))
 				}
 				clusterAutoscaler.SetNamespaceUID(namespaceUID)
 				clusterAutoscaler.SetMachineDeployments(machineDeployments)
