@@ -77,6 +77,7 @@ var _ = Describe("ConfigCodec", func() {
 			CPUCFSQuota:                 ptr.To(true),
 			MaxOpenFiles:                1000000,
 			KubeAPIQPS:                  ptr.To[int32](50),
+			PodPidsLimit:                ptr.To[int64](150),
 			KubeAPIBurst:                50,
 			SerializeImagePulls:         ptr.To(true),
 			EvictionHard: map[string]string{
@@ -192,6 +193,7 @@ maxPods: 110
 memorySwap: {}
 nodeStatusReportFrequency: 0s
 nodeStatusUpdateFrequency: 10s
+podPidsLimit: 150
 registryBurst: 10
 registryPullQPS: 5
 resolvConf: /etc/resolv.conf
