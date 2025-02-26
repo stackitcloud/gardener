@@ -6,7 +6,6 @@ package app
 
 import (
 	"context"
-	"errors"
 	"fmt"
 
 	"github.com/Masterminds/semver/v3"
@@ -16,25 +15,30 @@ import (
 	"k8s.io/client-go/rest"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 
-	gardencorev1beta1 "github.com/gardener/gardener/pkg/apis/core/v1beta1"
-	v1beta1helper "github.com/gardener/gardener/pkg/apis/core/v1beta1/helper"
-	"github.com/gardener/gardener/pkg/features"
 	"github.com/gardener/gardener/pkg/utils/flow"
-	gardenerutils "github.com/gardener/gardener/pkg/utils/gardener"
 	versionutils "github.com/gardener/gardener/pkg/utils/version"
 )
 
-func (g *garden) runMigrations(ctx context.Context, log logr.Logger, gardenClient client.Client) error {
+func (g *garden) runMigrations(ctx context.Context, log logr.Logger, _ client.Client) error {
 	log.Info("Migrating deprecated failure-domain.beta.kubernetes.io labels to topology.kubernetes.io")
 	if err := migrateDeprecatedTopologyLabels(ctx, log, g.mgr.GetClient(), g.mgr.GetConfig()); err != nil {
 		return err
 	}
 
-	if features.DefaultFeatureGate.Enabled(features.RemoveAPIServerProxyLegacyPort) {
-		if err := verifyRemoveAPIServerProxyLegacyPortFeatureGate(ctx, gardenClient, g.config.SeedConfig.Name); err != nil {
-			return err
-		}
-	}
+	/*
+		As we already run a modified apiserver-proxy component which uses the reversed-vpn port for connecting to the shoot controlplane,
+			we don't need to validate if every shoot was reconciled with g/g 1.113 and has a reconfigured apiserver-proxy
+
+		We also don't want to expose the vulnerable port again, requiring us the instantly enable the new "RemoveAPIServerProxyLegacyPort" feature gate when upgrading to g/g 1.113.
+		This would not be possible with the feature gate validation intact.
+
+		This check was only implemented upstream to ensure that the legacy proxy-protocol port (8443) will not be removed until every shoot switched to the new port
+
+		if features.DefaultFeatureGate.Enabled(features.RemoveAPIServerProxyLegacyPort) {
+			if err := verifyRemoveAPIServerProxyLegacyPortFeatureGate(ctx, gardenClient, g.config.SeedConfig.Name); err != nil {
+				return err
+			}
+		}*/
 
 	return nil
 }
@@ -119,6 +123,7 @@ func migrateDeprecatedTopologyLabels(ctx context.Context, log logr.Logger, seedC
 }
 
 // TODO(Wieneo): Remove this function when feature gate RemoveAPIServerProxyLegacyPort is removed
+/*
 func verifyRemoveAPIServerProxyLegacyPortFeatureGate(ctx context.Context, gardenClient client.Client, seedName string) error {
 	shootList := &gardencorev1beta1.ShootList{}
 	if err := gardenClient.List(ctx, shootList); err != nil {
@@ -151,3 +156,4 @@ func verifyRemoveAPIServerProxyLegacyPortFeatureGate(ctx context.Context, garden
 
 	return nil
 }
+*/
