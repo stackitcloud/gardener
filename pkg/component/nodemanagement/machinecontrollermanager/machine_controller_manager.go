@@ -209,8 +209,7 @@ func (m *machineControllerManager) Deploy(ctx context.Context) error {
 					Name:            containerName,
 					Image:           m.values.Image,
 					ImagePullPolicy: corev1.PullIfNotPresent,
-					Command: []string{
-						"./machine-controller-manager",
+					Args: []string{
 						"--control-kubeconfig=inClusterConfig",
 						"--machine-safety-overshooting-period=1m",
 						"--namespace=" + m.namespace,
