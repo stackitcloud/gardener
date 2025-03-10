@@ -205,8 +205,7 @@ var _ = Describe("MachineControllerManager", func() {
 							Name:            "machine-controller-manager",
 							Image:           image,
 							ImagePullPolicy: corev1.PullIfNotPresent,
-							Command: []string{
-								"./machine-controller-manager",
+							Args: []string{
 								"--control-kubeconfig=inClusterConfig",
 								"--machine-safety-overshooting-period=1m",
 								"--namespace=" + namespace,
