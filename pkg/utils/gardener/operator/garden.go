@@ -57,9 +57,10 @@ func IsServedByKubeAPIServer(resource string) bool {
 func ComputeRequiredExtensionsForGarden(garden *operatorv1alpha1.Garden) sets.Set[string] {
 	requiredExtensions := sets.New[string]()
 
-	if operatorv1alpha1helper.GetETCDMainBackup(garden) != nil {
-		requiredExtensions.Insert(gardener.ExtensionsID(extensionsv1alpha1.BackupBucketResource, garden.Spec.VirtualCluster.ETCD.Main.Backup.Provider))
-	}
+	// TODO: reapply validation when STACKITSKE-830 is resolved
+	// if operatorv1alpha1helper.GetETCDMainBackup(garden) != nil {
+	// 	requiredExtensions.Insert(gardener.ExtensionsID(extensionsv1alpha1.BackupBucketResource, garden.Spec.VirtualCluster.ETCD.Main.Backup.Provider))
+	// }
 
 	for _, provider := range operatorv1alpha1helper.GetDNSProviders(garden) {
 		requiredExtensions.Insert(gardener.ExtensionsID(extensionsv1alpha1.DNSRecordResource, provider.Type))

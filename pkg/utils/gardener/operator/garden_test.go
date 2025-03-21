@@ -76,9 +76,7 @@ var _ = Describe("Garden", func() {
 				},
 			}
 
-			Expect(ComputeRequiredExtensionsForGarden(garden).UnsortedList()).To(ConsistOf(
-				"BackupBucket/local-infrastructure",
-			))
+			Expect(ComputeRequiredExtensionsForGarden(garden).UnsortedList()).To(BeEmpty())
 		})
 
 		It("should return required DNSRecord extension types", func() {
@@ -113,20 +111,20 @@ var _ = Describe("Garden", func() {
 					{Type: "local-dns"},
 				},
 			}
-			garden.Spec.VirtualCluster.ETCD = &operatorv1alpha1.ETCD{
-				Main: &operatorv1alpha1.ETCDMain{
-					Backup: &operatorv1alpha1.Backup{
-						Provider: "local-infrastructure",
-					},
-				},
-			}
+			// garden.Spec.VirtualCluster.ETCD = &operatorv1alpha1.ETCD{
+			// 	Main: &operatorv1alpha1.ETCDMain{
+			// 		Backup: &operatorv1alpha1.Backup{
+			// 			Provider: "local-infrastructure",
+			// 		},
+			// 	},
+			// }
 			garden.Spec.Extensions = []operatorv1alpha1.GardenExtension{
 				{Type: "local-extension-1"},
 				{Type: "local-extension-2"},
 			}
 
 			Expect(ComputeRequiredExtensionsForGarden(garden).UnsortedList()).To(ConsistOf(
-				"BackupBucket/local-infrastructure",
+				// "BackupBucket/local-infrastructure",
 				"DNSRecord/local-dns",
 				"Extension/local-extension-1",
 				"Extension/local-extension-2",
