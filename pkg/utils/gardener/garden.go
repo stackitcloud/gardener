@@ -374,9 +374,9 @@ func IsServedByKubeAPIServer(resource string) bool {
 func ComputeRequiredExtensionsForGarden(garden *operatorv1alpha1.Garden) sets.Set[string] {
 	requiredExtensions := sets.New[string]()
 
-	if helper.GetETCDMainBackup(garden) != nil {
-		requiredExtensions.Insert(ExtensionsID(extensionsv1alpha1.BackupBucketResource, garden.Spec.VirtualCluster.ETCD.Main.Backup.Provider))
-	}
+	// if helper.GetETCDMainBackup(garden) != nil {
+	// 	requiredExtensions.Insert(ExtensionsID(extensionsv1alpha1.BackupBucketResource, garden.Spec.VirtualCluster.ETCD.Main.Backup.Provider))
+	// }
 
 	for _, provider := range helper.GetDNSProviders(garden) {
 		requiredExtensions.Insert(ExtensionsID(extensionsv1alpha1.DNSRecordResource, provider.Type))
