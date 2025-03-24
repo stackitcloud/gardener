@@ -374,6 +374,7 @@ func IsServedByKubeAPIServer(resource string) bool {
 func ComputeRequiredExtensionsForGarden(garden *operatorv1alpha1.Garden) sets.Set[string] {
 	requiredExtensions := sets.New[string]()
 
+	// TODO: reapply validation when STACKITSKE-830 is resolved
 	// if helper.GetETCDMainBackup(garden) != nil {
 	// 	requiredExtensions.Insert(ExtensionsID(extensionsv1alpha1.BackupBucketResource, garden.Spec.VirtualCluster.ETCD.Main.Backup.Provider))
 	// }
