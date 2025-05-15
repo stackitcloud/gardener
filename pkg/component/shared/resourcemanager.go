@@ -39,7 +39,6 @@ import (
 func runtimeGardenerResourceManagerDefaultValues() resourcemanager.Values {
 	return resourcemanager.Values{
 		ConcurrentSyncs:                   ptr.To(20),
-		AlwaysUpdate:                      ptr.To(true),
 		HealthSyncPeriod:                  &metav1.Duration{Duration: time.Minute},
 		MaxConcurrentNetworkPolicyWorkers: ptr.To(20),
 		NetworkPolicyControllerIngressControllerSelector: &resourcemanagerconfigv1alpha1.IngressControllerSelector{
