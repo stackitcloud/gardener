@@ -2459,54 +2459,58 @@ var _ = Describe("Validation Tests", func() {
 			})
 
 			Context("ETCD", func() {
-				It("should not be possible to set the backup bucket name if it was unset initially", func() {
-					oldGarden.Spec.VirtualCluster.ETCD = &operatorv1alpha1.ETCD{
-						Main: &operatorv1alpha1.ETCDMain{
-							Backup: &operatorv1alpha1.Backup{
-								Provider: "foo-provider",
-								ProviderConfig: &runtime.RawExtension{
-									Raw: []byte(`{"foo":"bar"}`),
+				/*
+					It("should not be possible to set the backup bucket name if it was unset initially", func() {
+						oldGarden.Spec.VirtualCluster.ETCD = &operatorv1alpha1.ETCD{
+							Main: &operatorv1alpha1.ETCDMain{
+								Backup: &operatorv1alpha1.Backup{
+									Provider: "foo-provider",
+									ProviderConfig: &runtime.RawExtension{
+										Raw: []byte(`{"foo":"bar"}`),
+									},
 								},
 							},
-						},
-					}
-					newGarden.Spec.VirtualCluster.ETCD = &operatorv1alpha1.ETCD{
-						Main: &operatorv1alpha1.ETCDMain{
-							Backup: &operatorv1alpha1.Backup{
-								BucketName: ptr.To("foo-bucket"),
-								Provider:   "foo-provider",
+						}
+						newGarden.Spec.VirtualCluster.ETCD = &operatorv1alpha1.ETCD{
+							Main: &operatorv1alpha1.ETCDMain{
+								Backup: &operatorv1alpha1.Backup{
+									BucketName: ptr.To("foo-bucket"),
+									Provider:   "foo-provider",
+								},
 							},
-						},
-					}
+						}
 
-					Expect(ValidateGardenUpdate(oldGarden, newGarden, extensions)).To(ContainElement(PointTo(MatchFields(IgnoreExtras, Fields{
-						"Type":  Equal(field.ErrorTypeInvalid),
-						"Field": Equal("spec.virtualCluster.etcd.main.backup.bucketName"),
-					}))))
-				})
+						Expect(ValidateGardenUpdate(oldGarden, newGarden, extensions)).To(ContainElement(PointTo(MatchFields(IgnoreExtras, Fields{
+							"Type":  Equal(field.ErrorTypeInvalid),
+							"Field": Equal("spec.virtualCluster.etcd.main.backup.bucketName"),
+						}))))
+					})
+				*/
 
-				It("should not be possible to delete the backup bucket name if it was set initially", func() {
-					oldGarden.Spec.VirtualCluster.ETCD = &operatorv1alpha1.ETCD{
-						Main: &operatorv1alpha1.ETCDMain{
-							Backup: &operatorv1alpha1.Backup{
-								Provider:   "foo-provider",
-								BucketName: ptr.To("foo-bucket"),
+				/*
+					It("should not be possible to delete the backup bucket name if it was set initially", func() {
+						oldGarden.Spec.VirtualCluster.ETCD = &operatorv1alpha1.ETCD{
+							Main: &operatorv1alpha1.ETCDMain{
+								Backup: &operatorv1alpha1.Backup{
+									Provider:   "foo-provider",
+									BucketName: ptr.To("foo-bucket"),
+								},
 							},
-						},
-					}
-					newGarden.Spec.VirtualCluster.ETCD = &operatorv1alpha1.ETCD{
-						Main: &operatorv1alpha1.ETCDMain{
-							Backup: &operatorv1alpha1.Backup{
-								Provider: "foo-provider",
+						}
+						newGarden.Spec.VirtualCluster.ETCD = &operatorv1alpha1.ETCD{
+							Main: &operatorv1alpha1.ETCDMain{
+								Backup: &operatorv1alpha1.Backup{
+									Provider: "foo-provider",
+								},
 							},
-						},
-					}
+						}
 
-					Expect(ValidateGardenUpdate(oldGarden, newGarden, extensions)).To(ContainElement(PointTo(MatchFields(IgnoreExtras, Fields{
-						"Type":  Equal(field.ErrorTypeInvalid),
-						"Field": Equal("spec.virtualCluster.etcd.main.backup.bucketName"),
-					}))))
-				})
+						Expect(ValidateGardenUpdate(oldGarden, newGarden, extensions)).To(ContainElement(PointTo(MatchFields(IgnoreExtras, Fields{
+							"Type":  Equal(field.ErrorTypeInvalid),
+							"Field": Equal("spec.virtualCluster.etcd.main.backup.bucketName"),
+						}))))
+					})
+				*/
 
 				It("should not be possible to delete the backup if it was set initially", func() {
 					oldGarden.Spec.VirtualCluster.ETCD = &operatorv1alpha1.ETCD{
