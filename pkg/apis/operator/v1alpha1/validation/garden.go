@@ -137,9 +137,10 @@ func validateVirtualClusterUpdate(oldGarden, newGarden *operatorv1alpha1.Garden)
 	if oldVirtualCluster.ETCD != nil && oldVirtualCluster.ETCD.Main != nil && oldVirtualCluster.ETCD.Main.Backup != nil &&
 		newVirtualCluster.ETCD != nil && newVirtualCluster.ETCD.Main != nil {
 		fldBackup := fldPath.Child("etcd", "main", "backup")
-		if newVirtualCluster.ETCD.Main.Backup != nil {
+		// TODO: reapply validation when https://github.com/stackitcloud/ske-base/pull/3088 is rolled out
+		/*if newVirtualCluster.ETCD.Main.Backup != nil {
 			allErrs = append(allErrs, apivalidation.ValidateImmutableField(oldVirtualCluster.ETCD.Main.Backup.BucketName, newVirtualCluster.ETCD.Main.Backup.BucketName, fldBackup.Child("bucketName"))...)
-		}
+		}*/
 		if newVirtualCluster.ETCD.Main.Backup == nil {
 			allErrs = append(allErrs, field.Forbidden(fldBackup, "backup must not be deactivated if it was set before"))
 		}
