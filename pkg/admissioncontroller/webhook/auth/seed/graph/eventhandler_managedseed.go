@@ -103,6 +103,19 @@ func (g *graph) handleManagedSeedCreateOrUpdate(ctx context.Context, managedSeed
 			}
 			g.addEdge(vertex, managedSeedVertex)
 		}
+		for _, resource := range seedTemplate.Spec.Resources {
+			// only secrets and configMap are supported here
+			if resource.ResourceRef.APIVersion == "v1" {
+				if resource.ResourceRef.Kind == "Secret" {
+					secretVertex := g.getOrCreateVertex(VertexTypeSecret, v1beta1constants.GardenNamespace, resource.ResourceRef.Name)
+					g.addEdge(secretVertex, managedSeedVertex)
+				}
+				if resource.ResourceRef.Kind == "ConfigMap" {
+					configMapVertex := g.getOrCreateVertex(VertexTypeConfigMap, v1beta1constants.GardenNamespace, resource.ResourceRef.Name)
+					g.addEdge(configMapVertex, managedSeedVertex)
+				}
+			}
+		}
 	}
 
 	if gardenletConfig == nil || managedSeed.Spec.Gardenlet.Bootstrap == nil {
