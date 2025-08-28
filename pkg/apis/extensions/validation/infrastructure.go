@@ -64,7 +64,7 @@ func ValidateInfrastructureSpecUpdate(new, old *extensionsv1alpha1.Infrastructur
 		return field.ErrorList{field.Forbidden(fldPath, fmt.Sprintf("cannot update infrastructure spec if deletion timestamp is set. Requested changes: %s", strings.Join(diff, ",")))}
 	}
 
-	allErrs = append(allErrs, apivalidation.ValidateImmutableField(new.Type, old.Type, fldPath.Child("type"))...)
+	// allErrs = append(allErrs, apivalidation.ValidateImmutableField(new.Type, old.Type, fldPath.Child("type"))...)
 	allErrs = append(allErrs, apivalidation.ValidateImmutableField(new.Region, old.Region, fldPath.Child("region"))...)
 
 	return allErrs
