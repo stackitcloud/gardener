@@ -6,7 +6,6 @@ package gardener
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"maps"
 	"slices"
@@ -193,24 +192,6 @@ func ValidateCloudProfileChanges(cloudProfileLister gardencorev1beta1listers.Clo
 		}
 	}
 	return nil
-}
-
-// getRootCloudProfile determines the root CloudProfile from a CloudProfileReference containing any (Namespaced)CloudProfile
-func getRootCloudProfile(namespacedCloudProfileLister gardencorev1beta1listers.NamespacedCloudProfileLister, cloudProfile *gardencorev1beta1.CloudProfileReference, namespace string) (*gardencorev1beta1.CloudProfileReference, error) {
-	if cloudProfile == nil {
-		return nil, errors.New("unexpected nil cloudprofile to get root of")
-	}
-	switch cloudProfile.Kind {
-	case v1beta1constants.CloudProfileReferenceKindCloudProfile:
-		return cloudProfile, nil
-	case v1beta1constants.CloudProfileReferenceKindNamespacedCloudProfile:
-		cp, err := namespacedCloudProfileLister.NamespacedCloudProfiles(namespace).Get(cloudProfile.Name)
-		if err != nil {
-			return nil, err
-		}
-		return getRootCloudProfile(namespacedCloudProfileLister, &cp.Spec.Parent, namespace)
-	}
-	return nil, fmt.Errorf("unexpected cloudprofile kind %s", cloudProfile.Kind)
 }
 
 // BuildCoreCloudProfileReference determines and returns the CloudProfile reference of the given shoot,
