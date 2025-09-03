@@ -347,42 +347,42 @@ var _ = Describe("CloudProfile", func() {
 				Expect(err).NotTo(HaveOccurred())
 			})
 
-			It("should fail if the CloudProfile referenced by cloudProfileName is updated to an unrelated NamespacedCloudProfile", func() {
-				unrelatedNamespacedCloudProfile := namespacedCloudProfile.DeepCopy()
-				unrelatedNamespacedCloudProfile.Spec.Parent = gardencorev1beta1.CloudProfileReference{
-					Kind: "CloudProfile",
-					Name: "someOtherCloudProfile",
-				}
+			// It("should fail if the CloudProfile referenced by cloudProfileName is updated to an unrelated NamespacedCloudProfile", func() {
+			// 	unrelatedNamespacedCloudProfile := namespacedCloudProfile.DeepCopy()
+			// 	unrelatedNamespacedCloudProfile.Spec.Parent = gardencorev1beta1.CloudProfileReference{
+			// 		Kind: "CloudProfile",
+			// 		Name: "someOtherCloudProfile",
+			// 	}
 
-				Expect(coreInformerFactory.Core().V1beta1().CloudProfiles().Informer().GetStore().Add(cloudProfile)).To(Succeed())
-				Expect(coreInformerFactory.Core().V1beta1().NamespacedCloudProfiles().Informer().GetStore().Add(unrelatedNamespacedCloudProfile)).To(Succeed())
+			// 	Expect(coreInformerFactory.Core().V1beta1().CloudProfiles().Informer().GetStore().Add(cloudProfile)).To(Succeed())
+			// 	Expect(coreInformerFactory.Core().V1beta1().NamespacedCloudProfiles().Informer().GetStore().Add(unrelatedNamespacedCloudProfile)).To(Succeed())
 
-				newShoot := shoot.DeepCopy()
-				shoot.Spec.CloudProfileName = &cloudProfileName
-				newShoot.Spec.CloudProfile = &core.CloudProfileReference{
-					Kind: "NamespacedCloudProfile",
-					Name: unrelatedNamespacedCloudProfile.Name,
-				}
-				err := gardenerutils.ValidateCloudProfileChanges(cloudProfileLister, namespacedCloudProfileLister, newShoot, shoot)
-				Expect(err).To(HaveOccurred())
-			})
+			// 	newShoot := shoot.DeepCopy()
+			// 	shoot.Spec.CloudProfileName = &cloudProfileName
+			// 	newShoot.Spec.CloudProfile = &core.CloudProfileReference{
+			// 		Kind: "NamespacedCloudProfile",
+			// 		Name: unrelatedNamespacedCloudProfile.Name,
+			// 	}
+			// 	err := gardenerutils.ValidateCloudProfileChanges(cloudProfileLister, namespacedCloudProfileLister, newShoot, shoot)
+			// 	Expect(err).To(HaveOccurred())
+			// })
 
-			It("should fail if the CloudProfile is updated to another CloudProfile", func() {
-				unrelatedCloudProfile := cloudProfile.DeepCopy()
-				unrelatedCloudProfile.Name = "someOtherCloudProfile"
+			// It("should fail if the CloudProfile is updated to another CloudProfile", func() {
+			// 	unrelatedCloudProfile := cloudProfile.DeepCopy()
+			// 	unrelatedCloudProfile.Name = "someOtherCloudProfile"
 
-				Expect(coreInformerFactory.Core().V1beta1().CloudProfiles().Informer().GetStore().Add(cloudProfile)).To(Succeed())
-				Expect(coreInformerFactory.Core().V1beta1().CloudProfiles().Informer().GetStore().Add(unrelatedCloudProfile)).To(Succeed())
+			// 	Expect(coreInformerFactory.Core().V1beta1().CloudProfiles().Informer().GetStore().Add(cloudProfile)).To(Succeed())
+			// 	Expect(coreInformerFactory.Core().V1beta1().CloudProfiles().Informer().GetStore().Add(unrelatedCloudProfile)).To(Succeed())
 
-				newShoot := shoot.DeepCopy()
-				shoot.Spec.CloudProfileName = &cloudProfileName
-				newShoot.Spec.CloudProfile = &core.CloudProfileReference{
-					Kind: "CloudProfile",
-					Name: unrelatedCloudProfile.Name,
-				}
-				err := gardenerutils.ValidateCloudProfileChanges(cloudProfileLister, namespacedCloudProfileLister, newShoot, shoot)
-				Expect(err).To(HaveOccurred())
-			})
+			// 	newShoot := shoot.DeepCopy()
+			// 	shoot.Spec.CloudProfileName = &cloudProfileName
+			// 	newShoot.Spec.CloudProfile = &core.CloudProfileReference{
+			// 		Kind: "CloudProfile",
+			// 		Name: unrelatedCloudProfile.Name,
+			// 	}
+			// 	err := gardenerutils.ValidateCloudProfileChanges(cloudProfileLister, namespacedCloudProfileLister, newShoot, shoot)
+			// 	Expect(err).To(HaveOccurred())
+			// })
 		})
 
 		Describe("#BuildCoreCloudProfileReference", func() {

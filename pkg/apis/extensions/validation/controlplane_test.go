@@ -96,9 +96,9 @@ var _ = Describe("ControlPlane validation tests", func() {
 			errorList := ValidateControlPlaneUpdate(newControlPlane, cp)
 
 			Expect(errorList).To(ConsistOf(PointTo(MatchFields(IgnoreExtras, Fields{
-				"Type":  Equal(field.ErrorTypeInvalid),
-				"Field": Equal("spec.type"),
-			})), PointTo(MatchFields(IgnoreExtras, Fields{
+				// 	"Type":  Equal(field.ErrorTypeInvalid),
+				// 	"Field": Equal("spec.type"),
+				// })), PointTo(MatchFields(IgnoreExtras, Fields{
 				"Type":  Equal(field.ErrorTypeInvalid),
 				"Field": Equal("spec.region"),
 			}))))

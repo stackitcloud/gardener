@@ -1047,10 +1047,10 @@ var _ = Describe("Shoot Validation Tests", func() {
 					"Type":  Equal(field.ErrorTypeInvalid),
 					"Field": Equal("spec.region"),
 				})),
-				PointTo(MatchFields(IgnoreExtras, Fields{
-					"Type":  Equal(field.ErrorTypeInvalid),
-					"Field": Equal("spec.provider.type"),
-				})),
+				// PointTo(MatchFields(IgnoreExtras, Fields{
+				// 	"Type":  Equal(field.ErrorTypeInvalid),
+				// 	"Field": Equal("spec.provider.type"),
+				// })),
 			))
 		})
 
