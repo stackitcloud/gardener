@@ -393,7 +393,7 @@ func validateWorkerUpdate(newHasWorkers, oldHasWorkers bool, fldPath *field.Path
 func ValidateProviderUpdate(newProvider, oldProvider *core.Provider, fldPath *field.Path) field.ErrorList {
 	allErrs := field.ErrorList{}
 
-	allErrs = append(allErrs, apivalidation.ValidateImmutableField(newProvider.Type, oldProvider.Type, fldPath.Child("type"))...)
+	// allErrs = append(allErrs, apivalidation.ValidateImmutableField(newProvider.Type, oldProvider.Type, fldPath.Child("type"))...)
 
 	for i, newWorker := range newProvider.Workers {
 		var (

@@ -1063,9 +1063,10 @@ func (c *validationContext) validateProvider(a admission.Attributes) field.Error
 }
 
 func (c *validationContext) validateProviderType(path *field.Path) *field.Error {
-	if c.shoot.Spec.Provider.Type != c.cloudProfileSpec.Type {
-		return field.Invalid(path.Child("type"), c.shoot.Spec.Provider.Type, fmt.Sprintf("provider type in shoot must equal provider type of referenced CloudProfile: %q", c.cloudProfileSpec.Type))
-	}
+	// allow mismatch
+	// if c.shoot.Spec.Provider.Type != c.cloudProfileSpec.Type {
+	// 	return field.Invalid(path.Child("type"), c.shoot.Spec.Provider.Type, fmt.Sprintf("provider type in shoot must equal provider type of referenced CloudProfile: %q", c.cloudProfileSpec.Type))
+	// }
 
 	if c.secretBinding != nil && !v1beta1helper.SecretBindingHasType(c.secretBinding, c.shoot.Spec.Provider.Type) {
 		var secretBindingProviderType string

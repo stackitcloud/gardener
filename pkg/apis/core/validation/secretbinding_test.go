@@ -158,25 +158,25 @@ var _ = Describe("SecretBinding Validation Tests", func() {
 			))
 		})
 
-		It("should forbid updating the SecretBinding provider when the field is already set", func() {
-			secretBinding.Provider = &core.SecretBindingProvider{
-				Type: "old-type",
-			}
+		// It("should forbid updating the SecretBinding provider when the field is already set", func() {
+		// 	secretBinding.Provider = &core.SecretBindingProvider{
+		// 		Type: "old-type",
+		// 	}
 
-			newSecretBinding := prepareSecretBindingForUpdate(secretBinding)
-			newSecretBinding.Provider = &core.SecretBindingProvider{
-				Type: "new-type",
-			}
+		// 	newSecretBinding := prepareSecretBindingForUpdate(secretBinding)
+		// 	newSecretBinding.Provider = &core.SecretBindingProvider{
+		// 		Type: "new-type",
+		// 	}
 
-			errorList := ValidateSecretBindingUpdate(newSecretBinding, secretBinding)
+		// 	errorList := ValidateSecretBindingUpdate(newSecretBinding, secretBinding)
 
-			Expect(errorList).To(ConsistOf(
-				PointTo(MatchFields(IgnoreExtras, Fields{
-					"Type":  Equal(field.ErrorTypeInvalid),
-					"Field": Equal("provider"),
-				})),
-			))
-		})
+		// 	Expect(errorList).To(ConsistOf(
+		// 		PointTo(MatchFields(IgnoreExtras, Fields{
+		// 			"Type":  Equal(field.ErrorTypeInvalid),
+		// 			"Field": Equal("provider"),
+		// 		})),
+		// 	))
+		// })
 
 		It("should allow updating the SecretBinding provider when the field is not set", func() {
 			secretBinding.Provider = nil

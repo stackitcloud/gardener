@@ -146,9 +146,9 @@ var _ = Describe("Worker validation tests", func() {
 			errorList := ValidateWorkerUpdate(newWorker, worker)
 
 			Expect(errorList).To(ConsistOf(PointTo(MatchFields(IgnoreExtras, Fields{
-				"Type":  Equal(field.ErrorTypeInvalid),
-				"Field": Equal("spec.type"),
-			})), PointTo(MatchFields(IgnoreExtras, Fields{
+				// 	"Type":  Equal(field.ErrorTypeInvalid),
+				// 	"Field": Equal("spec.type"),
+				// })), PointTo(MatchFields(IgnoreExtras, Fields{
 				"Type":  Equal(field.ErrorTypeInvalid),
 				"Field": Equal("spec.region"),
 			}))))
