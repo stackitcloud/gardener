@@ -51,8 +51,9 @@ RestartSec=5
 StartLimitBurst=0
 EnvironmentFile=/etc/environment
 ExecStart=/var/lib/gardenadm/download.sh
-StandardOutput=journal+console
-StandardError=journal+console
+TTYPath=/dev/ttyS0
+StandardOutput=tty
+StandardError=tty
 [Install]
 WantedBy=multi-user.target`),
 					FilePaths: []string{"/var/lib/gardenadm/download.sh"},

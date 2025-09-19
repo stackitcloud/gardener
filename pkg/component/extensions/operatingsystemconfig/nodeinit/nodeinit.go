@@ -143,8 +143,9 @@ RestartSec=5
 StartLimitBurst=0
 EnvironmentFile=/etc/environment
 ExecStart=` + filePath + `
-StandardOutput=journal+console
-StandardError=journal+console
+TTYPath=/dev/ttyS0
+StandardOutput=tty
+StandardError=tty
 [Install]
 WantedBy=multi-user.target`),
 		FilePaths: []string{filePath},
