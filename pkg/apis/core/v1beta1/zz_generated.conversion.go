@@ -6238,6 +6238,7 @@ func autoConvert_v1beta1_SeedSettingLoadBalancerServices_To_core_SeedSettingLoad
 	out.Zones = *(*[]core.SeedSettingLoadBalancerServicesZones)(unsafe.Pointer(&in.Zones))
 	out.ProxyProtocol = (*core.LoadBalancerServicesProxyProtocol)(unsafe.Pointer(in.ProxyProtocol))
 	out.ZonalIngress = (*core.SeedSettingLoadBalancerServicesZonalIngress)(unsafe.Pointer(in.ZonalIngress))
+	out.Class = (*string)(unsafe.Pointer(in.Class))
 	return nil
 }
 
@@ -6252,6 +6253,7 @@ func autoConvert_core_SeedSettingLoadBalancerServices_To_v1beta1_SeedSettingLoad
 	out.Zones = *(*[]SeedSettingLoadBalancerServicesZones)(unsafe.Pointer(&in.Zones))
 	out.ProxyProtocol = (*LoadBalancerServicesProxyProtocol)(unsafe.Pointer(in.ProxyProtocol))
 	out.ZonalIngress = (*SeedSettingLoadBalancerServicesZonalIngress)(unsafe.Pointer(in.ZonalIngress))
+	out.Class = (*string)(unsafe.Pointer(in.Class))
 	return nil
 }
 
