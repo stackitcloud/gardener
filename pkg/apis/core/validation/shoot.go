@@ -3229,32 +3229,10 @@ func validateHAShootControlPlaneConfigurationValue(shoot *core.Shoot) field.Erro
 	return allErrs
 }
 
-func validateShootHAControlPlaneSpecUpdate(newShoot, oldShoot *core.Shoot, fldPath *field.Path) field.ErrorList {
+func validateShootHAControlPlaneSpecUpdate(_, _ *core.Shoot, _ *field.Path) field.ErrorList {
 	var (
-		allErrs          = field.ErrorList{}
-		shootIsScheduled = newShoot.Spec.SeedName != nil
-
-		oldVal, newVal core.FailureToleranceType
-		oldValExists   bool
+		allErrs = field.ErrorList{}
 	)
-
-	if oldShoot.Spec.ControlPlane != nil && oldShoot.Spec.ControlPlane.HighAvailability != nil {
-		oldVal = oldShoot.Spec.ControlPlane.HighAvailability.FailureTolerance.Type
-		oldValExists = true
-	}
-
-	if newShoot.Spec.ControlPlane != nil && newShoot.Spec.ControlPlane.HighAvailability != nil {
-		newVal = newShoot.Spec.ControlPlane.HighAvailability.FailureTolerance.Type
-		// TODO(@aaronfern): remove this validation of not allowing scale-up to HA while hibernated when https://github.com/gardener/etcd-druid/issues/589 is resolved
-		if !oldValExists && helper.IsShootInHibernation(newShoot) {
-			allErrs = append(allErrs, field.Forbidden(fldPath.Child("highAvailability", "failureTolerance", "type"), "Shoot is currently hibernated and cannot be scaled up to HA. Please make sure your cluster has woken up before scaling it up to HA"))
-		}
-	}
-
-	if oldValExists && shootIsScheduled {
-		// If the HighAvailability field is already set for the shoot then enforce that it cannot be changed.
-		allErrs = append(allErrs, apivalidation.ValidateImmutableField(newVal, oldVal, fldPath.Child("highAvailability", "failureTolerance", "type"))...)
-	}
 
 	return allErrs
 }
