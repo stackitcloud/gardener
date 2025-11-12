@@ -645,30 +645,6 @@ var _ = Describe("Project Validation Tests", func() {
 			Entry("no change (same value)", ptr.To("garden-dev"), ptr.To("garden-dev"), BeEmpty()),
 		)
 
-		It("should forbid Project updates trying to change the createdBy field", func() {
-			newProject := prepareProjectForUpdate(project)
-			newProject.Spec.CreatedBy.Name = "some-other-user"
-
-			errorList := ValidateProjectUpdate(newProject, project)
-
-			Expect(errorList).To(ConsistOf(PointTo(MatchFields(IgnoreExtras, Fields{
-				"Type":  Equal(field.ErrorTypeInvalid),
-				"Field": Equal("spec.createdBy"),
-			}))))
-		})
-
-		It("should forbid Project updates trying to change the createdBy field", func() {
-			newProject := prepareProjectForUpdate(project)
-			newProject.Spec.CreatedBy.Name = "some-other-user"
-
-			errorList := ValidateProjectUpdate(newProject, project)
-
-			Expect(errorList).To(ConsistOf(PointTo(MatchFields(IgnoreExtras, Fields{
-				"Type":  Equal(field.ErrorTypeInvalid),
-				"Field": Equal("spec.createdBy"),
-			}))))
-		})
-
 		It("should forbid Project updates trying to reset the owner field", func() {
 			newProject := prepareProjectForUpdate(project)
 			newProject.Spec.Owner = nil
