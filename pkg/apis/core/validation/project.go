@@ -68,9 +68,6 @@ func ValidateProjectUpdate(newProject, oldProject *core.Project) field.ErrorList
 	allErrs = append(allErrs, apivalidation.ValidateObjectMetaUpdate(&newProject.ObjectMeta, &oldProject.ObjectMeta, field.NewPath("metadata"))...)
 	allErrs = append(allErrs, ValidateProjectWithOpts(newProject, opts)...)
 
-	if oldProject.Spec.CreatedBy != nil {
-		allErrs = append(allErrs, apivalidation.ValidateImmutableField(newProject.Spec.CreatedBy, oldProject.Spec.CreatedBy, field.NewPath("spec", "createdBy"))...)
-	}
 	if oldProject.Spec.Namespace != nil {
 		allErrs = append(allErrs, apivalidation.ValidateImmutableField(newProject.Spec.Namespace, oldProject.Spec.Namespace, field.NewPath("spec", "namespace"))...)
 	}
