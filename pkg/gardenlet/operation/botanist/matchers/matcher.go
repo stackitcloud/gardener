@@ -45,6 +45,10 @@ var (
 		corev1.LabelMetadataName:         metav1.NamespaceSystem,
 	}
 
+	kubeNodeNamespaceLabels = labels.Set{
+		corev1.LabelMetadataName: corev1.NamespaceNodeLease,
+	}
+
 	podsLabels = labels.Set{
 		v1beta1constants.ShootNoCleanup: "true",
 		managedresources.LabelKeyOrigin: managedresources.LabelValueGardener,
@@ -56,6 +60,9 @@ var (
 		// object selector here is added to support the use case described in - https://github.com/gardener/gardener/pull/8034
 		{GVR: coordinationv1.SchemeGroupVersion.WithResource("leases"), NamespaceLabels: kubeSystemNamespaceLabels, ObjectLabels: labels.Set{}},
 		{GVR: coordinationv1beta1.SchemeGroupVersion.WithResource("leases"), NamespaceLabels: kubeSystemNamespaceLabels, ObjectLabels: labels.Set{}},
+		// kube-node-lease namespace is added to flag webhooks related to the node heartbeat described in - https://github.com/gardener/gardener/issues/13361
+		{GVR: coordinationv1.SchemeGroupVersion.WithResource("leases"), NamespaceLabels: kubeNodeNamespaceLabels, ObjectLabels: labels.Set{}},
+		{GVR: coordinationv1beta1.SchemeGroupVersion.WithResource("leases"), NamespaceLabels: kubeNodeNamespaceLabels, ObjectLabels: labels.Set{}},
 	}
 
 	// WebhookConstraintMatchers contains a list of all api resources which can break
