@@ -137,6 +137,9 @@ var (
 		// Needed for kubelet and kube-system controllers leader election.
 		{GVR: coordinationv1.SchemeGroupVersion.WithResource("leases")},
 		{GVR: coordinationv1beta1.SchemeGroupVersion.WithResource("leases")},
+		// Mark leases in kube-node-lease as critical for selector remediation
+		{GVR: coordinationv1.SchemeGroupVersion.WithResource("leases"), NamespaceLabels: kubeNodeNamespaceLabels},
+		{GVR: coordinationv1beta1.SchemeGroupVersion.WithResource("leases"), NamespaceLabels: kubeNodeNamespaceLabels},
 
 		// Modifications might be needed for old clusters with new policies.
 		{GVR: networkingv1.SchemeGroupVersion.WithResource("networkpolicies"), NamespaceLabels: kubeSystemNamespaceLabels},
