@@ -61,6 +61,7 @@ var (
 		{GVR: coordinationv1.SchemeGroupVersion.WithResource("leases"), NamespaceLabels: kubeSystemNamespaceLabels, ObjectLabels: labels.Set{}},
 		{GVR: coordinationv1beta1.SchemeGroupVersion.WithResource("leases"), NamespaceLabels: kubeSystemNamespaceLabels, ObjectLabels: labels.Set{}},
 		// kube-node-lease namespace is added to flag webhooks related to the node heartbeat described in - https://github.com/gardener/gardener/issues/13361
+		// This should adjust timouts to leases
 		{GVR: coordinationv1.SchemeGroupVersion.WithResource("leases"), NamespaceLabels: kubeNodeNamespaceLabels, ObjectLabels: labels.Set{}},
 		{GVR: coordinationv1beta1.SchemeGroupVersion.WithResource("leases"), NamespaceLabels: kubeNodeNamespaceLabels, ObjectLabels: labels.Set{}},
 	}
@@ -138,6 +139,7 @@ var (
 		{GVR: coordinationv1.SchemeGroupVersion.WithResource("leases")},
 		{GVR: coordinationv1beta1.SchemeGroupVersion.WithResource("leases")},
 		// Mark leases in kube-node-lease as critical for selector remediation
+		// This should adjust exclusion
 		{GVR: coordinationv1.SchemeGroupVersion.WithResource("leases"), NamespaceLabels: kubeNodeNamespaceLabels},
 		{GVR: coordinationv1beta1.SchemeGroupVersion.WithResource("leases"), NamespaceLabels: kubeNodeNamespaceLabels},
 
