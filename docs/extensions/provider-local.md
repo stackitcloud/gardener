@@ -128,16 +128,18 @@ This controller implements the `Bastion.extensions.gardener.cloud` resource by d
 
 Note that this controller does not respect the `Bastion.spec.ingress` configuration as there is no way to perform client IP restrictions in the local setup.
 
-#### `Service`
+#### `cloud-controller-manager-local`
 
-This controller reconciles `Services` of type `LoadBalancer` in the local `Seed` cluster.
-Since the local Kubernetes clusters used as Seed clusters typically don't support such services, this controller sets the `.status.ingress.loadBalancer.ip[0]` to magic `172.18.255.*` or `fd00:ff::*` IP addresses that are added to the loopback interface of the host machine running the kind cluster.
-It makes LoadBalancer Services (e.g. `istio-ingressgateway` and `shoot--*--*/bastion-*`) available to the host by setting `spec.ports[].nodePort` to well-known ports that are mapped to `hostPorts` in the kind cluster configuration.
+`Services` of type `LoadBalancer` in the local setup are handled by `cloud-controller-manager-local`, a dedicated cloud controller manager implementing the Kubernetes [`cloudprovider.LoadBalancer`](https://pkg.go.dev/k8s.io/cloud-provider#LoadBalancer) interface.
 
-`istio-ingress/istio-ingressgateway` is set to be exposed on `nodePort` `30433` by this controller.
-The bastion services are exposed on `nodePort` `30022`.
+For each `LoadBalancer` service, the cloud controller manager creates a Docker container running [envoy](https://www.envoyproxy.io/) as a Layer 4 proxy.
+The envoy container is connected to the `kind` Docker network and proxies traffic from external IPs to the Kubernetes node ports of the service.
 
-In case the seed has multiple availability zones (`.spec.provider.zones`) and it uses SNI, the different zone-specific `istio-ingressgateway` loadbalancers are exposed via different IP addresses. Per default, IP addresses `172.18.255.1{0,1,2}` and `fd00:ff::1{0,1,2}` are used for the zones `0`, `1`, and `2` respectively.
+Load balancer IPs are allocated from dedicated CIDR ranges:
+- Internal IPs (within the `kind` network): `172.18.0.240/28` (IPv4), `fd00:10::f0/124` (IPv6)
+- External IPs (bound on the host): `172.18.255.240/28` (IPv4), `fd00:ff::f0/124` (IPv6)
+
+The external IPs are added to the loopback interface of the host machine by `hack/kind-up.sh`, making `LoadBalancer` services (e.g., `istio-ingressgateway` and bastion services) reachable from the host.
 
 #### ETCD Backups
 
