@@ -821,6 +821,12 @@ type GardenStatus struct {
 	// Credentials contains information about the virtual garden cluster credentials.
 	// +optional
 	Credentials *Credentials `json:"credentials,omitempty"`
+
+	VirtualClusterStatus *VirtualClusterStatus `json:"virtualClusterStatus,omitempty"`
+}
+
+type VirtualClusterStatus struct {
+	AdvertisedAddresses []AdvertisedAddress `json:"advertisedAddresses,omitempty"`
 }
 
 // Credentials contains information about the virtual garden cluster credentials.
@@ -888,6 +894,14 @@ type WorkloadIdentityKeyRotation struct {
 	// triggered.
 	// +optional
 	LastCompletionTriggeredTime *metav1.Time `json:"lastCompletionTriggeredTime,omitempty"`
+}
+
+// AdvertisedAddress
+type AdvertisedAddress struct {
+	// Name of the advertised address. e.g. virtual or discovery-server
+	Name string `json:"name" protobuf:"bytes,1,opt,name=name"`
+	// The URL of the server. e.g. https://api.foo.bar or https://1.2.3.4
+	URL string `json:"url" protobuf:"bytes,2,opt,name=url"`
 }
 
 const (

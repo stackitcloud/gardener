@@ -409,6 +409,9 @@ func (r *Reconciler) updateStatusOperationSuccess(ctx context.Context, garden *o
 		})
 	}
 
+	// TODO: we must write this before reconilation is fully complete as extensions might want to use this field
+	mutateVirtualClusterStatus(garden)
+
 	return r.RuntimeClientSet.Client().Status().Update(ctx, garden)
 }
 
@@ -632,4 +635,16 @@ func valiEnabled(networking operatorv1alpha1.RuntimeNetworking) (bool, error) {
 	}
 
 	return true, nil
+}
+
+func mutateVirtualClusterStatus(garden *operatorv1alpha1.Garden) {
+	status := &operatorv1alpha1.VirtualClusterStatus{}
+	domains := getAPIServerDomains(garden.Spec.VirtualCluster.DNS.Domains)
+	for _, d := range domains {
+		status.AdvertisedAddresses = append(status.AdvertisedAddresses, operatorv1alpha1.AdvertisedAddress{
+			Name: operatorv1alpha1.AdvertisedAddressVirtual,
+			URL:  fmt.Sprintf("https://%s", d.Name),
+		})
+	}
+	garden.Status.VirtualClusterStatus = status
 }
