@@ -863,6 +863,12 @@ message ControllerResource {
   // This field can only be set for resources of kind "Extension".
   // +optional
   repeated string clusterCompatibility = 9;
+
+  // TODO: Find a prettier name for this field.
+  // SelfHostedShootExposureEndpointUpdate indicates whether the extension requires the SelfHostedShootExposure endpoints to be continuously
+  // updated with healthy/valid control plane endpoints.
+  // +optional
+  optional bool selfHostedShootExposureEndpointUpdate = 10;
 }
 
 // ControllerResourceLifecycle defines the lifecycle of a controller resource.

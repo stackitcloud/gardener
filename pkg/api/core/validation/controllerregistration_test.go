@@ -348,6 +348,48 @@ var _ = Describe("validation", func() {
 			}))))
 		})
 
+		It("should allow to set required field for kind SelfHostedShootExposure", func() {
+			strategy := core.BeforeKubeAPIServer
+			resource := core.ControllerResource{
+				Kind:                 extensionsv1alpha1.ExtensionResource,
+				Type:                 "arbitrary",
+				AutoEnable:           []core.ClusterType{core.ClusterTypeShoot},
+				ClusterCompatibility: []core.ClusterType{core.ClusterTypeShoot},
+				ReconcileTimeout:     &metav1.Duration{Duration: 10 * time.Second},
+				Lifecycle: &core.ControllerResourceLifecycle{
+					Reconcile: &strategy,
+				},
+			}
+
+			resources = []core.ControllerResource{resource}
+			errorList := ValidateControllerResources(resources, validModes, fldPath)
+
+			Expect(errorList).To(BeEmpty())
+		})
+
+		It("should forbid to set certain fields for kind != Extension", func() {
+			strategy := core.BeforeKubeAPIServer
+			ctrlResource.AutoEnable = []core.ClusterType{core.ClusterTypeShoot}
+			ctrlResource.ReconcileTimeout = &metav1.Duration{Duration: 10 * time.Second}
+			ctrlResource.Lifecycle = &core.ControllerResourceLifecycle{
+				Reconcile: &strategy,
+			}
+			resources = []core.ControllerResource{ctrlResource}
+
+			errorList := ValidateControllerResources(resources, validModes, fldPath)
+
+			Expect(errorList).To(ConsistOf(PointTo(MatchFields(IgnoreExtras, Fields{
+				"Type":  Equal(field.ErrorTypeForbidden),
+				"Field": Equal("resources[0].autoEnable"),
+			})), PointTo(MatchFields(IgnoreExtras, Fields{
+				"Type":  Equal(field.ErrorTypeForbidden),
+				"Field": Equal("resources[0].reconcileTimeout"),
+			})), PointTo(MatchFields(IgnoreExtras, Fields{
+				"Type":  Equal(field.ErrorTypeForbidden),
+				"Field": Equal("resources[0].lifecycle"),
+			}))))
+		})
+
 		It("should allow setting valid autoEnable modes", func() {
 			resources[0].Kind = "Extension"
 			resources[0].AutoEnable = []core.ClusterType{core.ClusterTypeShoot, core.ClusterTypeSeed}

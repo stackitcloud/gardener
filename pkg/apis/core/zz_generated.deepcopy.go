@@ -1596,6 +1596,11 @@ func (in *ControllerResource) DeepCopyInto(out *ControllerResource) {
 		*out = make([]ClusterType, len(*in))
 		copy(*out, *in)
 	}
+	if in.SelfHostedShootExposureEndpointUpdate != nil {
+		in, out := &in.SelfHostedShootExposureEndpointUpdate, &out.SelfHostedShootExposureEndpointUpdate
+		*out = new(bool)
+		**out = **in
+	}
 	return
 }
 

@@ -131,6 +131,10 @@ func ValidateControllerResources(resources []core.ControllerResource, clusterTyp
 			continue
 		}
 
+		if resource.Kind != extensionsv1alpha1.SelfHostedShootExposureResource && resource.SelfHostedShootExposureEndpointUpdate != nil {
+			allErrs = append(allErrs, field.Forbidden(idxPath.Child("selfHostedShootExposureResource"), fmt.Sprintf("field must not be set when kind != %s", extensionsv1alpha1.SelfHostedShootExposureResource)))
+		}
+
 		var (
 			validClusterTypes      = sets.New(clusterTypes...)
 			compatibleClusterTypes = sets.New[core.ClusterType]()

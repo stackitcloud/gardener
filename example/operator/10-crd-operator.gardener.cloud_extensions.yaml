@@ -400,6 +400,11 @@ spec:
                         ReconcileTimeout defines how long Gardener should wait for the resource reconciliation.
                         This field is defaulted to 3m0s when kind is "Extension".
                       type: string
+                    selfHostedShootExposureEndpointUpdate:
+                      description: |-
+                        SelfHostedShootExposureEndpointUpdate indicates whether the extension requires the SelfHostedShootExposure endpoints to be continuously
+                        updated with healthy/valid control plane endpoints.
+                      type: boolean
                     type:
                       description: Type is the resource type, for example "coreos"
                         or "ubuntu".
