@@ -7,6 +7,7 @@ package helper_test
 import (
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
+	"k8s.io/utils/ptr"
 
 	. "github.com/gardener/gardener/pkg/api/core/v1beta1/helper"
 	gardencorev1beta1 "github.com/gardener/gardener/pkg/apis/core/v1beta1"
@@ -48,6 +49,61 @@ var _ = Describe("Helper", func() {
 			},
 			"foo",
 			"baz",
+			false,
+		),
+	)
+
+	DescribeTable("#SelfHostedShootExposureEndpointUpdateEnabled",
+		func(registrations []gardencorev1beta1.ControllerRegistration, extensionType string, expected bool) {
+			Expect(SelfHostedShootExposureEndpointUpdateEnabled(registrations, extensionType)).To(Equal(expected))
+		},
+		Entry("no registrations defaults to false",
+			nil,
+			"local",
+			false,
+		),
+		Entry("no matching registration defaults to false",
+			[]gardencorev1beta1.ControllerRegistration{{
+				Spec: gardencorev1beta1.ControllerRegistrationSpec{
+					Resources: []gardencorev1beta1.ControllerResource{
+						{Kind: "foo", Type: "bar"},
+					},
+				},
+			}},
+			"local",
+			false,
+		),
+		Entry("matching registration with field unset defaults to true",
+			[]gardencorev1beta1.ControllerRegistration{{
+				Spec: gardencorev1beta1.ControllerRegistrationSpec{
+					Resources: []gardencorev1beta1.ControllerResource{
+						{Kind: "SelfHostedShootExposure", Type: "local"},
+					},
+				},
+			}},
+			"local",
+			true,
+		),
+		Entry("matching registration with field explicitly set to false",
+			[]gardencorev1beta1.ControllerRegistration{{
+				Spec: gardencorev1beta1.ControllerRegistrationSpec{
+					Resources: []gardencorev1beta1.ControllerResource{
+						{Kind: "SelfHostedShootExposure", Type: "local", SelfHostedShootExposureEndpointUpdate: ptr.To(false)},
+					},
+				},
+			}},
+			"local",
+			false,
+		),
+		Entry("type lookup is case-insensitive",
+			[]gardencorev1beta1.ControllerRegistration{{
+				Spec: gardencorev1beta1.ControllerRegistrationSpec{
+					Resources: []gardencorev1beta1.ControllerResource{
+						{Kind: "SelfHostedShootExposure", Type: "Local", SelfHostedShootExposureEndpointUpdate: ptr.To(false)},
+					},
+				},
+			}},
+			"local",
 			false,
 		),
 	)

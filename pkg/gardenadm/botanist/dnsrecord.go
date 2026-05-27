@@ -7,10 +7,8 @@ package botanist
 import (
 	"context"
 	"fmt"
-	"slices"
 
 	extensionsv1alpha1helper "github.com/gardener/gardener/pkg/api/extensions/v1alpha1/helper"
-	gardencorev1beta1 "github.com/gardener/gardener/pkg/apis/core/v1beta1"
 	extensionsv1alpha1 "github.com/gardener/gardener/pkg/apis/extensions/v1alpha1"
 	"github.com/gardener/gardener/pkg/component"
 )
@@ -81,7 +79,7 @@ func (b *GardenadmBotanist) extensionExposureDNSRecordValues() ([]string, extens
 	}
 	switch {
 	case len(ips) > 0:
-		filtered, recordType, ok := filterByIPFamily(ips, b.Shoot.GetInfo().Spec.Networking.IPFamilies)
+		filtered, recordType, ok := extensionsv1alpha1helper.FilterAddressesByIPFamily(ips, b.Shoot.GetInfo().Spec.Networking.IPFamilies)
 		if !ok {
 			return nil, "", fmt.Errorf("SelfHostedShootExposure ingress IPs %v do not match any configured IP family", ips)
 		}
@@ -108,31 +106,9 @@ func (b *GardenadmBotanist) nodeAddressDNSRecordValues(ctx context.Context) ([]s
 		addresses = append(addresses, addr)
 	}
 
-	filtered, recordType, ok := filterByIPFamily(addresses, b.Shoot.GetInfo().Spec.Networking.IPFamilies)
+	filtered, recordType, ok := extensionsv1alpha1helper.FilterAddressesByIPFamily(addresses, b.Shoot.GetInfo().Spec.Networking.IPFamilies)
 	if !ok {
 		return nil, "", fmt.Errorf("control plane node addresses %v do not match any configured IP family", addresses)
 	}
 	return filtered, recordType, nil
-}
-
-// filterByIPFamily returns the subset of addresses matching the first IP family in ipFamilies that has at least one
-// match, along with its DNS record type. The bool is false if no family matches.
-func filterByIPFamily(addresses []string, ipFamilies []gardencorev1beta1.IPFamily) ([]string, extensionsv1alpha1.DNSRecordType, bool) {
-	for _, family := range ipFamilies {
-		recordType := ipFamilyToDNSRecordType(family)
-		filtered := slices.DeleteFunc(slices.Clone(addresses), func(addr string) bool {
-			return extensionsv1alpha1helper.GetDNSRecordType(addr) != recordType
-		})
-		if len(filtered) > 0 {
-			return filtered, recordType, true
-		}
-	}
-	return nil, "", false
-}
-
-func ipFamilyToDNSRecordType(family gardencorev1beta1.IPFamily) extensionsv1alpha1.DNSRecordType {
-	if family == gardencorev1beta1.IPFamilyIPv6 {
-		return extensionsv1alpha1.DNSRecordTypeAAAA
-	}
-	return extensionsv1alpha1.DNSRecordTypeA
 }
