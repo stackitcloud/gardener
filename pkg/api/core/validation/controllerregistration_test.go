@@ -348,47 +348,39 @@ var _ = Describe("validation", func() {
 			}))))
 		})
 
-		It("should allow to set required field for kind SelfHostedShootExposure", func() {
-			strategy := core.BeforeKubeAPIServer
-			resource := core.ControllerResource{
-				Kind:                 extensionsv1alpha1.ExtensionResource,
-				Type:                 "arbitrary",
-				AutoEnable:           []core.ClusterType{core.ClusterTypeShoot},
-				ClusterCompatibility: []core.ClusterType{core.ClusterTypeShoot},
-				ReconcileTimeout:     &metav1.Duration{Duration: 10 * time.Second},
-				Lifecycle: &core.ControllerResourceLifecycle{
-					Reconcile: &strategy,
-				},
-			}
+		It("should allow setting selfHostedShootExposureEndpointUpdate for kind SelfHostedShootExposure", func() {
+			resources = []core.ControllerResource{{
+				Kind:                                  extensionsv1alpha1.SelfHostedShootExposureResource,
+				Type:                                  "arbitrary",
+				SelfHostedShootExposureEndpointUpdate: ptr.To(true),
+			}}
 
-			resources = []core.ControllerResource{resource}
 			errorList := ValidateControllerResources(resources, validModes, fldPath)
 
 			Expect(errorList).To(BeEmpty())
 		})
 
-		It("should forbid to set certain fields for kind != Extension", func() {
-			strategy := core.BeforeKubeAPIServer
-			ctrlResource.AutoEnable = []core.ClusterType{core.ClusterTypeShoot}
-			ctrlResource.ReconcileTimeout = &metav1.Duration{Duration: 10 * time.Second}
-			ctrlResource.Lifecycle = &core.ControllerResourceLifecycle{
-				Reconcile: &strategy,
-			}
-			resources = []core.ControllerResource{ctrlResource}
+		DescribeTable("should forbid setting selfHostedShootExposureEndpointUpdate for kind",
+			func(kind string) {
+				resources = []core.ControllerResource{{
+					Kind:                                  kind,
+					Type:                                  "arbitrary",
+					SelfHostedShootExposureEndpointUpdate: ptr.To(true),
+				}}
 
-			errorList := ValidateControllerResources(resources, validModes, fldPath)
+				errorList := ValidateControllerResources(resources, validModes, fldPath)
 
-			Expect(errorList).To(ConsistOf(PointTo(MatchFields(IgnoreExtras, Fields{
-				"Type":  Equal(field.ErrorTypeForbidden),
-				"Field": Equal("resources[0].autoEnable"),
-			})), PointTo(MatchFields(IgnoreExtras, Fields{
-				"Type":  Equal(field.ErrorTypeForbidden),
-				"Field": Equal("resources[0].reconcileTimeout"),
-			})), PointTo(MatchFields(IgnoreExtras, Fields{
-				"Type":  Equal(field.ErrorTypeForbidden),
-				"Field": Equal("resources[0].lifecycle"),
-			}))))
-		})
+				Expect(errorList).To(ConsistOf(PointTo(MatchFields(IgnoreExtras, Fields{
+					"Type":  Equal(field.ErrorTypeForbidden),
+					"Field": Equal("resources[0].selfHostedShootExposureEndpointUpdate"),
+				}))))
+			},
+
+			Entry("Extension", extensionsv1alpha1.ExtensionResource),
+			Entry("OperatingSystemConfig", extensionsv1alpha1.OperatingSystemConfigResource),
+			Entry("Infrastructure", extensionsv1alpha1.InfrastructureResource),
+			Entry("Worker", extensionsv1alpha1.WorkerResource),
+		)
 
 		It("should allow setting valid autoEnable modes", func() {
 			resources[0].Kind = "Extension"

@@ -114,6 +114,10 @@ func ValidateControllerResources(resources []core.ControllerResource, clusterTyp
 		}
 		resourceKindToType[resource.Kind] = resource.Type
 
+		if resource.Kind != extensionsv1alpha1.SelfHostedShootExposureResource && resource.SelfHostedShootExposureEndpointUpdate != nil {
+			allErrs = append(allErrs, field.Forbidden(idxPath.Child("selfHostedShootExposureEndpointUpdate"), fmt.Sprintf("field must not be set when kind != %s", extensionsv1alpha1.SelfHostedShootExposureResource)))
+		}
+
 		if resource.Kind != extensionsv1alpha1.ExtensionResource {
 			if len(resource.AutoEnable) > 0 {
 				allErrs = append(allErrs, field.Forbidden(idxPath.Child("autoEnable"), fmt.Sprintf("field must not be set when kind != %s", extensionsv1alpha1.ExtensionResource)))
@@ -129,10 +133,6 @@ func ValidateControllerResources(resources []core.ControllerResource, clusterTyp
 			}
 
 			continue
-		}
-
-		if resource.Kind != extensionsv1alpha1.SelfHostedShootExposureResource && resource.SelfHostedShootExposureEndpointUpdate != nil {
-			allErrs = append(allErrs, field.Forbidden(idxPath.Child("selfHostedShootExposureResource"), fmt.Sprintf("field must not be set when kind != %s", extensionsv1alpha1.SelfHostedShootExposureResource)))
 		}
 
 		var (
