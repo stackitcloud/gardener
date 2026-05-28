@@ -323,7 +323,16 @@ func (r *Reconciler) reconcile(
 	}
 
 	if r.SelfHostedShootMeta != nil {
-		gardenerMap["selfHostedShootCluster"] = true
+		// Only enable self-hosted shoot cluster mode (which, amongst others, merges the extensions' shoot webhooks into
+		// the seed webhook configuration) when the cluster this reconciler deploys to actually hosts the shoot's control
+		// plane (e.g. `gardenadm init` or a self-hosted shoot's own gardenlet, in which case the Seed is labeled
+		// accordingly or does not exist yet). During `gardenadm bootstrap` the bootstrap cluster behaves like a standard
+		// seed and does not run the control plane, so its Seed is not labeled - the shoot webhooks must not be activated
+		// here because there is no shoot kube-apiserver pod from which the shoot namespace could be resolved, and any
+		// matching request (e.g. the gardener-resource-manager Service) would consequently be denied.
+		if seed == nil || metav1.HasLabel(seed.ObjectMeta, v1beta1constants.LabelSelfHostedShootCluster) {
+			gardenerMap["selfHostedShootCluster"] = true
+		}
 
 		shootValues := map[string]any{
 			"name":        shoot.Name,
