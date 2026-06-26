@@ -52,6 +52,7 @@ Description=Log Rotation at each 10 minutes
 [Timer]
 OnCalendar=*:0/10
 AccuracySec=1min
+RandomizedDelaySec=6h
 Persistent=true
 [Install]
 WantedBy=multi-user.target`),
