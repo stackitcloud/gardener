@@ -1,11 +1,26 @@
 # Envoy proxy and istio do not support HTTP/2 client connection coalescing natively.
 # Clients, especially web browsers, may open a single HTTP/2 connection and send requests
 # targeted at different hosts all backed by the same IP address and wildcard certificate.
-# Returning 421 for requests where the server name and the authority header do not match
-# indicates to the client that it should open a new connection for the request.
+# Returning 421 for coalesced requests tells the client to open a new connection.
+#
+# Kube-apiserver clients and proxies (like Rancher) may inject unexpected Host headers 
+# (e.g., 'localhost'). Because TLS is terminated at the gateway (L7), Istio's strict 
+# routing will normally 404 these requests.
+# 
+# The certificate is the source of truth for both enforcement and k8s api client rescue:
+# 1. Fast Path: If SNI and Authority match perfectly -> ALLOW.
+# 2. Coalescing Check: If the requested Authority matches a Wildcard SAN (e.g. *.example.com) 
+#    on the certificate -> return 421 status code to break the HTTP/2 coalescing attempt.
+# 3. Misbehaving Client Rescue: If the Authority matches an exact SAN explicitly listed on the 
+#    cert (e.g., 'localhost') AND the certificate belongs to a kube-apiserver, we rewrite 
+#    the Authority to the SNI and clear the route cache. This passes Istio's strict L7 routing.
+# 4. DEFAULT: Any other mismatch (not covered by a wildcard, or an exact match on a non-kube 
+#    gateway) -> DO NOTHING. Envoy's standard L7 routing will handle it (usually returning 404).
+#
 # Issues:
 # - https://github.com/envoyproxy/envoy/issues/6767
 # - https://github.com/istio/istio/issues/13589
+# - https://github.com/rancher/rancher/issues/55596
 # Documentation:
 # - https://istio.io/latest/docs/ops/common-problems/network-issues/#404-errors-occur-when-multiple-gateways-configured-with-same-tls-certificate
 apiVersion: networking.istio.io/v1alpha3
@@ -19,34 +34,68 @@ spec:
     match:
       context: GATEWAY
       listener:
-        portNumber: 9443
         filterChain:
           filter:
             name: envoy.filters.network.http_connection_manager
             subFilter:
               name: envoy.filters.http.router
+        portNumber: 9443
     patch:
       operation: INSERT_BEFORE
       value:
         name: envoy.lua
         typed_config:
-          "@type": "type.googleapis.com/envoy.extensions.filters.http.lua.v3.Lua"
+          '@type': type.googleapis.com/envoy.extensions.filters.http.lua.v3.Lua
           inlineCode: |
             function envoy_on_request(request_handle)
               local streamInfo = request_handle:streamInfo()
-              if streamInfo:requestedServerName() ~= "" then
-                -- Handle wildcard in the requested server name
-                if (string.sub(streamInfo:requestedServerName(), 1, 2) == "*." and not string.find(request_handle:headers():get(":authority"), string.sub(streamInfo:requestedServerName(), 2), 1, true)) then
-                  request_handle:respond({[":status"] = "421"}, "Misdirected Request")
-                end
-                -- Handle mismatch between requested server name and :authority header
-                if (string.sub(streamInfo:requestedServerName(), 1, 2) ~= "*." and streamInfo:requestedServerName() ~= request_handle:headers():get(":authority")) then
-                  -- Check if the difference is just the port (443) as suffix in the :authority header
-                  local portSuffix = ":443"
-                  local portSuffixLen = string.len(portSuffix)
-                  if (not(string.find(string.sub(request_handle:headers():get(":authority"), -portSuffixLen), portSuffix, 1, true) and streamInfo:requestedServerName() == string.sub(request_handle:headers():get(":authority"), 1, -portSuffixLen - 1))) then
+              local sni = streamInfo:requestedServerName()
+              local authority = request_handle:headers():get(":authority")
+
+              if sni == "" or authority == nil then return end
+
+              local authority_no_port = authority
+              if string.sub(authority, -4) == ":443" then
+                authority_no_port = string.sub(authority, 1, -5)
+              end
+
+              -- FAST PATH
+              if sni == authority_no_port then return end
+
+              -- FETCH INFO FOR CERTIFICATE PRESENTED TO THE CLIENT
+              local ssl_info = streamInfo:downstreamSslConnection()
+              if ssl_info == nil then return end
+              
+              local sans = ssl_info:dnsSansLocalCertificate()
+              if sans == nil then return end
+
+              -- Check if this certificate is for a kube-apiserver
+              local subject = ssl_info:subjectLocalCertificate()
+              local is_kube_api = false
+              if subject ~= nil and string.find(subject, "kube-apiserver", 1, true) then
+                is_kube_api = true
+              end
+
+
+              -- SAN COVERAGE CHECK AND ENFORCEMENT
+              local exact_match_found = false
+              for _, san in ipairs(sans) do
+                if string.sub(san, 1, 2) == "*." then
+                  local base_domain = string.sub(san, 2)
+                  if string.sub(authority_no_port, -string.len(base_domain)) == base_domain then
                     request_handle:respond({[":status"] = "421"}, "Misdirected Request")
+                    return
                   end
+                elseif san == authority_no_port then
+                  exact_match_found = true
                 end
+              end
+
+              -- MISBEHAVING CLIENT RESCUE (Restricted to kube-apiservers)
+              -- Only rewrite the header if the exact match was found AND this gateway 
+              -- is actively serving a kube-apiserver certificate.
+              if exact_match_found and is_kube_api then
+                request_handle:headers():replace(":authority", sni)
+                request_handle:clearRouteCache()
               end
             end
