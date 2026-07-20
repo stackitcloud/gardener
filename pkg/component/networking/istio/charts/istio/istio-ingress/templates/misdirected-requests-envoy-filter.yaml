@@ -3,19 +3,19 @@
 # targeted at different hosts all backed by the same IP address and wildcard certificate.
 # Returning 421 for coalesced requests tells the client to open a new connection.
 #
-# We must maintain compatibility with kube-apiserver clients and proxies (like Rancher) 
-# that inject unexpected Host headers (e.g., 'localhost'). We know this is fundamentally 
-# a client-side problem, but we cannot easily fix all upstream tools and we need the compatibility.
+# Kube-apiserver clients and proxies (like Rancher) may inject unexpected Host headers 
+# (e.g., 'localhost'). Because TLS is terminated at the gateway (L7), Istio's strict 
+# routing will normally 404 these requests.
 # 
-# We only return 421 if the SNI and Authority mismatch AND the requested Authority
-# is actually covered by the certificate's SANs. This specific intersection proves
-# the client is trying to reuse an existing TLS connection for a different valid
-# domain (HTTP/2 coalescing).
-#
-# By narrowing the 421 response to this exact scenario, standard traffic (where SNI
-# matches Authority) flows normally. Crucially, it also allows mismatched requests
-# where the Authority is completely outside the certificate's scope (like 'localhost'),
-# letting standard Envoy routing handle those custom proxies.
+# The certificate is the source of truth for both enforcement and k8s api client rescue:
+# 1. Fast Path: If SNI and Authority match perfectly -> ALLOW.
+# 2. Coalescing Check: If the requested Authority matches a Wildcard SAN (e.g. *.example.com) 
+#    on the certificate -> return 421 status code to break the HTTP/2 coalescing attempt.
+# 3. Misbehaving Client Rescue: If the Authority matches an exact SAN explicitly listed on the 
+#    cert (e.g., 'localhost') AND the certificate belongs to a kube-apiserver, we rewrite 
+#    the Authority to the SNI and clear the route cache. This passes Istio's strict L7 routing.
+# 4. DEFAULT: Any other mismatch (not covered by a wildcard, or an exact match on a non-kube 
+#    gateway) -> DO NOTHING. Envoy's standard L7 routing will handle it (usually returning 404).
 #
 # Issues:
 # - https://github.com/envoyproxy/envoy/issues/6767
@@ -34,12 +34,12 @@ spec:
     match:
       context: GATEWAY
       listener:
-        portNumber: 9443
         filterChain:
           filter:
             name: envoy.filters.network.http_connection_manager
             subFilter:
               name: envoy.filters.http.router
+        portNumber: 9443
     patch:
       operation: INSERT_BEFORE
       value:
@@ -52,62 +52,50 @@ spec:
               local sni = streamInfo:requestedServerName()
               local authority = request_handle:headers():get(":authority")
 
-              -- Abort early if essential routing data is missing
-              if sni == "" or authority == nil then
-                return
-              end
+              if sni == "" or authority == nil then return end
 
-              -- Strip the :443 port suffix from the authority header if it exists
               local authority_no_port = authority
               if string.sub(authority, -4) == ":443" then
                 authority_no_port = string.sub(authority, 1, -5)
               end
 
-              -- STEP 1: FAST PATH (Normal Traffic)
-              -- If the client requested the exact same host in TLS (SNI) and HTTP (:authority),
-              -- this is standard traffic. Allow it through immediately.
-              if sni == authority_no_port then
-                return
-              end
+              -- FAST PATH
+              if sni == authority_no_port then return end
 
-              -- STEP 2: FETCH CERTIFICATE SANS
-              -- SNI and Authority do not match. We must inspect the local certificate
-              -- to see if the requested Authority is legally covered by this connection.
+              -- FETCH INFO FOR CERTIFICATE PRESENTED TO THE CLIENT
               local ssl_info = streamInfo:downstreamSslConnection()
               if ssl_info == nil then return end
-
+              
               local sans = ssl_info:dnsSansLocalCertificate()
               if sans == nil then return end
 
-              local is_authority_covered = false
+              -- Check if this certificate is for a kube-apiserver
+              local subject = ssl_info:subjectLocalCertificate()
+              local is_kube_api = false
+              if subject ~= nil and string.find(subject, "kube-apiserver", 1, true) then
+                is_kube_api = true
+              end
 
-              -- STEP 3: SAN COVERAGE CHECK
-              -- Iterate through all SANs on the certificate.
+
+              -- SAN COVERAGE CHECK AND ENFORCEMENT
+              local exact_match_found = false
               for _, san in ipairs(sans) do
                 if string.sub(san, 1, 2) == "*." then
-                  -- Handle Wildcard SANs (e.g., *.example.com)
-                  local base_domain = string.sub(san, 2) -- Extract ".example.com"
-                  -- Check if the requested authority ends with the exact base domain
+                  local base_domain = string.sub(san, 2)
                   if string.sub(authority_no_port, -string.len(base_domain)) == base_domain then
-                    is_authority_covered = true
-                    break
+                    request_handle:respond({[":status"] = "421"}, "Misdirected Request")
+                    return
                   end
-                else
-                  -- Handle Exact Match SANs
-                  if san == authority_no_port then
-                    is_authority_covered = true
-                    break
-                  end
+                elseif san == authority_no_port then
+                  exact_match_found = true
                 end
               end
 
-              -- STEP 4: ENFORCEMENT
-              -- If the requested authority IS in the cert's SANs, the client is trying to
-              -- reuse a TLS connection meant for a different domain. Return 421.
-              --
-              -- If the requested authority is NOT in the SANs (e.g., 'localhost'), this block
-              -- is skipped. The script ends and Envoy allows the request to proceed natively.
-              if is_authority_covered then
-                request_handle:respond({[":status"] = "421"}, "Misdirected Request")
+              -- MISBEHAVING CLIENT RESCUE (Restricted to kube-apiservers)
+              -- Only rewrite the header if the exact match was found AND this gateway 
+              -- is actively serving a kube-apiserver certificate.
+              if exact_match_found and is_kube_api then
+                request_handle:headers():replace(":authority", sni)
+                request_handle:clearRouteCache()
               end
             end
