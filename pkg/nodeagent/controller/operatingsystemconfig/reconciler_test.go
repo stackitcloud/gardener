@@ -14,6 +14,7 @@ import (
 	"path/filepath"
 	"time"
 
+	systemddbus "github.com/coreos/go-systemd/v22/dbus"
 	machinev1alpha1 "github.com/gardener/machine-controller-manager/pkg/apis/machine/v1alpha1"
 	"github.com/go-logr/logr"
 	. "github.com/onsi/ginkgo/v2"
@@ -919,6 +920,65 @@ kind: NodeAgentConfiguration
 
 			expectedNodeAgentKubeConfig := getNodeAgentKubeConfig(nodeAgentConfig.APIServer.CAFile, nodeAgentConfig.APIServer.Server, "new-cert")
 			test.AssertFileOnDisk(fs, nodeagentconfigv1alpha1.KubeconfigFilePath, expectedNodeAgentKubeConfig, 0600)
+		})
+	})
+
+	Context("#enforceStoppedUnits", func() {
+		var osc *extensionsv1alpha1.OperatingSystemConfig
+
+		BeforeEach(func() {
+			osc = &extensionsv1alpha1.OperatingSystemConfig{
+				Spec: extensionsv1alpha1.OperatingSystemConfigSpec{
+					Units: []extensionsv1alpha1.Unit{
+						{Name: "enabled.service", Enable: new(true)},
+						{Name: "disabled.service", Enable: new(false)},
+						{Name: "stop.service", Command: new(extensionsv1alpha1.CommandStop)},
+						{Name: "default.service"},
+					},
+				},
+			}
+		})
+
+		It("should stop units which are active but were instructed to be stopped", func() {
+			fakeDBus.SetUnits(
+				systemddbus.UnitStatus{Name: "enabled.service", ActiveState: "active"},
+				systemddbus.UnitStatus{Name: "disabled.service", ActiveState: "active"},
+				systemddbus.UnitStatus{Name: "stop.service", ActiveState: "active"},
+				systemddbus.UnitStatus{Name: "default.service", ActiveState: "active"},
+			)
+
+			Expect(reconciler.enforceStoppedUnits(ctx, log, node, osc)).To(Succeed())
+
+			Expect(fakeDBus.Actions).NotTo(ContainElement(fakedbus.SystemdAction{Action: fakedbus.ActionStop, UnitNames: []string{"disabled.service"}}))
+			Expect(fakeDBus.Actions).To(ContainElement(fakedbus.SystemdAction{Action: fakedbus.ActionStop, UnitNames: []string{"stop.service"}}))
+			Expect(fakeDBus.Actions).NotTo(ContainElement(fakedbus.SystemdAction{Action: fakedbus.ActionStop, UnitNames: []string{"enabled.service"}}))
+			Expect(fakeDBus.Actions).NotTo(ContainElement(fakedbus.SystemdAction{Action: fakedbus.ActionStop, UnitNames: []string{"default.service"}}))
+		})
+
+		It("should not stop units which are already inactive", func() {
+			fakeDBus.SetUnits(
+				systemddbus.UnitStatus{Name: "disabled.service", ActiveState: "inactive"},
+				systemddbus.UnitStatus{Name: "stop.service", ActiveState: "inactive"},
+			)
+
+			Expect(reconciler.enforceStoppedUnits(ctx, log, node, osc)).To(Succeed())
+
+			for _, action := range fakeDBus.Actions {
+				Expect(action.Action).NotTo(Equal(fakedbus.ActionStop))
+			}
+		})
+
+		It("should also enforce extension units declared in the OSC status", func() {
+			osc.Status.ExtensionUnits = []extensionsv1alpha1.Unit{
+				{Name: "extension-stop.service", Command: new(extensionsv1alpha1.CommandStop)},
+			}
+			fakeDBus.SetUnits(
+				systemddbus.UnitStatus{Name: "extension-stop.service", ActiveState: "active"},
+			)
+
+			Expect(reconciler.enforceStoppedUnits(ctx, log, node, osc)).To(Succeed())
+
+			Expect(fakeDBus.Actions).To(ContainElement(fakedbus.SystemdAction{Action: fakedbus.ActionStop, UnitNames: []string{"extension-stop.service"}}))
 		})
 	})
 })

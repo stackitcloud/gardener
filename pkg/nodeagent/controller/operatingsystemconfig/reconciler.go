@@ -195,9 +195,17 @@ func (r *Reconciler) Reconcile(ctx context.Context, request reconcile.Request) (
 
 	serialReconciliationLease := newLeaderElectorForSecret(log, r.LeaseClient, r.Clock, secret, r.HostName)
 
+	// Enforce the desired stopped state on every reconcile. After a node reboot, systemd may start units
+	// the extension instructed to be stopped (e.g., they are pulled in by multi-user.target).
+	if node != nil {
+		if err := r.enforceStoppedUnits(ctx, log, node, osc); err != nil {
+			return reconcile.Result{}, fmt.Errorf("failed enforcing stopped units: %w", err)
+		}
+	}
+
 	if node != nil && node.Annotations[nodeagentconfigv1alpha1.AnnotationKeyChecksumAppliedOperatingSystemConfig] == oscChecksum {
 		log.Info("Configuration on this node is up to date, nothing to be done")
-		return reconcile.Result{}, serialReconciliationLease.release(ctx)
+		return reconcile.Result{RequeueAfter: r.Config.SyncPeriod.Duration}, serialReconciliationLease.release(ctx)
 	}
 
 	if serialReconciliation(secret) {
@@ -794,6 +802,47 @@ func (r *Reconciler) executeUnitCommands(ctx context.Context, log logr.Logger, n
 	}
 
 	return flow.Parallel(fns...)(ctx)
+}
+
+// enforceStoppedUnits stops units which the OSC instructs to be stopped (Command=stop) but which are
+// currently active. This is required because the regular reconciliation flow only stops units when the OSC changes,
+// while systemd may start such units after a node reboot. Units which are already inactive are left untouched.
+func (r *Reconciler) enforceStoppedUnits(ctx context.Context, log logr.Logger, node *corev1.Node, osc *extensionsv1alpha1.OperatingSystemConfig) error {
+	var unitNames []string
+	for _, unit := range mergeUnits(osc.Spec.Units, osc.Status.ExtensionUnits) {
+		// getCommandToExecute returns CommandStop when the unit is explicitly set to Command=stop.
+		if getCommandToExecute(unit) == extensionsv1alpha1.CommandStop {
+			unitNames = append(unitNames, unit.Name)
+		}
+	}
+
+	// TODO: diagnostic logging
+	log.Info("Enforcing stopped state for units instructed to be stopped", "units", unitNames)
+
+	if len(unitNames) == 0 {
+		return nil
+	}
+
+	statuses, err := r.DBus.ListByNames(ctx, unitNames)
+	if err != nil {
+		return fmt.Errorf("unable to list systemd unit statuses: %w", err)
+	}
+
+	for _, status := range statuses {
+		// TODO: diagnostic logging
+		log.Info("Observed systemd unit status", "unitName", status.Name, "loadState", status.LoadState, "activeState", status.ActiveState, "subState", status.SubState)
+
+		if status.ActiveState != "active" {
+			continue
+		}
+
+		log.Info("Unit is active but was instructed to be stopped, enforcing desired state", "unitName", status.Name)
+		if err := r.DBus.Stop(ctx, r.Recorder, node, status.Name); err != nil {
+			return fmt.Errorf("unable to stop unit %q which should be stopped: %w", status.Name, err)
+		}
+	}
+
+	return nil
 }
 
 func isInPlaceUpdate(changes *operatingSystemConfigChanges) bool {
