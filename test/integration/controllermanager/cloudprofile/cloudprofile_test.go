@@ -9,6 +9,7 @@ import (
 
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
+	"github.com/rs/zerolog/log"
 	"k8s.io/apimachinery/pkg/api/resource"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"sigs.k8s.io/controller-runtime/pkg/client"
@@ -127,6 +128,36 @@ var _ = DescribeTableSubtree("CloudProfile controller tests", func(isCapabilitie
 				Expect(client.IgnoreNotFound(testClient.Delete(ctx, shoot))).To(Succeed())
 			})
 		}
+	})
+
+	Context("shoots referencing the CloudProfile", func() {
+		JustBeforeEach(func() {
+			By("Ensure finalizer got added")
+			Eventually(func(g Gomega) {
+				g.Expect(testClient.Get(ctx, client.ObjectKeyFromObject(cloudProfile), cloudProfile)).To(Succeed())
+				g.Expect(cloudProfile.Finalizers).To(ConsistOf("gardener"))
+			}).Should(Succeed())
+
+			By("Delete CloudProfile")
+			Expect(testClient.Delete(ctx, cloudProfile)).To(Succeed())
+		})
+
+		It("should add the finalizer and not release it on deletion since there still is a referencing shoot", func() {
+			By("Ensure CloudProfile is not released")
+			Consistently(func() error {
+				return testClient.Get(ctx, client.ObjectKeyFromObject(cloudProfile), cloudProfile)
+			}).Should(Succeed())
+		})
+
+		It("should add the finalizer and release it on deletion after the shoot got deleted", func() {
+			By("Delete Shoot")
+			Expect(testClient.Delete(ctx, shoot)).To(Succeed())
+
+			By("Ensure CloudProfile is released")
+			Eventually(func() error {
+				return testClient.Get(ctx, client.ObjectKeyFromObject(cloudProfile), cloudProfile)
+			}).Should(BeNotFoundError())
+		})
 	})
 
 	Context("no shoot referencing the CloudProfile", func() {
