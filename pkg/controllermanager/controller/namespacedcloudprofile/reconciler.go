@@ -270,7 +270,9 @@ func compareLifecycleStages(a, b gardencorev1beta1.LifecycleStage) int {
 }
 
 func mergeClassificationLifecycles(base, override gardencorev1beta1.LifecycleStage) gardencorev1beta1.LifecycleStage {
-	base.StartTime = override.StartTime
+	if override.StartTime != nil {
+		base.StartTime = override.StartTime
+	}
 	return base
 }
 
