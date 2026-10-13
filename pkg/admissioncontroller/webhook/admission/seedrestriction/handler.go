@@ -13,6 +13,7 @@ import (
 	"time"
 
 	"github.com/go-logr/logr"
+	"github.com/google/go-cmp/cmp"
 	admissionv1 "k8s.io/api/admission/v1"
 	certificatesv1 "k8s.io/api/certificates/v1"
 	coordinationv1 "k8s.io/api/coordination/v1"
@@ -120,7 +121,7 @@ func (h *Handler) Handle(ctx context.Context, request admission.Request) admissi
 	case seedResource:
 		return h.admitSeed(ctx, seedName, request)
 	case shootResource:
-		return h.admitShoot(seedName, request)
+		return h.admitShoot(log, seedName, request)
 	case serviceAccountResource:
 		return h.admitServiceAccount(ctx, seedName, userType, request)
 	case shootStateResource:
@@ -720,7 +721,7 @@ func (h *Handler) admitServiceAccount(ctx context.Context, seedName string, user
 	return admission.Errored(http.StatusForbidden, fmt.Errorf("object does not belong to seed %q", seedName))
 }
 
-func (h *Handler) admitShoot(_ string, request admission.Request) admission.Response {
+func (h *Handler) admitShoot(log logr.Logger, _ string, request admission.Request) admission.Response {
 	if request.Operation != admissionv1.Update {
 		return admission.Errored(http.StatusBadRequest, fmt.Errorf("unexpected operation: %q", request.Operation))
 	}
@@ -744,9 +745,10 @@ func (h *Handler) admitShoot(_ string, request admission.Request) admission.Resp
 	if newShoot.Spec.Networking != nil {
 		newNodes = newShoot.Spec.Networking.Nodes
 	}
+	oldSpecForComparison := oldShoot.Spec
 	if oldNodes == nil && newNodes != nil {
 		// Check that .spec.networking.nodes is the only change by temporarily patching old spec and re-comparing.
-		oldSpecForComparison := *oldShoot.Spec.DeepCopy()
+		oldSpecForComparison = *oldShoot.Spec.DeepCopy()
 		if oldSpecForComparison.Networking == nil {
 			oldSpecForComparison.Networking = &gardencorev1beta1.Networking{}
 		}
@@ -755,7 +757,10 @@ func (h *Handler) admitShoot(_ string, request admission.Request) admission.Resp
 			return admission.Allowed("")
 		}
 	}
-	return admission.Errored(http.StatusForbidden, errors.New("gardenlet must not modify .spec of Shoot (only .spec.networking.nodes may be set from nil)"))
+
+	diff := cmp.Diff(oldSpecForComparison, newShoot.Spec)
+	log.Info("Gardenlet attempted unauthorized modification to Shoot spec", "diff", diff)
+	return admission.Errored(http.StatusForbidden, fmt.Errorf("gardenlet must not modify .spec of Shoot (only .spec.networking.nodes may be set from nil); diff (-want +got):\n%s", diff))
 }
 
 func (h *Handler) admitShootState(ctx context.Context, seedName string, request admission.Request) admission.Response {
